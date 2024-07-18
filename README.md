@@ -1,4 +1,4 @@
-# Go-lito
+# Go-lito (Go Lee Toe)
 
 Go-lito is a small project specifically created for those running algod on a Linux system that uses Systemd. It is used to assist in collecting extra data from the local node that does not get propagated to algod or indexers and thus never get collected.
 
