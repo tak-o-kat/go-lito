@@ -31,3 +31,6 @@ main
 
 # sqlite db
 *.db
+
+# executable
+litod
