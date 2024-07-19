@@ -15,10 +15,10 @@ func main() {
 	// if err != nil {
 	// 	panic(fmt.Sprintf("cannot start server: %s", err))
 	// }
-	lito := lito.New()
+	lito := lito.Init()
 
 	err := lito.Run()
 	if err != nil {
-		panic(fmt.Sprintf("Something went wrong: %s", err))
+		panic(fmt.Sprintf("Error running lito: %s", err))
 	}
 }

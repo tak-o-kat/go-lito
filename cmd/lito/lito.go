@@ -1,7 +1,7 @@
 package lito
 
 import (
-	"errors"
+	"fmt"
 
 	_ "github.com/joho/godotenv/autoload"
 
@@ -9,11 +9,15 @@ import (
 )
 
 type app struct {
+	apiURL string
+	token string
 	db database.Service
 }
 
-func New() *app {
+func Init() *app {
 	lito := &app{
+		apiURL: "",
+		token: "",
 		db: database.New(),
 	}	
 	return lito
@@ -24,12 +28,15 @@ func (l *app) Run() error {
 	defer l.db.Close()
 
 	// run prerequisites
-	
+	err := Prerequisites(l)
 
-
+	if err != nil {
+		return err
+	}
 	// run server
 
-	return errors.New("something went wrong")
+	fmt.Println(l.apiURL)
+	fmt.Println(l.token)
+
+	return nil
 }
-
-

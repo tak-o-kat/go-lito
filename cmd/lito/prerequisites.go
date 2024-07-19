@@ -23,7 +23,7 @@ func GetDataFolderInfo(command string) (string, error) {
 	return strings.TrimSuffix(string(stdout), "\n"), nil
 }
 
-func Prerequisites() error {
+func Prerequisites(l *app) error {
 	// Make sure OS is linux
 	if runtime.GOOS != "linux" {
 			return fmt.Errorf("this program is currently only supported on linux")
@@ -46,5 +46,16 @@ func Prerequisites() error {
 			return fmt.Errorf("ALGORAND_DATA env variable is not set")
 	}
 
+	// Now that algod and ALGORAND_DATA are checked, chekc NET and TOKEN
+	l.apiURL, err = GetDataFolderInfo("cat $ALGORAND_DATA/algod.net")
+	if err != nil{
+		return err
+	}
+
+	l.token, err = GetDataFolderInfo("cat $ALGORAND_DATA/algod.token")
+	if err != nil{
+		return err
+	}
+	
 	return nil
 }
