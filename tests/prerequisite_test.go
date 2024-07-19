@@ -29,7 +29,7 @@ func TestGoalNotRunning(t *testing.T) {
 	}
 
 	expected := errors.New("algod is not running")
-	got := lito.Prerequisites()
+	got := lito.Prerequisites(lito.Init())
 
 	if expected.Error() != got.Error() {
 		t.Errorf("expected %v; got %v", expected, got)
