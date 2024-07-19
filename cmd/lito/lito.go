@@ -1,6 +1,8 @@
 package lito
 
 import (
+	"errors"
+
 	_ "github.com/joho/godotenv/autoload"
 
 	"go-lito/internal/database"
@@ -18,13 +20,16 @@ func New() *app {
 }
 
 func (l *app) Run() error {
+	// Ensure database connection is closed 
+	defer l.db.Close()
+
 	// run prerequisites
 	
 
 
 	// run server
 
-	return nil
+	return errors.New("something went wrong")
 }
 
 
