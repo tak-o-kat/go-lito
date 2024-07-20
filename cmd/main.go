@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"go-lito/cmd/lito"
+	"log/slog"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -15,10 +16,11 @@ func main() {
 	// if err != nil {
 	// 	panic(fmt.Sprintf("cannot start server: %s", err))
 	// }
+
 	lito := lito.Init()
 
 	err := lito.Run()
 	if err != nil {
-		panic(fmt.Sprintf("Error running lito: %s", err))
-	}
+		slog.Error(fmt.Sprintf("%s",err))
+ 	}
 }

@@ -23,16 +23,18 @@ func GetDataFolderInfo(command string) (string, error) {
 	return strings.TrimSuffix(string(stdout), "\n"), nil
 }
 
-func Prerequisites(l *app) error {
+func CheckEnvVar() error {
+	_, isSet := os.LookupEnv("ALGORAND_DATA")
+	if !isSet {
+		return fmt.Errorf("ALGORAND_DATA env variable is not set")
+	}
+	return nil
+}
+
+func Prerequisites(algod *AlgodInfo) error {
 	// Make sure OS is linux
 	if runtime.GOOS != "linux" {
 			return fmt.Errorf("this program is currently only supported on linux")
-	}
-
-	// Check if algod is running
-	_, err := exec.Command("pgrep", "algod").Output()
-	if err != nil {
-		return fmt.Errorf("algod is not running")
 	}
 
 	// Make sure GOAL is installed
@@ -41,18 +43,24 @@ func Prerequisites(l *app) error {
 	}
 
 	// Make sure ALGORAND_DATA is set
-	_, isSet := os.LookupEnv("ALGORAND_DATA")
-	if !isSet {
-			return fmt.Errorf("ALGORAND_DATA env variable is not set")
+	err := CheckEnvVar()
+	if err != nil {
+		return err
+	}
+
+		// Check if algod is running
+	_, err = exec.Command("pgrep", "algod").Output()
+	if err != nil {
+		return fmt.Errorf("algod is not running")
 	}
 
 	// Now that algod and ALGORAND_DATA are checked, chekc NET and TOKEN
-	l.apiURL, err = GetDataFolderInfo("cat $ALGORAND_DATA/algod.net")
+	algod.url, err = GetDataFolderInfo("cat $ALGORAND_DATA/algod.net")
 	if err != nil{
 		return err
 	}
 
-	l.token, err = GetDataFolderInfo("cat $ALGORAND_DATA/algod.token")
+	algod.token, err = GetDataFolderInfo("cat $ALGORAND_DATA/algod.token")
 	if err != nil{
 		return err
 	}
