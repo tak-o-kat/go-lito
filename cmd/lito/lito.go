@@ -29,7 +29,7 @@ func Init() *LitoApp {
 	}
 	var logger *slog.Logger
 
-	// Check to see it ALGOD_DATA is set before settin gup logger
+	// Check to see it ALGORAND_DATA is set before settin gup logger
 	err := CheckEnvVar()
 	if err != nil {
 		slog.Error(fmt.Sprintf("%s",err))
@@ -44,8 +44,7 @@ func Init() *LitoApp {
 	logger = slog.New(slog.NewJSONHandler(os.Stderr, handlerOpts))
 	slog.SetDefault(logger)
 
-	logger.Debug("Starting Lito")
-
+	// Run prerequisites
 	err = Prerequisites(algodInfo)
 	if err != nil {
 		slog.Error(fmt.Sprintf("%s",err))
@@ -57,7 +56,8 @@ func Init() *LitoApp {
 		Logger: logger,
 		db: database.New(),
 	}	
-
+	
+	logger.Debug("init complete")
 	return lito
 }
 
