@@ -2,12 +2,13 @@ package lito
 
 import (
 	"fmt"
-	"log/slog"
 	"os"
-
-	_ "github.com/joho/godotenv/autoload"
+	"time"
 
 	"go-lito/internal/database"
+
+	_ "github.com/joho/godotenv/autoload"
+	"github.com/rs/zerolog"
 )
 
 type AlgodInfo struct {
@@ -17,7 +18,7 @@ type AlgodInfo struct {
 
 type LitoApp struct {
 	algodInfo *AlgodInfo
-	Logger *slog.Logger
+	Logger *zerolog.Logger
 	db database.Service
 }
 
@@ -27,46 +28,44 @@ func Init() *LitoApp {
 		url: "",
 		token: "",
 	}
-	var logger *slog.Logger
-
-	// Check to see it ALGORAND_DATA is set before settin gup logger
-	err := CheckEnvVar()
-	if err != nil {
-		slog.Error(fmt.Sprintf("%s",err))
-		os.Exit(1)
-	}
 
 	// Set up logger
-	handlerOpts := &slog.HandlerOptions{
-		Level: slog.LevelDebug,
-		AddSource: true,
+	output := zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339}
+	output.FormatMessage = func(i interface{}) string {
+		return fmt.Sprintf("%s", i)
 	}
-	logger = slog.New(slog.NewJSONHandler(os.Stderr, handlerOpts))
-	slog.SetDefault(logger)
+
+	logger := zerolog.New(output).With().Caller().Int("pid", os.Getpid()).Timestamp().Logger()
+
+	// Check to see it ALGORAND_DATA is set before setting up logger
+	err := CheckEnvVar()
+	if err != nil {
+		logger.Fatal().Msg(fmt.Sprintf("%s",err))
+	}
+
+	// Create handler options and create logger
 
 	// Run prerequisites
 	err = Prerequisites(algodInfo)
 	if err != nil {
-		slog.Error(fmt.Sprintf("%s",err))
-		os.Exit(1)
+		logger.Fatal().Msg(fmt.Sprintf("%s",err))
 	}
 
 	lito := &LitoApp{
 		algodInfo: algodInfo,
-		Logger: logger,
+		Logger: &logger,
 		db: database.New(),
 	}	
-	
-	logger.Debug("init complete")
+		
+	logger.Info().Msg(fmt.Sprint(lito.db.Health()))
 	return lito
 }
 
 func (l *LitoApp) Run() error {
-	// Ensure database connection is closed 
+	// Ensure database connection is closed when app exits
 	defer l.db.Close()
+	l.Logger.Info().Msg("Starting Lito")
 
-	l.Logger.Info(l.algodInfo.url)
-	l.Logger.Info(l.algodInfo.token)
 
 	return nil
 }
