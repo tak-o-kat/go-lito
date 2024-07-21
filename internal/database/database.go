@@ -35,10 +35,10 @@ var (
 	dbInstance *service
 )
 
-func createTables(db *sql.DB, l *zerolog.Logger) {
+func CreateTables(l *zerolog.Logger) {
 	// Check if tables exist
 	tableExists := `SELECT id FROM types WHERE id=?`
-	row := db.QueryRow(tableExists, 1)
+	row := dbInstance.db.QueryRow(tableExists, 1)
 	var id int
 	if err := row.Scan(&id); err != nil {
 		l.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
@@ -89,7 +89,7 @@ func createTables(db *sql.DB, l *zerolog.Logger) {
 			FOREIGN KEY (typeId) REFERENCES Types (id)
 		);`
 		
-		if _, err := db.Exec(blocks); err != nil {
+		if _, err := dbInstance.db.Exec(blocks); err != nil {
 			slog.Error(fmt.Sprintf("%s",err))
 		}
 
@@ -100,7 +100,7 @@ func createTables(db *sql.DB, l *zerolog.Logger) {
 			('certified'),
 			('frozen');`
 
-		if _, err := db.Exec(addTypes); err != nil {
+		if _, err := dbInstance.db.Exec(addTypes); err != nil {
 			slog.Error(fmt.Sprintf("%s",err))
 
 		}
@@ -112,7 +112,7 @@ func createTables(db *sql.DB, l *zerolog.Logger) {
 			(0, 4),
 			(0, 5);`
 
-		if _, err := db.Exec(addTotals); err != nil {
+		if _, err := dbInstance.db.Exec(addTotals); err != nil {
 			slog.Error(fmt.Sprintf("%s",err))
 		}
 	}
@@ -121,12 +121,12 @@ func createTables(db *sql.DB, l *zerolog.Logger) {
 func New(l *zerolog.Logger, dbFile string) Service {
 		// Reuse Connection
 	if dbInstance != nil {
+		l.Info().Msg("Reusing existing database connection")
 		return dbInstance
 	}
 
 	if dbFile == "" {
 		dbFile = os.Getenv("DB_NAME")
-		fmt.Println(os.Getenv("TEST_DATA"))
 	}
 
 	// Create lito folder in ALGORAND_DATA
@@ -147,7 +147,7 @@ func New(l *zerolog.Logger, dbFile string) Service {
 	dbInstance = &service{
 		db: db,
 	}
-	createTables(dbInstance.db, l)
+	// createTables(dbInstance.db, l)
 
 	return dbInstance
 }

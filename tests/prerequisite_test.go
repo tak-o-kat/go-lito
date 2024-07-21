@@ -9,10 +9,14 @@ import (
 )
 
 func TestGoalRunning(t *testing.T) {
+	// Shutdown algod before running these tests
+	cmd := "goal node stop"
+	_ = exec.Command("bash", "-c", cmd).Run()
+
 	// Ensure algod is not running when running these tests
 	expected := "Algorand node successfully started!\n"
 
-	cmd := "goal node start"
+	cmd = "goal node start"
 	got, _ := exec.Command("bash", "-c", cmd).Output()
 
 	if expected != string(got) {

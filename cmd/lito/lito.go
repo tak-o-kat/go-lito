@@ -50,6 +50,7 @@ func Init() *LitoApp {
 	// Check to see it ALGORAND_DATA is set before setting up logger
 	err := CheckEnvVar()
 	if err != nil {
+		
 		logger.Fatal().Msg(fmt.Sprintf("%s",err))
 	}
 
@@ -59,12 +60,17 @@ func Init() *LitoApp {
 		logger.Fatal().Msg(fmt.Sprintf("%s",err))
 	}
 
+	// Set up database and create tables if needed
+	dbInstance := database.New(&logger, "")
+	database.CreateTables(&logger)
+
+	// Set up LitoApp struct
 	lito := &LitoApp{
 		algodInfo: algodInfo,
 		Logger: &logger,
-		db: database.New(&logger, ""),
+		db: dbInstance,
 	}	
-		
+	
 	logger.Info().Msg(fmt.Sprint(lito.db.Health()))
 	logger.Info().Msg("Finished initializing lito")
 	return lito
