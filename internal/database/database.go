@@ -37,15 +37,15 @@ var (
 
 func createTables(db *sql.DB) {
 	blocks := `CREATE TABLE IF NOT EXISTS types (
-		id 		INTEGER NOT NULL,
-		type 	TEXT NOT NULL,
+		id 					INTEGER NOT NULL,
+		type 				TEXT NOT NULL,
 		created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
 		PRIMARY KEY (id AUTOINCREMENT)
 	);
 	CREATE TABLE IF NOT EXISTS blocks (
-		id INTEGER NOT NULL,
-		round INTEGER,
+		id 					INTEGER NOT NULL,
+		round 			INTEGER,
 		timestamp 	DATETIME NOT NULL,
 		typeId    	INTEGER NOT NULL,
   	onChain   	INTEGER NULL,
@@ -60,7 +60,7 @@ func createTables(db *sql.DB) {
 		typeId    	INTEGER NOT NULL,
 		created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		updatedAt 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		
+		git s
 		PRIMARY KEY (id),
 		FOREIGN KEY (typeId) REFERENCES Types (id)
 	);`
