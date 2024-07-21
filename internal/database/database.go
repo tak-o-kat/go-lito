@@ -12,6 +12,7 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/rs/zerolog"
 )
 
 // Service represents a service that interacts with a database.
@@ -22,7 +23,7 @@ type Service interface {
 
 	// Close terminates the database connection.
 	// It returns an error if the connection cannot be closed.
-	Close() error
+	Close(l *zerolog.Logger) error
 }
 
 type service struct {
@@ -30,26 +31,98 @@ type service struct {
 }
 
 var (
-	dburl      = os.Getenv("DB_URL")
+	dburl      = os.Getenv("DB_NAME")
 	dbInstance *service
 )
+
+func createTables(db *sql.DB) {
+	blocks := `CREATE TABLE IF NOT EXISTS types (
+		id 		INTEGER NOT NULL,
+		type 	TEXT NOT NULL,
+		created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+		PRIMARY KEY (id AUTOINCREMENT)
+	);
+	CREATE TABLE IF NOT EXISTS blocks (
+		id INTEGER NOT NULL,
+		round INTEGER,
+		timestamp 	DATETIME NOT NULL,
+		typeId    	INTEGER NOT NULL,
+  	onChain   	INTEGER NULL,
+		created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  	PRIMARY KEY (id AUTOINCREMENT),
+  	FOREIGN KEY (typeId) REFERENCES Types (id)
+	);
+	CREATE TABLE Totals (
+		id        	INTEGER NOT NULL,
+		count    		INTEGER NOT NULL,
+		typeId    	INTEGER NOT NULL,
+		created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		updatedAt 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		
+		PRIMARY KEY (id),
+		FOREIGN KEY (typeId) REFERENCES Types (id)
+	);`
+	
+	if _, err := db.Exec(blocks); err != nil {
+		slog.Error(fmt.Sprintf("%s",err))
+	}
+
+	addTypes := `INSERT INTO Types (type) VALUES
+		('onchain'),
+		('proposed'),
+		('soft'),
+		('certified'),
+		('frozen');`
+
+	if _, err := db.Exec(addTypes); err != nil {
+		slog.Error(fmt.Sprintf("%s",err))
+
+	}
+
+	addTotals := `INSERT INTO Totals (count, typeId) VALUES
+		(0, 1),
+		(0, 2),
+		(0, 3),
+		(0, 4),
+		(0, 5);`
+
+	if _, err := db.Exec(addTotals); err != nil {
+		slog.Error(fmt.Sprintf("%s",err))
+	}
+
+}
 
 func New() Service {
 	// Reuse Connection
 	if dbInstance != nil {
 		return dbInstance
 	}
+	
+	// Create lito folder in ALGORAND_DATA
+	path, _ := os.LookupEnv("ALGORAND_DATA")
+	path += "/lito"
+	err := os.MkdirAll(path, os.ModePerm)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	db, err := sql.Open("sqlite3", dburl)
+	db, err := sql.Open("sqlite3", path + dburl)
 	if err != nil {
 		// This will not be a connection error, but a DSN parse error or
 		// another initialization error.
 		log.Fatal(err)
 	}
 
+	
+
 	dbInstance = &service{
 		db: db,
 	}
+
+	createTables(dbInstance.db)
+
 	return dbInstance
 }
 
@@ -108,7 +181,7 @@ func (s *service) Health() map[string]string {
 // It logs a message indicating the disconnection from the specific database.
 // If the connection is successfully closed, it returns nil.
 // If an error occurs while closing the connection, it returns the error.
-func (s *service) Close() error {
-	slog.Info(fmt.Sprintf("Disconnected from database: %s", dburl))
+func (s *service) Close(l *zerolog.Logger) error {
+	l.Info().Msg(fmt.Sprintf("Disconnected from database: %s", dburl))
 	return s.db.Close()
 }

@@ -24,6 +24,10 @@ type LitoApp struct {
 
 
 func Init() *LitoApp {
+	var level = zerolog.PanicLevel
+	if os.Getenv("APP_ENV") == "local" {
+		level = zerolog.DebugLevel
+	}
 	algodInfo := &AlgodInfo{
 		url: "",
 		token: "",
@@ -35,15 +39,19 @@ func Init() *LitoApp {
 		return fmt.Sprintf("%s", i)
 	}
 
-	logger := zerolog.New(output).With().Caller().Int("pid", os.Getpid()).Timestamp().Logger()
+	// Set up global logger
+	logger := zerolog.New(output).
+		With().
+		Caller().
+		Int("pid", os.Getpid()).
+		Timestamp().
+		Logger().Level(level)
 
 	// Check to see it ALGORAND_DATA is set before setting up logger
 	err := CheckEnvVar()
 	if err != nil {
 		logger.Fatal().Msg(fmt.Sprintf("%s",err))
 	}
-
-	// Create handler options and create logger
 
 	// Run prerequisites
 	err = Prerequisites(algodInfo)
@@ -63,9 +71,8 @@ func Init() *LitoApp {
 
 func (l *LitoApp) Run() error {
 	// Ensure database connection is closed when app exits
-	defer l.db.Close()
+	defer l.db.Close(l.Logger)
 	l.Logger.Info().Msg("Starting Lito")
-
 
 	return nil
 }
