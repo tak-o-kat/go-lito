@@ -43,7 +43,7 @@ func createTables(db *sql.DB) {
 
 		PRIMARY KEY (id AUTOINCREMENT)
 	);
-	CREATE TABLE IF NOT EXISTS blocks (
+	CREATE TABLE IF NOT EXISTS proposed (
 		id 					INTEGER NOT NULL,
 		round 			INTEGER,
 		timestamp 	DATETIME NOT NULL,
@@ -54,13 +54,23 @@ func createTables(db *sql.DB) {
   	PRIMARY KEY (id AUTOINCREMENT),
   	FOREIGN KEY (typeId) REFERENCES Types (id)
 	);
-	CREATE TABLE Totals (
+	CREATE TABLE IF NOT EXISTS votes (
+		id 					INTEGER NOT NULL,
+		round 			INTEGER,
+		timestamp 	DATETIME NOT NULL,
+		typeId    	INTEGER NOT NULL,
+		created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  	PRIMARY KEY (id AUTOINCREMENT),
+  	FOREIGN KEY (typeId) REFERENCES Types (id)
+	);
+	CREATE TABLE IF NOT EXISTS totals (
 		id        	INTEGER NOT NULL,
 		count    		INTEGER NOT NULL,
 		typeId    	INTEGER NOT NULL,
 		created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 		updatedAt 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		git s
+		
 		PRIMARY KEY (id),
 		FOREIGN KEY (typeId) REFERENCES Types (id)
 	);`
@@ -69,7 +79,7 @@ func createTables(db *sql.DB) {
 		slog.Error(fmt.Sprintf("%s",err))
 	}
 
-	addTypes := `INSERT INTO Types (type) VALUES
+	addTypes := `INSERT INTO types (type) VALUES
 		('onchain'),
 		('proposed'),
 		('soft'),
@@ -81,7 +91,7 @@ func createTables(db *sql.DB) {
 
 	}
 
-	addTotals := `INSERT INTO Totals (count, typeId) VALUES
+	addTotals := `INSERT INTO totals (count, typeId) VALUES
 		(0, 1),
 		(0, 2),
 		(0, 3),
