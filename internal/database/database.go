@@ -118,12 +118,17 @@ func createTables(db *sql.DB, l *zerolog.Logger) {
 	}
 }
 
-func New(l *zerolog.Logger) Service {
-	// Reuse Connection
+func New(l *zerolog.Logger, dbFile string) Service {
+		// Reuse Connection
 	if dbInstance != nil {
 		return dbInstance
 	}
-	
+
+	if dbFile == "" {
+		dbFile = os.Getenv("DB_NAME")
+		fmt.Println(os.Getenv("TEST_DATA"))
+	}
+
 	// Create lito folder in ALGORAND_DATA
 	path, _ := os.LookupEnv("ALGORAND_DATA")
 	path += "/lito"
@@ -131,8 +136,8 @@ func New(l *zerolog.Logger) Service {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	db, err := sql.Open("sqlite3", path + dburl)
+	l.Info().Msg(fmt.Sprintf("database file: %s", dbFile))
+	db, err := sql.Open("sqlite3", path + dbFile)
 	if err != nil {
 		// This will not be a connection error, but a DSN parse error or
 		// another initialization error.

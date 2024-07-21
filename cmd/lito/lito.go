@@ -62,7 +62,7 @@ func Init() *LitoApp {
 	lito := &LitoApp{
 		algodInfo: algodInfo,
 		Logger: &logger,
-		db: database.New(&logger),
+		db: database.New(&logger, ""),
 	}	
 		
 	logger.Info().Msg(fmt.Sprint(lito.db.Health()))

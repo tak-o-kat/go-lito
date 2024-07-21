@@ -25,7 +25,7 @@ func NewServer(l *zerolog.Logger) *http.Server {
 	NewServer := &Server{
 		port: port,
 
-		db: database.New(l),
+		db: database.New(l, ""),
 	}
 
 	// Declare Server config
