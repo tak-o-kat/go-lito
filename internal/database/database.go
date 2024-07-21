@@ -139,12 +139,9 @@ func New(l *zerolog.Logger) Service {
 		log.Fatal(err)
 	}
 
-	
-
 	dbInstance = &service{
 		db: db,
 	}
-
 	createTables(dbInstance.db, l)
 
 	return dbInstance
