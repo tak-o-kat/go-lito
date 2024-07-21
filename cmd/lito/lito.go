@@ -14,6 +14,7 @@ import (
 type AlgodInfo struct {
 	url string
 	token string
+	archiveLog string
 }
 
 type LitoApp struct {
@@ -31,15 +32,14 @@ func Init() *LitoApp {
 	algodInfo := &AlgodInfo{
 		url: "",
 		token: "",
+		archiveLog: "node.archive.log",
 	}
 
-	// Set up logger
+		// Set up global logger
 	output := zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339}
 	output.FormatMessage = func(i interface{}) string {
 		return fmt.Sprintf("%s", i)
 	}
-
-	// Set up global logger
 	logger := zerolog.New(output).
 		With().
 		Caller().
@@ -47,22 +47,18 @@ func Init() *LitoApp {
 		Timestamp().
 		Logger().Level(level)
 
-	// Check to see it ALGORAND_DATA is set before setting up logger
-	err := CheckEnvVar()
-	if err != nil {
-		
-		logger.Fatal().Msg(fmt.Sprintf("%s",err))
-	}
-
 	// Run prerequisites
-	err = Prerequisites(algodInfo)
+	err := Prerequisites(algodInfo)
 	if err != nil {
 		logger.Fatal().Msg(fmt.Sprintf("%s",err))
 	}
 
 	// Set up database and create tables if needed
 	dbInstance := database.New(&logger, "")
-	database.CreateTables(&logger)
+	exist := dbInstance.CheckDefaultTables(&logger)
+	if !exist {
+		database.CreateTables(&logger)
+	}
 
 	// Set up LitoApp struct
 	lito := &LitoApp{
