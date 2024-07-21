@@ -40,14 +40,9 @@ var (
 
 func CreateTables(l *zerolog.Logger) {
 	// Check if tables exist
-	tableExists := `SELECT id FROM types WHERE id=?`
-	row := dbInstance.db.QueryRow(tableExists, 1)
-	var id int
-	if err := row.Scan(&id); err != nil {
-		l.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
-	}
+	exists := dbInstance.CheckDefaultTables(l)
 
-	if id == 1 {
+	if exists {
 		return
 	} else {
 		// Tables don't exist, create them
@@ -90,7 +85,7 @@ func CreateTables(l *zerolog.Logger) {
 			PRIMARY KEY (id),
 			FOREIGN KEY (typeId) REFERENCES Types (id)
 		);`
-		
+		l.Debug().Msg("Creating default types and totals")
 		if _, err := dbInstance.db.Exec(blocks); err != nil {
 			l.Error().Msg(fmt.Sprintf("%s",err))
 			// slog.Error(fmt.Sprintf("%s",err))
@@ -223,23 +218,23 @@ func (s *service) CheckDefaultTables(l *zerolog.Logger) bool {
 	tableExists := `SELECT name FROM sqlite_master WHERE type='table' AND name=?`
 	row := dbInstance.db.QueryRow(tableExists, "proposed")
 	if err := row.Scan(&name); err != nil {
-		exists = false
 		l.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
+		return false
 	}
 	row = dbInstance.db.QueryRow(tableExists, "votes")
 	if err := row.Scan(&name); err != nil {
-		exists = false
 		l.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
+		return false
 	}
 	row = dbInstance.db.QueryRow(tableExists, "types")
 	if err := row.Scan(&name); err != nil {
-		exists = false
 		l.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
+		return false
 	}
 	row = dbInstance.db.QueryRow(tableExists, "totals")
 	if err := row.Scan(&name); err != nil {
-		exists = false
 		l.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
+		return false
 	}
 	return exists
 }
