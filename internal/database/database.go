@@ -17,6 +17,9 @@ import (
 
 // Service represents a service that interacts with a database.
 type Service interface {
+	// Verify Tables exist and default entries have been added
+	CheckDefaultTables(l *zerolog.Logger) bool
+	
 	// Health returns a map of health status information.
 	// The keys and values in the map are service-specific.
 	Health() map[string]string
@@ -45,7 +48,6 @@ func CreateTables(l *zerolog.Logger) {
 	}
 
 	if id == 1 {
-		l.Debug().Msg("Tables already exist")
 		return
 	} else {
 		// Tables don't exist, create them
@@ -90,7 +92,8 @@ func CreateTables(l *zerolog.Logger) {
 		);`
 		
 		if _, err := dbInstance.db.Exec(blocks); err != nil {
-			slog.Error(fmt.Sprintf("%s",err))
+			l.Error().Msg(fmt.Sprintf("%s",err))
+			// slog.Error(fmt.Sprintf("%s",err))
 		}
 
 		addTypes := `INSERT INTO types (type) VALUES
@@ -119,35 +122,35 @@ func CreateTables(l *zerolog.Logger) {
 }
 
 func New(l *zerolog.Logger, dbFile string) Service {
-		// Reuse Connection
+	// Reuse Connection
 	if dbInstance != nil {
-		l.Info().Msg("Reusing existing database connection")
 		return dbInstance
 	}
 
 	if dbFile == "" {
+		l.Debug().Msg("dbFile is Empty, using default env variable")
 		dbFile = os.Getenv("DB_NAME")
 	}
 
 	// Create lito folder in ALGORAND_DATA
 	path, _ := os.LookupEnv("ALGORAND_DATA")
 	path += "/lito"
-	err := os.MkdirAll(path, os.ModePerm)
+
+	err := os.MkdirAll(path, 0777)
 	if err != nil {
-		log.Fatal(err)
+		l.Fatal().Msg(fmt.Sprintf("%s",err))
 	}
-	l.Info().Msg(fmt.Sprintf("database file: %s", dbFile))
+
 	db, err := sql.Open("sqlite3", path + dbFile)
 	if err != nil {
 		// This will not be a connection error, but a DSN parse error or
 		// another initialization error.
-		log.Fatal(err)
+		l.Fatal().Msg(fmt.Sprintf("%s",err))
 	}
 
 	dbInstance = &service{
 		db: db,
 	}
-	// createTables(dbInstance.db, l)
 
 	return dbInstance
 }
@@ -210,4 +213,33 @@ func (s *service) Health() map[string]string {
 func (s *service) Close(l *zerolog.Logger) error {
 	l.Info().Msg(fmt.Sprintf("Disconnected from database: %s", dburl))
 	return s.db.Close()
+}
+
+func (s *service) CheckDefaultTables(l *zerolog.Logger) bool {
+	// Check if tables exist
+	exists := true
+	var name string
+
+	tableExists := `SELECT name FROM sqlite_master WHERE type='table' AND name=?`
+	row := dbInstance.db.QueryRow(tableExists, "proposed")
+	if err := row.Scan(&name); err != nil {
+		exists = false
+		l.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
+	}
+	row = dbInstance.db.QueryRow(tableExists, "votes")
+	if err := row.Scan(&name); err != nil {
+		exists = false
+		l.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
+	}
+	row = dbInstance.db.QueryRow(tableExists, "types")
+	if err := row.Scan(&name); err != nil {
+		exists = false
+		l.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
+	}
+	row = dbInstance.db.QueryRow(tableExists, "totals")
+	if err := row.Scan(&name); err != nil {
+		exists = false
+		l.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
+	}
+	return exists
 }

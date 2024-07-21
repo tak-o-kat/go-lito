@@ -11,7 +11,7 @@ build:
 
 # Run the application
 run:
-	@go run cmd/main.go
+	@goal node start && go run cmd/main.go
 
 
 
@@ -23,7 +23,7 @@ test:
 # Clean the binary
 clean:
 	@echo "Cleaning..."
-	@rm -f main
+	@rm -f litod
 
 # Live Reload
 watch:
