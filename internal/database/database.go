@@ -35,76 +35,90 @@ var (
 	dbInstance *service
 )
 
-func createTables(db *sql.DB) {
-	blocks := `CREATE TABLE IF NOT EXISTS types (
+func createTables(db *sql.DB, l *zerolog.Logger) {
+	// Check if tables exist
+	tableExists := `SELECT id FROM types WHERE id=?`
+	row := db.QueryRow(tableExists, 1)
+	var id int
+	if err := row.Scan(&id); err != nil {
+		l.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
+	}
+
+	if id == 1 {
+		l.Debug().Msg("Tables already exist")
+		return
+	} else {
+		// Tables don't exist, create them
+		l.Debug().Msg("Creating tables")
+		blocks := `CREATE TABLE IF NOT EXISTS types (
 		id 					INTEGER NOT NULL,
 		type 				TEXT NOT NULL,
 		created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
 		PRIMARY KEY (id AUTOINCREMENT)
-	);
-	CREATE TABLE IF NOT EXISTS proposed (
-		id 					INTEGER NOT NULL,
-		round 			INTEGER,
-		timestamp 	DATETIME NOT NULL,
-		typeId    	INTEGER NOT NULL,
-  	onChain   	INTEGER NULL,
-		created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		);
+		CREATE TABLE IF NOT EXISTS proposed (
+			id 					INTEGER NOT NULL,
+			round 			INTEGER,
+			timestamp 	DATETIME NOT NULL,
+			typeId    	INTEGER NOT NULL,
+			onChain   	INTEGER NULL,
+			created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-  	PRIMARY KEY (id AUTOINCREMENT),
-  	FOREIGN KEY (typeId) REFERENCES Types (id)
-	);
-	CREATE TABLE IF NOT EXISTS votes (
-		id 					INTEGER NOT NULL,
-		round 			INTEGER,
-		timestamp 	DATETIME NOT NULL,
-		typeId    	INTEGER NOT NULL,
-		created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id AUTOINCREMENT),
+			FOREIGN KEY (typeId) REFERENCES Types (id)
+		);
+		CREATE TABLE IF NOT EXISTS votes (
+			id 					INTEGER NOT NULL,
+			round 			INTEGER,
+			timestamp 	DATETIME NOT NULL,
+			typeId    	INTEGER NOT NULL,
+			created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-  	PRIMARY KEY (id AUTOINCREMENT),
-  	FOREIGN KEY (typeId) REFERENCES Types (id)
-	);
-	CREATE TABLE IF NOT EXISTS totals (
-		id        	INTEGER NOT NULL,
-		count    		INTEGER NOT NULL,
-		typeId    	INTEGER NOT NULL,
-		created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-		updatedAt 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id AUTOINCREMENT),
+			FOREIGN KEY (typeId) REFERENCES Types (id)
+		);
+		CREATE TABLE IF NOT EXISTS totals (
+			id        	INTEGER NOT NULL,
+			count    		INTEGER NOT NULL,
+			typeId    	INTEGER NOT NULL,
+			created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			updatedAt 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+			PRIMARY KEY (id),
+			FOREIGN KEY (typeId) REFERENCES Types (id)
+		);`
 		
-		PRIMARY KEY (id),
-		FOREIGN KEY (typeId) REFERENCES Types (id)
-	);`
-	
-	if _, err := db.Exec(blocks); err != nil {
-		slog.Error(fmt.Sprintf("%s",err))
+		if _, err := db.Exec(blocks); err != nil {
+			slog.Error(fmt.Sprintf("%s",err))
+		}
+
+		addTypes := `INSERT INTO types (type) VALUES
+			('onchain'),
+			('proposed'),
+			('soft'),
+			('certified'),
+			('frozen');`
+
+		if _, err := db.Exec(addTypes); err != nil {
+			slog.Error(fmt.Sprintf("%s",err))
+
+		}
+
+		addTotals := `INSERT INTO totals (count, typeId) VALUES
+			(0, 1),
+			(0, 2),
+			(0, 3),
+			(0, 4),
+			(0, 5);`
+
+		if _, err := db.Exec(addTotals); err != nil {
+			slog.Error(fmt.Sprintf("%s",err))
+		}
 	}
-
-	addTypes := `INSERT INTO types (type) VALUES
-		('onchain'),
-		('proposed'),
-		('soft'),
-		('certified'),
-		('frozen');`
-
-	if _, err := db.Exec(addTypes); err != nil {
-		slog.Error(fmt.Sprintf("%s",err))
-
-	}
-
-	addTotals := `INSERT INTO totals (count, typeId) VALUES
-		(0, 1),
-		(0, 2),
-		(0, 3),
-		(0, 4),
-		(0, 5);`
-
-	if _, err := db.Exec(addTotals); err != nil {
-		slog.Error(fmt.Sprintf("%s",err))
-	}
-
 }
 
-func New() Service {
+func New(l *zerolog.Logger) Service {
 	// Reuse Connection
 	if dbInstance != nil {
 		return dbInstance
@@ -131,7 +145,7 @@ func New() Service {
 		db: db,
 	}
 
-	createTables(dbInstance.db)
+	createTables(dbInstance.db, l)
 
 	return dbInstance
 }

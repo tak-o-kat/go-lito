@@ -62,17 +62,17 @@ func Init() *LitoApp {
 	lito := &LitoApp{
 		algodInfo: algodInfo,
 		Logger: &logger,
-		db: database.New(),
+		db: database.New(&logger),
 	}	
 		
 	logger.Info().Msg(fmt.Sprint(lito.db.Health()))
+	logger.Info().Msg("Finished initializing lito")
 	return lito
 }
 
 func (l *LitoApp) Run() error {
 	// Ensure database connection is closed when app exits
 	defer l.db.Close(l.Logger)
-	l.Logger.Info().Msg("Starting Lito")
 
 	return nil
 }
