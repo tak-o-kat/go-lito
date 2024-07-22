@@ -53,7 +53,7 @@ func Prerequisites(algod *AlgodInfo) error {
 	if err != nil {
 		return fmt.Errorf("algod is not running")
 	}
-
+	
 	// Now that algod and ALGORAND_DATA are checked, chekc NET and TOKEN
 	algod.url, err = GetDataFolderInfo("cat $ALGORAND_DATA/algod.net")
 	if err != nil{
@@ -61,6 +61,11 @@ func Prerequisites(algod *AlgodInfo) error {
 	}
 
 	algod.token, err = GetDataFolderInfo("cat $ALGORAND_DATA/algod.token")
+	if err != nil{
+		return err
+	}
+
+	algod.partAccount, err = GetAccountAddress()
 	if err != nil{
 		return err
 	}
