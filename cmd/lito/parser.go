@@ -20,7 +20,6 @@ type Totals struct {
 }
 
 type Blocks struct {
-	// LastRound int `json:"last-round"`
 	Round uint64 `json:"round"`
 	TimeStamp string `json:"time"`
 	Sender string `json:"sender"`
@@ -45,23 +44,10 @@ type LogData struct {
 	sender string
 }
 
-// func getAccountAddress() string {
-// 	cmd := "goal account partkeyinfo | " +
-// 			"sed -n '/Parent/p' | " +
-// 			"awk '{print $3}'"
-// 	stdout, err := exec.Command("bash", "-c", cmd).Output()
-
-// 	if err != nil {
-// 		fmt.Printf("%s", err)
-// 	}
-// 	return strings.TrimSuffix(string(stdout), "\n")
-// }
-
 
 func Parse(la *LitoApp) {
-	fmt.Println(la.algodInfo.archiveFile)
-	address := "VEJGTLTKNT3VGLG2GVB2LMXC55WYW6J6WPZ76XTY2Y46TRJQOORWERYXYE" //os.Getenv("ADDRESS")
-
+	address := os.Getenv("ACCOUNT")
+	la.Logger.Debug().Msg("Address: " + address)
 	// Hard code for now
 	logFile := os.Getenv("ALGORAND_DATA") + "/archive.log" // use 
 	file , ferr := os.Open (logFile)
@@ -120,6 +106,7 @@ func Parse(la *LitoApp) {
 	
 	defer file.Close()
 
+	// Print out data for testing
 	fmt.Println(parsedData.totals)
 
 	blockArr := blockSorter(parsedData.Blocks)
@@ -223,7 +210,7 @@ func CertVotesParser(line *string, ld *LogData) {
 	ld.totals.certVotes++
 }
 
-
+// Helper to sort the blocks map
 func blockSorter(b map[uint64]Blocks) []Blocks {
 	keys := make([]string, 0, len(b))
 	for k := range b {
