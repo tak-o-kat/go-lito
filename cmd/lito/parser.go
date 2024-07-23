@@ -109,6 +109,9 @@ func Parse(la *LitoApp) {
 	// Print out data for testing
 	fmt.Println(parsedData.totals)
 
+
+	// **** TODO: User the Round Array to sort the blocks and calculate the block time
+	// at the same time
 	blockArr := blockSorter(parsedData.Blocks)
 	for _, block := range blockArr {
 		fmt.Println(block)
@@ -148,6 +151,10 @@ func ProposalAssembledParser(line *string) time.Time {
 }
 
 func ProposalBroadcastParser(line *string, ld *LogData) {
+	// **** TODO: Collect all the rounds we have proposed in an array
+	// this array will server as a key sorter for the block map
+
+
 	// extract json log data from line
 	parsedJson := Blocks{}
 	jsonErr := json.Unmarshal([]byte(*line), &parsedJson)

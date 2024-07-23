@@ -71,6 +71,8 @@ func watcherLoop(w *fsnotify.Watcher, la *LitoApp) {
 				// Begin parsing the archive log file and get the saved data
 				Parse(la)
 
+				// Insert all the parsed data into the database
+				// Inserter(parsedData)
 
 			}
 		}
