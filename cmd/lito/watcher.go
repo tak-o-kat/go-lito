@@ -38,7 +38,6 @@ func Watcher(la *LitoApp) {
 }
 
 func watcherLoop(w *fsnotify.Watcher, la *LitoApp) {
-	i := 0
 	for {
 		select {
 		// Read from Errors.
@@ -64,14 +63,15 @@ func watcherLoop(w *fsnotify.Watcher, la *LitoApp) {
 				continue
 			}
 
-			// Just print the event nicely aligned, and keep track how many
-			// events we've seen.
-			i++
-			
-
+			// Wait for the WRITE even trigger before contintuing
 			if (e.Op.String() == "WRITE") {
-				la.Logger.Info().Msgf("%d %s %q", i, e.Op.String(), e.Name)
+				// After file trigger is set log the event
+				la.Logger.Info().Msgf("%s %q", e.Op.String(), e.Name)
+
+				// Begin parsing the archive log file and get the saved data
 				Parse(la)
+
+
 			}
 		}
 	}
