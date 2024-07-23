@@ -29,7 +29,6 @@ type Blocks struct {
 }
 
 type Votes struct {
-	// LastRound int `json:"last-round"`
 	Round uint64 `json:"round"`
 	TimeStamp string `json:"time"`
 	Type int64 `json:"ObjectStep"`
@@ -48,7 +47,8 @@ type LogData struct {
 func Parse(la *LitoApp) {
 	address := la.algodInfo.partAccount
 	la.Logger.Debug().Msg("Address: " + address)
-	// Hard code for now
+
+	// Open log file
 	logFile := os.Getenv("ALGORAND_DATA") + "/archive.log" // use 
 	file , ferr := os.Open (logFile)
 	if ferr != nil {

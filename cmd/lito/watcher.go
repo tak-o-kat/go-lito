@@ -68,12 +68,11 @@ func watcherLoop(w *fsnotify.Watcher, la *LitoApp) {
 			// events we've seen.
 			i++
 			
-			la.Logger.Info().Msgf("%d %s %q", i, e.Op.String(), e.Name)
-			Parse(la)
-			// if (e.Op.String() == "CREATE") {
-			// 	// Parse the archive log file.
-			// 	parseLogFile(file)
-			// }
+
+			if (e.Op.String() == "WRITE") {
+				la.Logger.Info().Msgf("%d %s %q", i, e.Op.String(), e.Name)
+				Parse(la)
+			}
 		}
 	}
 }
