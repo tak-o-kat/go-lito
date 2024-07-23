@@ -27,6 +27,6 @@ func GetAccountAddress() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("%s", err)
 	}
-	return "CTTR2JYLHQVQRTLAMNUA475YSBBOPSUOG5E72AOR6MQYRNFVJX4Q5YZUMY", nil
+	return os.Getenv("ACCOUNT"), nil
 	//strings.TrimSuffix(string(stdout), "\n"), nil
 }

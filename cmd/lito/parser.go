@@ -46,7 +46,7 @@ type LogData struct {
 
 
 func Parse(la *LitoApp) {
-	address := os.Getenv("ACCOUNT")
+	address := la.algodInfo.partAccount
 	la.Logger.Debug().Msg("Address: " + address)
 	// Hard code for now
 	logFile := os.Getenv("ALGORAND_DATA") + "/archive.log" // use 
