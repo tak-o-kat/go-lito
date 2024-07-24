@@ -3,11 +3,8 @@ package lito
 import (
 	//"runtime"
 	"bufio"
-	"encoding/json"
 	"fmt"
 	"os"
-	"sort"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -26,6 +23,7 @@ type Blocks struct {
 	isOnChain bool 
 	startTime time.Time
 	endTime time.Time
+	blockTime float64
 }
 
 type Votes struct {
@@ -35,16 +33,23 @@ type Votes struct {
 }
 
 type LogData struct {
-	totals Totals
-	Blocks map[uint64]Blocks
-	votes []Votes
+	totals *Totals
+	Blocks *map[uint64]Blocks
+	orderedRounds *[]uint64
+	votes *[]Votes
 	round uint64
 	startTime time.Time
 	sender string
 }
 
+type SortedData struct {
+	totals *Totals
+	proposed *[]Blocks
+	votes *[]Votes
+}
 
-func Parse(la *LitoApp) {
+
+func Parser(la *LitoApp) *SortedData {
 	address := la.algodInfo.partAccount
 	la.Logger.Debug().Msg("Address: " + address)
 
@@ -55,15 +60,18 @@ func Parse(la *LitoApp) {
 			panic(ferr)
 	}
 
+	blockMap := make(map[uint64]Blocks)
+
 	var parsedData = LogData{
-		totals: Totals{},
-		Blocks: make(map[uint64]Blocks),
-		votes: []Votes{},
+		totals: new(Totals),
+		Blocks: &blockMap,
+		orderedRounds: new([]uint64),
+		votes: new([]Votes),
 		round: 0,
 		startTime: time.Now(),
 		sender: address,
 	}
-	
+
 	// Open log file and read line by line to exract node data
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -100,139 +108,18 @@ func Parse(la *LitoApp) {
 			RoundConcludedParser(&line, &parsedData)
 			continue
 		}
-
-
 	}
 	
 	defer file.Close()
 
-	// Print out data for testing
-	fmt.Println(parsedData.totals)
+	// Use the Ordered Rounds array to sort the block map
+	sortedBlocks := blockSorter(parsedData.orderedRounds, parsedData.Blocks)
 
+	nodeData := new(SortedData) 
+	nodeData.totals = parsedData.totals
+	nodeData.proposed = sortedBlocks
+	nodeData.votes = parsedData.votes
 
-	// **** TODO: User the Round Array to sort the blocks and calculate the block time
-	// at the same time
-	blockArr := blockSorter(parsedData.Blocks)
-	for _, block := range blockArr {
-		fmt.Println(block)
-	}
+	return nodeData
 
-	bl := parsedData.Blocks[40557166]
-	blockTime := durationToSeconds(bl.endTime, bl.startTime)
-
-	fmt.Printf("Block Time for Round 40557166: %s\n", bl.endTime.Sub(bl.startTime).String())
-	fmt.Printf("Block Time for Round 40557166: %0.2f\n", blockTime)
-}
-
-// Helper function to convert duration to seconds
-func durationToSeconds(et time.Time, st time.Time) float64 {
-	blockTimeStr := strings.Split(et.Sub(st).String(), "s")[0]
-	blockTime, err := strconv.ParseFloat(blockTimeStr, 64)
-
-	if err != nil {
-		panic(err)
-	}
-	return blockTime
-}
-
-func ProposalAssembledParser(line *string) time.Time {
-	parsedJson := Blocks{}
-	jsonErr := json.Unmarshal([]byte(*line), &parsedJson)
-	if jsonErr != nil {
-		panic(jsonErr)
-	}
-	
-	// Save the start time of each round, and save for later if needed
-	startTime, err := time.Parse(time.RFC3339Nano, parsedJson.TimeStamp)
-	if err != nil {
-		panic(err)
-	}
-	return startTime
-}
-
-func ProposalBroadcastParser(line *string, ld *LogData) {
-	// **** TODO: Collect all the rounds we have proposed in an array
-	// this array will server as a key sorter for the block map
-
-
-	// extract json log data from line
-	parsedJson := Blocks{}
-	jsonErr := json.Unmarshal([]byte(*line), &parsedJson)
-	if jsonErr != nil {
-		panic(jsonErr)
-	}
-
-	// Add to the map
-	ld.Blocks[parsedJson.Round] = parsedJson
-
-	// Save this round in order to extrac block time end time in RoundConcluded
-	ld.round = uint64(parsedJson.Round)
-
-	// increment total
-	ld.totals.blocksProposed++
-}
-
-func RoundConcludedParser(line *string, ld *LogData) {
-	// Check see if this round is in the block map
-	if _, ok := ld.Blocks[ld.round]; ok {
-		parsedJson := Blocks{}
-		jsonErr := json.Unmarshal([]byte(*line), &parsedJson)
-		if jsonErr != nil {
-			panic(jsonErr)
-		}
-
-		// Find block and update isOnChain
-		block := ld.Blocks[parsedJson.Round]
-		block.startTime = ld.startTime
-		block.endTime, _ = time.Parse(time.RFC3339Nano, parsedJson.TimeStamp)
-
-		// Check and see if the sender is our account, if so set isOnChain to true
-		if parsedJson.Sender == ld.sender {
-			block.isOnChain = true
-			ld.totals.blocksOnChain++
-		}
-		ld.Blocks[parsedJson.Round] = block
-	}
-}
-
-func SoftVotesParser(line *string, ld *LogData) {
-	parsedJson := Votes{}
-	jsonErr := json.Unmarshal([]byte(*line), &parsedJson)
-	if jsonErr != nil {
-		panic(jsonErr)
-	}
-
-	ld.votes = append(ld.votes, parsedJson)
-	ld.totals.softVotes++
-}
-
-func CertVotesParser(line *string, ld *LogData) {
-	parsedJson := Votes{}
-	jsonErr := json.Unmarshal([]byte(*line), &parsedJson)
-	if jsonErr != nil {
-		panic(jsonErr)
-	}
-
-	ld.votes = append(ld.votes, parsedJson)
-	ld.totals.certVotes++
-}
-
-// Helper to sort the blocks map
-func blockSorter(b map[uint64]Blocks) []Blocks {
-	keys := make([]string, 0, len(b))
-	for k := range b {
-		keys = append(keys, fmt.Sprintf("%d", k))
-	}
-
-	sort.Strings(keys)
-	blocks := []Blocks{}
-
-	for _, k := range keys {
-		round, err := strconv.ParseUint(k, 10, 64)
-		if err != nil {
-			panic(err)
-		}
-		blocks = append(blocks, b[round])
-	}
-	return blocks
 }

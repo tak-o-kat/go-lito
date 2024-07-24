@@ -63,13 +63,21 @@ func watcherLoop(w *fsnotify.Watcher, la *LitoApp) {
 				continue
 			}
 
+			// **TODO: May need to set a time delay in case the CREATE event isn't instant
+
 			// Wait for the WRITE even trigger before contintuing
 			if (e.Op.String() == "WRITE") {
 				// After file trigger is set log the event
 				la.Logger.Info().Msgf("%s %q", e.Op.String(), e.Name)
 
 				// Begin parsing the archive log file and get the saved data
-				Parse(la)
+				nodeData := Parser(la)
+
+				la.Logger.Debug().Msgf("Node Totals: %v", *nodeData.totals)
+				for _, round := range *nodeData.proposed {
+					la.Logger.Debug().Msgf("Round: %v, Time: %v", round.Round, round.blockTime)
+				}
+
 
 				// Insert all the parsed data into the database
 				// Inserter(parsedData)
