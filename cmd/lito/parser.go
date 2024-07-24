@@ -120,6 +120,8 @@ func Parser(la *LitoApp) *SortedData {
 	nodeData.proposed = sortedBlocks
 	nodeData.votes = parsedData.votes
 
+	la.Logger.Info().Msg("Finished parsing")
+
 	return nodeData
 
 }

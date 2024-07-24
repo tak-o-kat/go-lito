@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"time"
 
 	"go-lito/internal/database"
 
@@ -28,26 +27,12 @@ type LitoApp struct {
 
 func Init() *LitoApp {
 	// Check to see if the .env file exists
-	if _, err := os.Stat(".env1"); os.IsNotExist(err) {
+	if _, err := os.Stat(".env"); os.IsNotExist(err) {
 	  panic(err)
 	}
 
-	var level = zerolog.PanicLevel
-	if os.Getenv("APP_ENV") == "local" {
-		level = zerolog.DebugLevel
-	}
-
-	// Set up global logger
-	output := zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339}
-	output.FormatMessage = func(i interface{}) string {
-		return fmt.Sprintf("%s", i)
-	}
-	logger := zerolog.New(output).
-		With().
-		Caller().
-		Int("pid", os.Getpid()).
-		Timestamp().
-		Logger().Level(level)
+	// Get a new zerolog logger
+	logger := NewLogger()
 
 	// Set up the archive file to be used
 	archiveLog := "node.test.log"
@@ -86,16 +71,16 @@ func Init() *LitoApp {
 	logger.Info().Msg("algod running and prequisites passed")
 	logger.Debug().Msg(algodInfo.partAccount)
 	// Set up database and create tables if needed
-	dbInstance := database.New(&logger, "")
-	exists = dbInstance.CheckDefaultTables(&logger)
+	dbInstance := database.New(logger, "")
+	exists = dbInstance.CheckDefaultTables(logger)
 	if !exists {
-		database.CreateTables(&logger)
+		database.CreateTables(logger)
 	}
 
 	// Set up LitoApp struct
 	lito := &LitoApp{
 		algodInfo: algodInfo,
-		Logger: &logger,
+		Logger: logger,
 		db: dbInstance,
 	}	
 	
