@@ -27,6 +27,11 @@ type LitoApp struct {
 }
 
 func Init() *LitoApp {
+	// Check to see if the .env file exists
+	if _, err := os.Stat(".env1"); os.IsNotExist(err) {
+	  panic(err)
+	}
+
 	var level = zerolog.PanicLevel
 	if os.Getenv("APP_ENV") == "local" {
 		level = zerolog.DebugLevel
