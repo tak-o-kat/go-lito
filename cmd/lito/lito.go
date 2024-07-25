@@ -3,7 +3,6 @@ package lito
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"go-lito/internal/database"
 
@@ -16,13 +15,13 @@ type AlgodInfo struct {
 	token string
 	archivePath string
 	archiveFile string
-	partAccount string
+	PartAccount string
 }
 
 type LitoApp struct {
-	algodInfo *AlgodInfo
+	AlgodInfo *AlgodInfo
 	Logger *zerolog.Logger
-	db database.Service
+	DB database.Service
 }
 
 func Init() *LitoApp {
@@ -34,64 +33,42 @@ func Init() *LitoApp {
 	// Get a new zerolog logger
 	logger := NewLogger()
 
-	// Set up the archive file to be used
-	archiveLog := "node.test.log"
-	archivePath := os.Getenv("ALGORAND_DATA")
-	archiveFile := filepath.Join(archivePath, archiveLog)
-
-	// Check if archive file exists, if not create one
-	exists, err := Exists(archiveFile)
-	if err != nil {
-		logger.Error().Msg(fmt.Sprintf("%s",err))
-	}
-	if !exists {
-		// Create archive file
-		logger.Debug().Msg("Creating archive file: " + archiveFile)
-		_, err := os.Create(archiveFile)
-		if err != nil {
-			logger.Error().Msg(fmt.Sprintf("%s",err))
-		}
-	}
-
-	// Set up default AlgodInfo
-	algodInfo := &AlgodInfo{
-		url: "",
-		token: "",
-		archivePath: archivePath,
-		archiveFile: archiveFile,
-		partAccount: "",
-	}
+	// Get algod info
+	algodInfo := NewAlgodInfo(logger, os.Getenv("LOG_FILE"))
 
 	// Run prerequisites
-	err = Prerequisites(algodInfo)
+	err := Prerequisites(algodInfo)
 	if err != nil {
 		logger.Fatal().Msg(fmt.Sprintf("%s",err))
 	}
 
 	logger.Info().Msg("algod running and prequisites passed")
-	logger.Debug().Msg(algodInfo.partAccount)
+	logger.Debug().Msg("Watch Log File: " + algodInfo.PartAccount)
+
 	// Set up database and create tables if needed
 	dbInstance := database.New(logger, "")
-	exists = dbInstance.CheckDefaultTables(logger)
+	exists := dbInstance.CheckDefaultTables(logger)
 	if !exists {
 		database.CreateTables(logger)
+	} else {
+		logger.Debug().Msg("Tables already exist")
 	}
 
 	// Set up LitoApp struct
 	lito := &LitoApp{
-		algodInfo: algodInfo,
+		AlgodInfo: algodInfo,
 		Logger: logger,
-		db: dbInstance,
+		DB: dbInstance,
 	}	
 	
-	logger.Info().Msg(fmt.Sprint(lito.db.Health()))
+	logger.Info().Msg(fmt.Sprint(lito.DB.Health()))
 	logger.Info().Msg("Finished initializing lito")
 	return lito
 }
 
 func (l *LitoApp) Run() error {
 	// Ensure database connection is closed when app exits
-	defer l.db.Close(l.Logger)
+	defer l.DB.Close(l.Logger)
 
 	// Begin watcher on archive file
 	Watcher(l)

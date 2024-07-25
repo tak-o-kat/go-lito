@@ -65,9 +65,11 @@ func Prerequisites(algod *AlgodInfo) error {
 		return err
 	}
 
-	algod.partAccount, err = GetAccountAddress()
-	if err != nil{
-		return err
+	 if algod.PartAccount == "" {
+		algod.PartAccount, err = GetAccountAddress()
+		if err != nil{
+			return err
+		}
 	}
 	
 	return nil

@@ -46,15 +46,15 @@ func TestCreateTables (t *testing.T) {
 	expected := true
 
 	path := os.Getenv("ALGORAND_DATA")
-	path += "/lito"
+	path += "/lito/test"
 
 	err := os.MkdirAll(path, os.ModePerm)
 	if err != nil {
 		t.Errorf("%s",err)
 	}
-
+	t.Log(path)
 	os.OpenFile(path + "/test.db", os.O_CREATE/os.O_RDWR, 0777)
-	db := database.New(logger, "/test.db")
+	db := database.New(logger, "/test/test.db")
 
 	// Test that tables do not exist
 	expected = false
@@ -75,6 +75,6 @@ func TestCreateTables (t *testing.T) {
 	}
 
 	// Close database and remove test.db
-	db.Close(&zerolog.Logger{})
-	os.Remove(path + "/test.db")
+	// db.Close(&zerolog.Logger{})
+	// os.Remove(path + "/test.db")
 }

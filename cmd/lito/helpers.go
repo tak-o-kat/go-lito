@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/rs/zerolog"
@@ -33,8 +35,37 @@ func NewLogger() *zerolog.Logger {
 		Int("pid", os.Getpid()).
 		Timestamp().
 		Logger().Level(level)
-
 	return &logger
+}
+
+func NewAlgodInfo(l *zerolog.Logger, file string) *AlgodInfo {
+	archiveLog := file
+	archivePath := os.Getenv("ALGORAND_DATA")
+	archiveFile := filepath.Join(archivePath, archiveLog)
+
+	exists, err := Exists(archiveFile)
+	if err != nil {
+		l.Error().Msg(fmt.Sprintf("%s",err))
+	}
+
+	// Check if archive file exists, if not create one
+	if !exists {
+		l.Debug().Msg("Creating archive file: " + archiveFile)
+		_, err := os.Create(archiveFile)
+		if err != nil {
+			l.Error().Msg(fmt.Sprintf("%s",err))
+		}
+	}
+
+	// Set up default AlgodInfo
+	algodInfo := &AlgodInfo{
+		url: "",
+		token: "",
+		archivePath: archivePath,
+		archiveFile: archiveFile,
+		PartAccount: os.Getenv("ACCOUNT"),
+	}
+	return algodInfo
 }
 
 func Exists(name string) (bool, error) {
@@ -57,6 +88,5 @@ func GetAccountAddress() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("%s", err)
 	}
-	return os.Getenv("ACCOUNT"), nil
-	//strings.TrimSuffix(string(stdout), "\n"), nil
+	return strings.TrimSuffix(string(stdout), "\n"), nil
 }

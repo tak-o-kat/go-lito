@@ -54,7 +54,7 @@ func ProposalBroadcastParser(line *string, ld *LogData) {
 	// Add Block to Round Slice for sorting later on
 	*ld.orderedRounds = append(*ld.orderedRounds, parsedJson.Round)
 	// increment total
-	ld.totals.blocksProposed++
+	ld.totals.BlocksProposed++
 }
 
 func RoundConcludedParser(line *string, ld *LogData) {
@@ -72,12 +72,12 @@ func RoundConcludedParser(line *string, ld *LogData) {
 		block.endTime, _ = time.Parse(time.RFC3339Nano, parsedJson.TimeStamp)
 
 		// Calculate the block time from the timestamps of ProposalAssembled and RoundConcluded
-		block.blockTime = durationToSeconds(block.endTime, block.startTime)
+		block.BlockTime = durationToSeconds(block.endTime, block.startTime)
 
 		// Check and see if the sender is our account, if so set isOnChain to true
 		if parsedJson.Sender == ld.sender {
 			block.isOnChain = true
-			ld.totals.blocksOnChain++
+			ld.totals.BlocksOnChain++
 		}
 
 		// Add block to block map
@@ -93,7 +93,7 @@ func SoftVotesParser(line *string, ld *LogData) {
 	}
 
 	(*ld.votes) = append(*ld.votes, parsedJson)
-	ld.totals.softVotes++
+	ld.totals.SoftVotes++
 }
 
 func CertVotesParser(line *string, ld *LogData) {
@@ -104,7 +104,7 @@ func CertVotesParser(line *string, ld *LogData) {
 	}
 
 	(*ld.votes) = append(*ld.votes, parsedJson)
-	ld.totals.certVotes++
+	ld.totals.CertVotes++
 }
 
 // Helper to sort the blocks map

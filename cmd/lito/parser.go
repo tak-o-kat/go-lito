@@ -10,10 +10,10 @@ import (
 )
 
 type Totals struct {
-	blocksOnChain int
-	blocksProposed int
-	softVotes int
-	certVotes int
+	BlocksOnChain int
+	BlocksProposed int
+	SoftVotes int
+	CertVotes int
 }
 
 type Blocks struct {
@@ -23,7 +23,7 @@ type Blocks struct {
 	isOnChain bool 
 	startTime time.Time
 	endTime time.Time
-	blockTime float64
+	BlockTime float64
 }
 
 type Votes struct {
@@ -43,18 +43,17 @@ type LogData struct {
 }
 
 type SortedData struct {
-	totals *Totals
-	proposed *[]Blocks
-	votes *[]Votes
+	Totals *Totals
+	Proposed *[]Blocks
+	Votes *[]Votes
 }
 
 
 func Parser(la *LitoApp) *SortedData {
-	address := la.algodInfo.partAccount
-	la.Logger.Debug().Msg("Address: " + address)
-
-	// Open log file
-	logFile := os.Getenv("ALGORAND_DATA") + "/archive.log" // use 
+	address := la.AlgodInfo.PartAccount
+	
+	// Log file to parse. *** TODO: Need to swap out for la.AlgodInfo.archiveFile
+	logFile := os.Getenv("ALGORAND_DATA") + "/archive.log" // 
 	file , ferr := os.Open (logFile)
 	if ferr != nil {
 			panic(ferr)
@@ -116,9 +115,9 @@ func Parser(la *LitoApp) *SortedData {
 	sortedBlocks := blockSorter(parsedData.orderedRounds, parsedData.Blocks)
 
 	nodeData := new(SortedData) 
-	nodeData.totals = parsedData.totals
-	nodeData.proposed = sortedBlocks
-	nodeData.votes = parsedData.votes
+	nodeData.Totals = parsedData.totals
+	nodeData.Proposed = sortedBlocks
+	nodeData.Votes = parsedData.votes
 
 	la.Logger.Info().Msg("Finished parsing")
 

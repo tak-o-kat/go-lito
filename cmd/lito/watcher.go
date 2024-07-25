@@ -18,22 +18,22 @@ func Watcher(la *LitoApp) {
 	go watcherLoop(w, la)
 
 	// Make sure what we'ere watching is a file
-	st, err := os.Lstat(la.algodInfo.archiveFile)
+	st, err := os.Lstat(la.AlgodInfo.archiveFile)
 	if err != nil {
 		la.Logger.Fatal().Msgf("%s", err)
 	}
 
 	if st.IsDir() {
-		la.Logger.Fatal().Msgf("%q is a directory, not a file", la.algodInfo.archiveFile)
+		la.Logger.Fatal().Msgf("%q is a directory, not a file", la.AlgodInfo.archiveFile)
 	}
 
 	// Watch the directory, not the file itself.
-	err = w.Add(filepath.Dir(la.algodInfo.archiveFile))
+	err = w.Add(filepath.Dir(la.AlgodInfo.archiveFile))
 	if err != nil {
-		la.Logger.Fatal().Msgf("%q: %s", la.algodInfo.archiveFile, err)
+		la.Logger.Fatal().Msgf("%q: %s", la.AlgodInfo.archiveFile, err)
 	}
 
-	la.Logger.Info().Msgf("WATCH %q", la.algodInfo.archiveFile)
+	la.Logger.Info().Msgf("WATCH %q", la.AlgodInfo.archiveFile)
 	<-make(chan struct{}) // Block forever
 }
 
@@ -56,7 +56,7 @@ func watcherLoop(w *fsnotify.Watcher, la *LitoApp) {
 			// map[string]struct{} if you have a lot of files, but for just a
 			// few files simply looping over a slice is faster.
 			var found bool
-			if la.algodInfo.archiveFile == e.Name {
+			if la.AlgodInfo.archiveFile == e.Name {
 				found = true
 			}
 			if !found {
@@ -73,9 +73,9 @@ func watcherLoop(w *fsnotify.Watcher, la *LitoApp) {
 				// Begin parsing the archive log file and get the saved data
 				nodeData := Parser(la)
 
-				la.Logger.Debug().Msgf("Node Totals: %v", *nodeData.totals)
-				for _, round := range *nodeData.proposed {
-					la.Logger.Debug().Msgf("Round: %v, Time: %v", round.Round, round.blockTime)
+				la.Logger.Debug().Msgf("Node Totals: %v", *nodeData.Totals)
+				for _, round := range *nodeData.Proposed {
+					la.Logger.Debug().Msgf("Round: %v, Time: %v", round.Round, round.BlockTime)
 				}
 
 

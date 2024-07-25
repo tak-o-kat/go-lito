@@ -19,7 +19,10 @@ import (
 type Service interface {
 	// Verify Tables exist and default entries have been added
 	CheckDefaultTables(l *zerolog.Logger) bool
-	
+
+	// CreateTables creates the tables in the database.
+	CreateTables(l *zerolog.Logger)
+
 	// Health returns a map of health status information.
 	// The keys and values in the map are service-specific.
 	Health() map[string]string
@@ -31,6 +34,11 @@ type Service interface {
 
 type service struct {
 	db *sql.DB
+}
+
+// CreateTables implements Service.
+func (s *service) CreateTables(l *zerolog.Logger) {
+	panic("unimplemented")
 }
 
 var (
@@ -87,7 +95,7 @@ func CreateTables(l *zerolog.Logger) {
 		);`
 		l.Debug().Msg("Creating default types and totals")
 		if _, err := dbInstance.db.Exec(blocks); err != nil {
-			l.Error().Msg(fmt.Sprintf("%s",err))
+			l.Error().Msg(fmt.Sprintf("%s", err))
 			// slog.Error(fmt.Sprintf("%s",err))
 		}
 
@@ -99,7 +107,7 @@ func CreateTables(l *zerolog.Logger) {
 			('frozen');`
 
 		if _, err := dbInstance.db.Exec(addTypes); err != nil {
-			slog.Error(fmt.Sprintf("%s",err))
+			slog.Error(fmt.Sprintf("%s", err))
 
 		}
 
@@ -111,7 +119,7 @@ func CreateTables(l *zerolog.Logger) {
 			(0, 5);`
 
 		if _, err := dbInstance.db.Exec(addTotals); err != nil {
-			slog.Error(fmt.Sprintf("%s",err))
+			slog.Error(fmt.Sprintf("%s", err))
 		}
 	}
 }
@@ -133,14 +141,14 @@ func New(l *zerolog.Logger, dbFile string) Service {
 
 	err := os.MkdirAll(path, 0777)
 	if err != nil {
-		l.Fatal().Msg(fmt.Sprintf("%s",err))
+		l.Fatal().Msg(fmt.Sprintf("%s", err))
 	}
 
-	db, err := sql.Open("sqlite3", path + dbFile)
+	db, err := sql.Open("sqlite3", path+dbFile)
 	if err != nil {
 		// This will not be a connection error, but a DSN parse error or
 		// another initialization error.
-		l.Fatal().Msg(fmt.Sprintf("%s",err))
+		l.Fatal().Msg(fmt.Sprintf("%s", err))
 	}
 
 	dbInstance = &service{
