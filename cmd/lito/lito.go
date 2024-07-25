@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"go-lito/internal/database"
+	"go-lito/internal/misc"
 
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/rs/zerolog"
@@ -32,6 +33,7 @@ func Init() *LitoApp {
 
 	// Get a new zerolog logger
 	logger := NewLogger()
+	misc.LoadEnvSettings(logger)
 
 	// Get algod info
 	algodInfo := NewAlgodInfo(logger, os.Getenv("LOG_FILE"))

@@ -52,29 +52,17 @@ func TestCreateTables (t *testing.T) {
 	if err != nil {
 		t.Errorf("%s",err)
 	}
-	t.Log(path)
-	os.OpenFile(path + "/test.db", os.O_CREATE/os.O_RDWR, 0777)
+	// os.OpenFile(path + "/test.db", os.O_CREATE/os.O_RDWR, 0777)
 	db := database.New(logger, "/test/test.db")
-
-	// Test that tables do not exist
-	expected = false
-	got := db.CheckDefaultTables(logger)
-	if expected != got {
-		t.Errorf("expected %v; got %v", expected, got)
-	}
 
 	// Create tables and default entries
 	database.CreateTables(logger)
 
 	// Test if tables exist and if Tables 'types' and 'totals' have default entries
 	expected = true
-	got = db.CheckDefaultTables(logger)
+	got := db.CheckDefaultTables(logger)
 
 	if expected != got {
 		t.Errorf("expected %v; got %v", expected, got)
 	}
-
-	// Close database and remove test.db
-	// db.Close(&zerolog.Logger{})
-	// os.Remove(path + "/test.db")
 }

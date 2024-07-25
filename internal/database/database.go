@@ -20,9 +20,6 @@ type Service interface {
 	// Verify Tables exist and default entries have been added
 	CheckDefaultTables(l *zerolog.Logger) bool
 
-	// CreateTables creates the tables in the database.
-	CreateTables(l *zerolog.Logger)
-
 	// Health returns a map of health status information.
 	// The keys and values in the map are service-specific.
 	Health() map[string]string
@@ -36,17 +33,13 @@ type service struct {
 	db *sql.DB
 }
 
-// CreateTables implements Service.
-func (s *service) CreateTables(l *zerolog.Logger) {
-	panic("unimplemented")
-}
-
 var (
 	dburl      = os.Getenv("DB_NAME")
 	dbInstance *service
 )
 
 func CreateTables(l *zerolog.Logger) {
+	
 	// Check if tables exist
 	exists := dbInstance.CheckDefaultTables(l)
 
@@ -133,6 +126,9 @@ func New(l *zerolog.Logger, dbFile string) Service {
 	if dbFile == "" {
 		l.Debug().Msg("dbFile is Empty, using default env variable")
 		dbFile = os.Getenv("DB_NAME")
+		dburl = dbFile
+	} else {
+		dburl = dbFile
 	}
 
 	// Create lito folder in ALGORAND_DATA
@@ -144,7 +140,7 @@ func New(l *zerolog.Logger, dbFile string) Service {
 		l.Fatal().Msg(fmt.Sprintf("%s", err))
 	}
 
-	db, err := sql.Open("sqlite3", path+dbFile)
+	db, err := sql.Open("sqlite3", path + dbFile)
 	if err != nil {
 		// This will not be a connection error, but a DSN parse error or
 		// another initialization error.
