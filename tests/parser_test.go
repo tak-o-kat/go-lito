@@ -3,6 +3,7 @@ package tests
 import (
 	"go-lito/cmd/lito"
 	"go-lito/internal/database"
+	"go-lito/internal/misc"
 	"os"
 	"testing"
 
@@ -11,7 +12,7 @@ import (
 
 func TestParser(t *testing.T) {
 		// Get a new zerolog logger
-	logger := lito.NewLogger()
+	logger := misc.NewLogger()
 	var la lito.LitoApp
 
 	t.Run("Get ", func(t *testing.T) {

@@ -32,7 +32,7 @@ func Init() *LitoApp {
 	}
 
 	// Get a new zerolog logger
-	logger := NewLogger()
+	logger := misc.NewLogger()
 	misc.LoadEnvSettings(logger)
 
 	// Get algod info
