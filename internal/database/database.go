@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"go-lito/internal/parser"
 	"os"
 	"strconv"
 	"time"
@@ -27,41 +28,41 @@ type Service interface {
 	Close() error
 
 	// InsertNodeData inserts node data into the database
-	InsertNodeData(data *SortedData)
+	InsertNodeData(data *parser.SortedData)
 }
 
 type service struct {
 	db *sql.DB
 }
 
-type Totals struct {
-	BlocksOnChain int
-	BlocksProposed int
-	SoftVotes int
-	CertVotes int
-}
+// type Totals struct {
+// 	BlocksOnChain int
+// 	BlocksProposed int
+// 	SoftVotes int
+// 	CertVotes int
+// }
 
-type Blocks struct {
-	Round uint64 `json:"round"`
-	TimeStamp string `json:"time"`
-	Sender string `json:"sender"`
-	isOnChain bool 
-	startTime time.Time
-	endTime time.Time
-	BlockTime float64
-}
+// type Blocks struct {
+// 	Round uint64 `json:"round"`
+// 	TimeStamp string `json:"time"`
+// 	Sender string `json:"sender"`
+// 	isOnChain bool 
+// 	startTime time.Time
+// 	endTime time.Time
+// 	BlockTime float64
+// }
 
-type Votes struct {
-	Round uint64 `json:"round"`
-	TimeStamp string `json:"time"`
-	Type int64 `json:"ObjectStep"`
-}
+// type Votes struct {
+// 	Round uint64 `json:"round"`
+// 	TimeStamp string `json:"time"`
+// 	Type int64 `json:"ObjectStep"`
+// }
 
-type SortedData struct {
-	Totals *Totals
-	Proposed *[]Blocks
-	Votes *[]Votes
-}
+// type SortedData struct {
+// 	Totals *Totals
+// 	Proposed *[]Blocks
+// 	Votes *[]Votes
+// }
 
 var (
 	dburl      = os.Getenv("DB_NAME")
@@ -274,7 +275,32 @@ func (s *service) CheckDefaultTables(l *zerolog.Logger) bool {
 	return exists
 }
 
-func (s *service) InsertNodeData(data *SortedData) {
+func (s *service) InsertNodeData(data *parser.SortedData) {
 	logger.Debug().Msg("Inserting: node data")
-}
 
+	tx, err := s.db.Begin()
+	if err != nil {
+		logger.Error().Msg(fmt.Sprintf("Error starting transaction: %v", err))
+	}
+
+	// id, round, timestamp, typeid, created_at
+	stmt, err := tx.Prepare("INSERT INTO votes(round, timestamp, typeId) VALUES(?, ?, ?)")
+	if err != nil {
+		logger.Error().Msg(fmt.Sprintf("Error preparing: %v", err))
+	}
+
+
+	for _, vote := range *data.Votes {
+		_, err := stmt.Exec(vote.Round, vote.TimeStamp, vote.Type)
+		if err != nil {
+			logger.Error().Msg(fmt.Sprintf("Error inserting: %v", err))
+		}
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		logger.Error().Msg(fmt.Sprintf("Error committing transaction: %v", err))
+	}
+	
+	logger.Debug().Msg(fmt.Sprintf("Inserted: %d records", len(*data.Votes)))
+}

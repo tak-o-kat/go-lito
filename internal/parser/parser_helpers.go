@@ -1,4 +1,4 @@
-package lito
+package parser
 
 import (
 	"encoding/json"

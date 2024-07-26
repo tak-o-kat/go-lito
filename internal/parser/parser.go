@@ -1,4 +1,4 @@
-package lito
+package parser
 
 import (
 	//"runtime"
@@ -7,6 +7,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/rs/zerolog"
 )
 
 type Totals struct {
@@ -49,12 +51,10 @@ type SortedData struct {
 }
 
 
-func Parser(la *LitoApp) *SortedData {
-	address := la.AlgodInfo.PartAccount
-	la.Logger.Debug().Msg("Parsing: " + la.AlgodInfo.ArchiveFile)
+func Parser(l *zerolog.Logger, logFile string, account string) *SortedData {
+	l.Debug().Msg("Parsing: " + logFile)
 	
-	// Log file to parse. *** TODO: Need to swap out for la.AlgodInfo.archiveFile
-	logFile := la.AlgodInfo.ArchiveFile
+	// Log file to parse. *** TODO: Need to swap out for l.AlgodInfo.archiveFile
 	file , ferr := os.Open (logFile)
 	if ferr != nil {
 			panic(ferr)
@@ -69,7 +69,7 @@ func Parser(la *LitoApp) *SortedData {
 		votes: new([]Votes),
 		round: 0,
 		startTime: time.Now(),
-		sender: address,
+		sender: account,
 	}
 
 	// Open log file and read line by line to exract node data
@@ -120,8 +120,7 @@ func Parser(la *LitoApp) *SortedData {
 	nodeData.Proposed = sortedBlocks
 	nodeData.Votes = parsedData.votes
 
-	la.Logger.Info().Msg("Finished parsing")
+	l.Info().Msg("Finished parsing")
 
 	return nodeData
-
 }

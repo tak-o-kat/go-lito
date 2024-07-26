@@ -1,6 +1,7 @@
 package lito
 
 import (
+	"go-lito/internal/parser"
 	"os"
 	"path/filepath"
 
@@ -74,7 +75,9 @@ func watcherLoop(w *fsnotify.Watcher, la *LitoApp, file string) {
 				la.Logger.Info().Msgf("%s %q", e.Op.String(), e.Name)
 
 				// Begin parsing the archive log file and get the saved data
-				nodeData := Parser(la)
+				nodeData := parser.Parser(la.Logger, 
+																	la.AlgodInfo.ArchiveFile, 
+																	la.AlgodInfo.PartAccount)
 
 				la.Logger.Debug().Msgf("Node Totals: %v", *nodeData.Totals)
 				for _, round := range *nodeData.Proposed {
