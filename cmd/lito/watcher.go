@@ -13,31 +13,34 @@ func Watcher(la *LitoApp) {
 		la.Logger.Fatal().Msgf("creating a new watcher: %s", err)
 	}
 	defer w.Close()
+	file := os.Getenv("ALGORAND_DATA") + "/node.test.log"
 
 	// Start listening for events.
-	go watcherLoop(w, la)
+	go watcherLoop(w, la, file)
 
 	// Make sure what we'ere watching is a file
-	st, err := os.Lstat(la.AlgodInfo.archiveFile)
+	
+	st, err := os.Lstat(file)  //la.AlgodInfo.archiveFile)
 	if err != nil {
 		la.Logger.Fatal().Msgf("%s", err)
 	}
 
 	if st.IsDir() {
-		la.Logger.Fatal().Msgf("%q is a directory, not a file", la.AlgodInfo.archiveFile)
+		la.Logger.Fatal().Msgf("%q is a directory, not a file", file)
 	}
 
 	// Watch the directory, not the file itself.
-	err = w.Add(filepath.Dir(la.AlgodInfo.archiveFile))
+	err = w.Add(filepath.Dir(file))
 	if err != nil {
-		la.Logger.Fatal().Msgf("%q: %s", la.AlgodInfo.archiveFile, err)
+		la.Logger.Fatal().Msgf("%q: %s", file, err)
 	}
 
-	la.Logger.Info().Msgf("WATCH %q", la.AlgodInfo.archiveFile)
+	la.Logger.Info().Msgf("WATCH %q", file)
 	<-make(chan struct{}) // Block forever
 }
 
-func watcherLoop(w *fsnotify.Watcher, la *LitoApp) {
+// TODO: Remove file and use la.AlgodInfo.archiveFile
+func watcherLoop(w *fsnotify.Watcher, la *LitoApp, file string) {
 	for {
 		select {
 		// Read from Errors.
@@ -56,7 +59,7 @@ func watcherLoop(w *fsnotify.Watcher, la *LitoApp) {
 			// map[string]struct{} if you have a lot of files, but for just a
 			// few files simply looping over a slice is faster.
 			var found bool
-			if la.AlgodInfo.archiveFile == e.Name {
+			if file == e.Name {
 				found = true
 			}
 			if !found {
@@ -78,9 +81,8 @@ func watcherLoop(w *fsnotify.Watcher, la *LitoApp) {
 					la.Logger.Debug().Msgf("Round: %v, Time: %v", round.Round, round.BlockTime)
 				}
 
-
 				// Insert all the parsed data into the database
-				// Inserter(parsedData)
+				Inserter(la, nodeData)
 
 			}
 		}

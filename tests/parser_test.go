@@ -14,6 +14,10 @@ func TestParser(t *testing.T) {
 	logger := lito.NewLogger()
 	var la lito.LitoApp
 
+	t.Run("Get ", func(t *testing.T) {
+		
+	})
+
 	la.Logger = logger
 
 	// Path to test.db
@@ -35,7 +39,7 @@ func TestParser(t *testing.T) {
 
 		// os.OpenFile(path + "/test.db", os.O_CREATE/os.O_RDWR, 0777)
 		la.DB = database.New(la.Logger, "/test/test.db")
-		database.CreateTables(la.Logger)
+		database.CreateTables()
 
 		assert.NotNil(t, la.DB)
 		assert.FileExists(t, path + "/test.db")
@@ -51,9 +55,9 @@ func TestParser(t *testing.T) {
 		assert.Equal(t, 9, (*data.Totals).BlocksProposed)
 		assert.Equal(t, 596, (*data.Totals).SoftVotes)
 		assert.Equal(t, 301, (*data.Totals).CertVotes)
-		la.DB.Close(logger)
+		assert.Equal(t, 9, len(*data.Proposed)) 
+		assert.Equal(t, 897, len(*data.Votes))
+		la.DB.Close()
 		os.Remove(path + "/test.db")
 	})
-
-
 }

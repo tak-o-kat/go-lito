@@ -14,8 +14,8 @@ import (
 type AlgodInfo struct {
 	url string
 	token string
-	archivePath string
-	archiveFile string
+	ArchivePath string
+	ArchiveFile string
 	PartAccount string
 }
 
@@ -45,13 +45,13 @@ func Init() *LitoApp {
 	}
 
 	logger.Info().Msg("algod running and prequisites passed")
-	logger.Debug().Msg("Watch Log File: " + algodInfo.PartAccount)
+	logger.Debug().Msg("Part Account: " + algodInfo.PartAccount)
 
 	// Set up database and create tables if needed
 	dbInstance := database.New(logger, "")
 	exists := dbInstance.CheckDefaultTables(logger)
 	if !exists {
-		database.CreateTables(logger)
+		database.CreateTables()
 	} else {
 		logger.Debug().Msg("Tables already exist")
 	}
@@ -70,7 +70,7 @@ func Init() *LitoApp {
 
 func (l *LitoApp) Run() error {
 	// Ensure database connection is closed when app exits
-	defer l.DB.Close(l.Logger)
+	defer l.DB.Close()
 
 	// Begin watcher on archive file
 	Watcher(l)

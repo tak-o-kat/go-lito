@@ -4,8 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
-	"log/slog"
 	"os"
 	"strconv"
 	"time"
@@ -26,28 +24,98 @@ type Service interface {
 
 	// Close terminates the database connection.
 	// It returns an error if the connection cannot be closed.
-	Close(l *zerolog.Logger) error
+	Close() error
+
+	// InsertNodeData inserts node data into the database
+	InsertNodeData(data *SortedData)
 }
 
 type service struct {
 	db *sql.DB
 }
 
+type Totals struct {
+	BlocksOnChain int
+	BlocksProposed int
+	SoftVotes int
+	CertVotes int
+}
+
+type Blocks struct {
+	Round uint64 `json:"round"`
+	TimeStamp string `json:"time"`
+	Sender string `json:"sender"`
+	isOnChain bool 
+	startTime time.Time
+	endTime time.Time
+	BlockTime float64
+}
+
+type Votes struct {
+	Round uint64 `json:"round"`
+	TimeStamp string `json:"time"`
+	Type int64 `json:"ObjectStep"`
+}
+
+type SortedData struct {
+	Totals *Totals
+	Proposed *[]Blocks
+	Votes *[]Votes
+}
+
 var (
 	dburl      = os.Getenv("DB_NAME")
 	dbInstance *service
+	logger *zerolog.Logger
 )
 
-func CreateTables(l *zerolog.Logger) {
+func New(l *zerolog.Logger, dbFile string) Service {
+	// Reuse Connection
+	logger = l
+	if dbInstance != nil {
+		l.Debug().Msg("Reusing dbInstance")
+		return dbInstance
+	}
+
+	if dbFile == "" {
+		l.Debug().Msg("dbFile is Empty, using default env variable")
+		dbFile = os.Getenv("DB_NAME")
+	} 
+	dburl = dbFile
+
+	// Create lito folder in ALGORAND_DATA
+	path, _ := os.LookupEnv("ALGORAND_DATA")
+	path += "/lito"
+
+	err := os.MkdirAll(path, 0777)
+	if err != nil {
+		logger.Fatal().Msg(fmt.Sprintf("%s", err))
+	}
+
+	db, err := sql.Open("sqlite3", path + dbFile)
+	if err != nil {
+		// This will not be a connection error, but a DSN parse error or
+		// another initialization error.
+		logger.Fatal().Msg(fmt.Sprintf("%s", err))
+	}
+
+	dbInstance = &service{
+		db: db,
+	}
+
+	return dbInstance
+}
+
+func CreateTables() {
 	
 	// Check if tables exist
-	exists := dbInstance.CheckDefaultTables(l)
+	exists := dbInstance.CheckDefaultTables(logger)
 
 	if exists {
 		return
 	} else {
 		// Tables don't exist, create them
-		l.Debug().Msg("Creating tables")
+		logger.Debug().Msg("Creating tables")
 		blocks := `CREATE TABLE IF NOT EXISTS types (
 		id 					INTEGER NOT NULL,
 		type 				TEXT NOT NULL,
@@ -86,10 +154,9 @@ func CreateTables(l *zerolog.Logger) {
 			PRIMARY KEY (id),
 			FOREIGN KEY (typeId) REFERENCES Types (id)
 		);`
-		l.Debug().Msg("Creating default types and totals")
+		logger.Debug().Msg("Creating default types and totals")
 		if _, err := dbInstance.db.Exec(blocks); err != nil {
-			l.Error().Msg(fmt.Sprintf("%s", err))
-			// slog.Error(fmt.Sprintf("%s",err))
+			logger.Error().Msg(fmt.Sprintf("%s", err))
 		}
 
 		addTypes := `INSERT INTO types (type) VALUES
@@ -100,8 +167,7 @@ func CreateTables(l *zerolog.Logger) {
 			('frozen');`
 
 		if _, err := dbInstance.db.Exec(addTypes); err != nil {
-			slog.Error(fmt.Sprintf("%s", err))
-
+			logger.Error().Msg(fmt.Sprintf("%s", err))
 		}
 
 		addTotals := `INSERT INTO totals (count, typeId) VALUES
@@ -112,47 +178,12 @@ func CreateTables(l *zerolog.Logger) {
 			(0, 5);`
 
 		if _, err := dbInstance.db.Exec(addTotals); err != nil {
-			slog.Error(fmt.Sprintf("%s", err))
+			logger.Error().Msg(fmt.Sprintf("%s", err))
 		}
 	}
 }
 
-func New(l *zerolog.Logger, dbFile string) Service {
-	// Reuse Connection
-	if dbInstance != nil {
-		return dbInstance
-	}
 
-	if dbFile == "" {
-		l.Debug().Msg("dbFile is Empty, using default env variable")
-		dbFile = os.Getenv("DB_NAME")
-		dburl = dbFile
-	} else {
-		dburl = dbFile
-	}
-
-	// Create lito folder in ALGORAND_DATA
-	path, _ := os.LookupEnv("ALGORAND_DATA")
-	path += "/lito"
-
-	err := os.MkdirAll(path, 0777)
-	if err != nil {
-		l.Fatal().Msg(fmt.Sprintf("%s", err))
-	}
-
-	db, err := sql.Open("sqlite3", path + dbFile)
-	if err != nil {
-		// This will not be a connection error, but a DSN parse error or
-		// another initialization error.
-		l.Fatal().Msg(fmt.Sprintf("%s", err))
-	}
-
-	dbInstance = &service{
-		db: db,
-	}
-
-	return dbInstance
-}
 
 // Health checks the health of the database connection by pinging the database.
 // It returns a map with keys indicating various health statistics.
@@ -167,7 +198,7 @@ func (s *service) Health() map[string]string {
 	if err != nil {
 		stats["status"] = "down"
 		stats["error"] = fmt.Sprintf("db down: %v", err)
-		log.Fatalf(fmt.Sprintf("db down: %v", err)) // Log the error and terminate the program
+		logger.Fatal().Msg(fmt.Sprintf("db down: %v", err)) // Log the error and terminate the program
 		return stats
 	}
 
@@ -209,8 +240,8 @@ func (s *service) Health() map[string]string {
 // It logs a message indicating the disconnection from the specific database.
 // If the connection is successfully closed, it returns nil.
 // If an error occurs while closing the connection, it returns the error.
-func (s *service) Close(l *zerolog.Logger) error {
-	l.Info().Msg(fmt.Sprintf("Disconnected from database: %s", dburl))
+func (s *service) Close() error {
+	logger.Info().Msg(fmt.Sprintf("Disconnected from database: %s", dburl))
 	return s.db.Close()
 }
 
@@ -242,3 +273,8 @@ func (s *service) CheckDefaultTables(l *zerolog.Logger) bool {
 	}
 	return exists
 }
+
+func (s *service) InsertNodeData(data *SortedData) {
+	logger.Debug().Msg("Inserting: node data")
+}
+

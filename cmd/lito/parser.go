@@ -51,9 +51,10 @@ type SortedData struct {
 
 func Parser(la *LitoApp) *SortedData {
 	address := la.AlgodInfo.PartAccount
+	la.Logger.Debug().Msg("Parsing: " + la.AlgodInfo.ArchiveFile)
 	
 	// Log file to parse. *** TODO: Need to swap out for la.AlgodInfo.archiveFile
-	logFile := os.Getenv("ALGORAND_DATA") + "/archive.log" // 
+	logFile := la.AlgodInfo.ArchiveFile
 	file , ferr := os.Open (logFile)
 	if ferr != nil {
 			panic(ferr)

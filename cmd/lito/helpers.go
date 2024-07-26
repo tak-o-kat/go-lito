@@ -39,7 +39,7 @@ func NewLogger() *zerolog.Logger {
 }
 
 func NewAlgodInfo(l *zerolog.Logger, file string) *AlgodInfo {
-	archiveLog := file
+	archiveLog := os.Getenv("LOG_FILE")
 	archivePath := os.Getenv("ALGORAND_DATA")
 	archiveFile := filepath.Join(archivePath, archiveLog)
 
@@ -61,8 +61,8 @@ func NewAlgodInfo(l *zerolog.Logger, file string) *AlgodInfo {
 	algodInfo := &AlgodInfo{
 		url: "",
 		token: "",
-		archivePath: archivePath,
-		archiveFile: archiveFile,
+		ArchivePath: archivePath,
+		ArchiveFile: archiveFile,
 		PartAccount: os.Getenv("ACCOUNT"),
 	}
 	return algodInfo

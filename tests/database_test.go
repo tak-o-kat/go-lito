@@ -56,7 +56,7 @@ func TestCreateTables (t *testing.T) {
 	db := database.New(logger, "/test/test.db")
 
 	// Create tables and default entries
-	database.CreateTables(logger)
+	database.CreateTables()
 
 	// Test if tables exist and if Tables 'types' and 'totals' have default entries
 	expected = true
