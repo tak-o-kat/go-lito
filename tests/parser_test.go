@@ -4,6 +4,7 @@ import (
 	"go-lito/cmd/lito"
 	"go-lito/internal/database"
 	"go-lito/internal/misc"
+	"go-lito/internal/parser"
 	"os"
 	"testing"
 
@@ -14,10 +15,6 @@ func TestParser(t *testing.T) {
 		// Get a new zerolog logger
 	logger := misc.NewLogger()
 	var la lito.LitoApp
-
-	t.Run("Get ", func(t *testing.T) {
-		
-	})
 
 	la.Logger = logger
 
@@ -49,7 +46,7 @@ func TestParser(t *testing.T) {
 	// Use a known archive.log file for testing any old log file will do
 	// just make sure to always use the same one for testing purposes
 	t.Run("Test Parser", func(t *testing.T) {
-		data := lito.Parser(&la)
+		data := parser.Parser(logger, la.AlgodInfo.ArchiveFile, la.AlgodInfo.PartAccount)
 
 		assert.NotNil(t, data)
 		assert.Equal(t, 1, (*data.Totals).BlocksOnChain)

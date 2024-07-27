@@ -8,7 +8,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 )
 
-func Watcher(la *LitoApp) {
+func (la *LitoApp) Watcher() {
 	w, err := fsnotify.NewWatcher()
 	if err != nil {
 		la.Logger.Fatal().Msgf("creating a new watcher: %s", err)
@@ -17,7 +17,7 @@ func Watcher(la *LitoApp) {
 	file := os.Getenv("ALGORAND_DATA") + "/node.test.log"
 
 	// Start listening for events.
-	go watcherLoop(w, la, file)
+	go la.watcherLoop(w, file)
 
 	// Make sure what we'ere watching is a file
 	
@@ -41,7 +41,7 @@ func Watcher(la *LitoApp) {
 }
 
 // TODO: Remove file and use la.AlgodInfo.archiveFile
-func watcherLoop(w *fsnotify.Watcher, la *LitoApp, file string) {
+func (la *LitoApp) watcherLoop(w *fsnotify.Watcher, file string) {
 	for {
 		select {
 		// Read from Errors.
@@ -85,7 +85,7 @@ func watcherLoop(w *fsnotify.Watcher, la *LitoApp, file string) {
 				}
 
 				// Insert all the parsed data into the database
-				Inserter(la, nodeData)
+				la.Inserter(nodeData)
 
 			}
 		}

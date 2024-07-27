@@ -76,7 +76,7 @@ func RoundConcludedParser(line *string, ld *LogData) {
 
 		// Check and see if the sender is our account, if so set isOnChain to true
 		if parsedJson.Sender == ld.sender {
-			block.isOnChain = true
+			block.IsOnChain = true
 			ld.totals.BlocksOnChain++
 		}
 

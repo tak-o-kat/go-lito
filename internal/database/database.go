@@ -17,7 +17,10 @@ import (
 // Service represents a service that interacts with a database.
 type Service interface {
 	// Verify Tables exist and default entries have been added
-	CheckDefaultTables(l *zerolog.Logger) bool
+	CheckDefaultTables() bool
+
+	// Create tables and default entries
+	CreateTables()
 
 	// Health returns a map of health status information.
 	// The keys and values in the map are service-specific.
@@ -35,35 +38,6 @@ type service struct {
 	db *sql.DB
 }
 
-// type Totals struct {
-// 	BlocksOnChain int
-// 	BlocksProposed int
-// 	SoftVotes int
-// 	CertVotes int
-// }
-
-// type Blocks struct {
-// 	Round uint64 `json:"round"`
-// 	TimeStamp string `json:"time"`
-// 	Sender string `json:"sender"`
-// 	isOnChain bool 
-// 	startTime time.Time
-// 	endTime time.Time
-// 	BlockTime float64
-// }
-
-// type Votes struct {
-// 	Round uint64 `json:"round"`
-// 	TimeStamp string `json:"time"`
-// 	Type int64 `json:"ObjectStep"`
-// }
-
-// type SortedData struct {
-// 	Totals *Totals
-// 	Proposed *[]Blocks
-// 	Votes *[]Votes
-// }
-
 var (
 	dburl      = os.Getenv("DB_NAME")
 	dbInstance *service
@@ -71,12 +45,14 @@ var (
 )
 
 func New(l *zerolog.Logger, dbFile string) Service {
+
 	// Reuse Connection
-	logger = l
 	if dbInstance != nil {
 		l.Debug().Msg("Reusing dbInstance")
 		return dbInstance
 	}
+	// Add logger to service
+	logger = l
 
 	if dbFile == "" {
 		l.Debug().Msg("dbFile is Empty, using default env variable")
@@ -106,84 +82,6 @@ func New(l *zerolog.Logger, dbFile string) Service {
 
 	return dbInstance
 }
-
-func CreateTables() {
-	
-	// Check if tables exist
-	exists := dbInstance.CheckDefaultTables(logger)
-
-	if exists {
-		return
-	} else {
-		// Tables don't exist, create them
-		logger.Debug().Msg("Creating tables")
-		blocks := `CREATE TABLE IF NOT EXISTS types (
-		id 					INTEGER NOT NULL,
-		type 				TEXT NOT NULL,
-		created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-		PRIMARY KEY (id AUTOINCREMENT)
-		);
-		CREATE TABLE IF NOT EXISTS proposed (
-			id 					INTEGER NOT NULL,
-			round 			INTEGER,
-			timestamp 	DATETIME NOT NULL,
-			typeId    	INTEGER NOT NULL,
-			onChain   	INTEGER NULL,
-			created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-			PRIMARY KEY (id AUTOINCREMENT),
-			FOREIGN KEY (typeId) REFERENCES Types (id)
-		);
-		CREATE TABLE IF NOT EXISTS votes (
-			id 					INTEGER NOT NULL,
-			round 			INTEGER,
-			timestamp 	DATETIME NOT NULL,
-			typeId    	INTEGER NOT NULL,
-			created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-			PRIMARY KEY (id AUTOINCREMENT),
-			FOREIGN KEY (typeId) REFERENCES Types (id)
-		);
-		CREATE TABLE IF NOT EXISTS totals (
-			id        	INTEGER NOT NULL,
-			count    		INTEGER NOT NULL,
-			typeId    	INTEGER NOT NULL,
-			created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-			updatedAt 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-			PRIMARY KEY (id),
-			FOREIGN KEY (typeId) REFERENCES Types (id)
-		);`
-		logger.Debug().Msg("Creating default types and totals")
-		if _, err := dbInstance.db.Exec(blocks); err != nil {
-			logger.Error().Msg(fmt.Sprintf("%s", err))
-		}
-
-		addTypes := `INSERT INTO types (type) VALUES
-			('onchain'),
-			('proposed'),
-			('soft'),
-			('certified'),
-			('frozen');`
-
-		if _, err := dbInstance.db.Exec(addTypes); err != nil {
-			logger.Error().Msg(fmt.Sprintf("%s", err))
-		}
-
-		addTotals := `INSERT INTO totals (count, typeId) VALUES
-			(0, 1),
-			(0, 2),
-			(0, 3),
-			(0, 4),
-			(0, 5);`
-
-		if _, err := dbInstance.db.Exec(addTotals); err != nil {
-			logger.Error().Msg(fmt.Sprintf("%s", err))
-		}
-	}
-}
-
 
 
 // Health checks the health of the database connection by pinging the database.
@@ -246,61 +144,22 @@ func (s *service) Close() error {
 	return s.db.Close()
 }
 
-func (s *service) CheckDefaultTables(l *zerolog.Logger) bool {
-	// Check if tables exist
-	exists := true
-	var name string
-
-	tableExists := `SELECT name FROM sqlite_master WHERE type='table' AND name=?`
-	row := dbInstance.db.QueryRow(tableExists, "proposed")
-	if err := row.Scan(&name); err != nil {
-		l.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
-		return false
-	}
-	row = dbInstance.db.QueryRow(tableExists, "votes")
-	if err := row.Scan(&name); err != nil {
-		l.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
-		return false
-	}
-	row = dbInstance.db.QueryRow(tableExists, "types")
-	if err := row.Scan(&name); err != nil {
-		l.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
-		return false
-	}
-	row = dbInstance.db.QueryRow(tableExists, "totals")
-	if err := row.Scan(&name); err != nil {
-		l.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
-		return false
-	}
-	return exists
-}
-
 func (s *service) InsertNodeData(data *parser.SortedData) {
-	logger.Debug().Msg("Inserting: node data")
-
-	tx, err := s.db.Begin()
+	// Insert Totals
+	err := s.InsertTotals(data.Totals)
 	if err != nil {
-		logger.Error().Msg(fmt.Sprintf("Error starting transaction: %v", err))
+		logger.Error().Msg(fmt.Sprintf("Error inserting: %v", err))
 	}
 
-	// id, round, timestamp, typeid, created_at
-	stmt, err := tx.Prepare("INSERT INTO votes(round, timestamp, typeId) VALUES(?, ?, ?)")
+	// Insert Votes
+	err = s.InsertVotes(data.Votes)
 	if err != nil {
-		logger.Error().Msg(fmt.Sprintf("Error preparing: %v", err))
+		logger.Error().Msg(fmt.Sprintf("Error inserting: %v", err))
 	}
 
-
-	for _, vote := range *data.Votes {
-		_, err := stmt.Exec(vote.Round, vote.TimeStamp, vote.Type)
-		if err != nil {
-			logger.Error().Msg(fmt.Sprintf("Error inserting: %v", err))
-		}
-	}
-
-	err = tx.Commit()
+	// Insert Proposals
+	err = s.InsertProposals(data.Proposed)
 	if err != nil {
-		logger.Error().Msg(fmt.Sprintf("Error committing transaction: %v", err))
+		logger.Error().Msg(fmt.Sprintf("Error inserting: %v", err))
 	}
-	
-	logger.Debug().Msg(fmt.Sprintf("Inserted: %d records", len(*data.Votes)))
 }

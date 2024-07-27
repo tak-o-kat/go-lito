@@ -22,7 +22,7 @@ type Blocks struct {
 	Round uint64 `json:"round"`
 	TimeStamp string `json:"time"`
 	Sender string `json:"sender"`
-	isOnChain bool 
+	IsOnChain bool 
 	startTime time.Time
 	endTime time.Time
 	BlockTime float64

@@ -49,9 +49,9 @@ func Init() *LitoApp {
 
 	// Set up database and create tables if needed
 	dbInstance := database.New(logger, "")
-	exists := dbInstance.CheckDefaultTables(logger)
+	exists := dbInstance.CheckDefaultTables()
 	if !exists {
-		database.CreateTables()
+		dbInstance.CreateTables()
 	} else {
 		logger.Debug().Msg("Tables already exist")
 	}
@@ -73,7 +73,7 @@ func (l *LitoApp) Run() error {
 	defer l.DB.Close()
 
 	// Begin watcher on archive file
-	Watcher(l)
+	l.Watcher()
 
 	return nil
 }
