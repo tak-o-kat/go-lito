@@ -6,6 +6,8 @@ import (
 	"go-lito/cmd/lito"
 	"os/exec"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGoalRunning(t *testing.T) {
@@ -48,16 +50,11 @@ func TestAlgorandDataFolder(t *testing.T) {
 
 	expected := "127.0.0.1:8080"
 	got, _ := lito.GetDataFolderInfo("cat $ALGORAND_DATA/algod.net")
-
-	if expected != got {
-		t.Errorf("expected %v; got %v", expected, got)
-	}
+	assert.Equal(t, expected, got)
 
 	token, _ := lito.GetDataFolderInfo("cat $ALGORAND_DATA/algod.net")
+	assert.NotEmpty(t, token)
 	
-	if token == "" {
-		t.Errorf("expected token to exist; got %v", token)
-	}
 	// Stop algod
 	stop := "goal node stop"
 	exec.Command("bash", "-c", stop).Run()

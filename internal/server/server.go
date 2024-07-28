@@ -9,6 +9,7 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 
+	"go-lito/cmd/lito"
 	"go-lito/internal/database"
 
 	"github.com/rs/zerolog"
@@ -22,10 +23,12 @@ type Server struct {
 
 func NewServer(l *zerolog.Logger) *http.Server {
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
+	path := lito.GetLitoPath()
+	file := "golito.db"
 	NewServer := &Server{
 		port: port,
 
-		db: database.New(l, ""),
+		db: database.New(l, path, file),
 	}
 
 	// Declare Server config

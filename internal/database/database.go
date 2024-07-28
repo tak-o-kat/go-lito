@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"go-lito/internal/parser"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -32,6 +33,18 @@ type Service interface {
 
 	// InsertNodeData inserts node data into the database
 	InsertNodeData(data *parser.SortedData)
+
+	InsertTotals(totals *parser.Totals) error
+
+	InsertProposals(proposals *[]parser.Blocks) error
+
+	InsertVotes(votes *[]parser.Votes) error
+
+	GetAllTotals() *parser.Totals
+
+	GetVotes(rows int) *[]parser.Votes
+
+	GetProposals(rows int) *[]parser.Blocks
 }
 
 type service struct {
@@ -44,13 +57,14 @@ var (
 	logger *zerolog.Logger
 )
 
-func New(l *zerolog.Logger, dbFile string) Service {
+func New(l *zerolog.Logger, dbPath string, dbFile string) Service {
 
 	// Reuse Connection
 	if dbInstance != nil {
 		l.Debug().Msg("Reusing dbInstance")
 		return dbInstance
 	}
+	l.Debug().Msg("Creating new dbInstance")
 	// Add logger to service
 	logger = l
 
@@ -58,18 +72,15 @@ func New(l *zerolog.Logger, dbFile string) Service {
 		l.Debug().Msg("dbFile is Empty, using default env variable")
 		dbFile = os.Getenv("DB_NAME")
 	} 
-	dburl = dbFile
+	dburl = filepath.Join(dbPath, dbFile)
 
-	// Create lito folder in ALGORAND_DATA
-	path, _ := os.LookupEnv("ALGORAND_DATA")
-	path += "/lito"
-
-	err := os.MkdirAll(path, 0777)
+	err := os.MkdirAll(dbPath, os.ModePerm)
 	if err != nil {
 		logger.Fatal().Msg(fmt.Sprintf("%s", err))
 	}
 
-	db, err := sql.Open("sqlite3", path + dbFile)
+	l.Debug().Msg("Opening database: " + dburl)
+	db, err := sql.Open("sqlite3", dburl)
 	if err != nil {
 		// This will not be a connection error, but a DSN parse error or
 		// another initialization error.

@@ -111,7 +111,6 @@ func CertVotesParser(line *string, ld *LogData) {
 func blockSorter(sortedKeys *[]uint64, b *map[uint64]Blocks) *[]Blocks {
 	blocks := []Blocks{}
 	for _, key := range *sortedKeys {
-
 		blocks = append(blocks, (*b)[key])
 	}
 	return &blocks

@@ -63,3 +63,10 @@ func GetAccountAddress() (string, error) {
 	}
 	return strings.TrimSuffix(string(stdout), "\n"), nil
 }
+
+func GetLitoPath() string {
+	path := os.Getenv("ALGORAND_DATA")
+	path += "/lito/"
+
+	return path
+}

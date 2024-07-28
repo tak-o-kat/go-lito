@@ -47,8 +47,13 @@ func Init() *LitoApp {
 	logger.Info().Msg("algod running and prequisites passed")
 	logger.Debug().Msg("Part Account: " + algodInfo.PartAccount)
 
+	path := GetLitoPath()
+	file := os.Getenv("DB_NAME")
+
+	logger.Debug().Msgf("DB path: %v - DB file: %v", path, file)
+
 	// Set up database and create tables if needed
-	dbInstance := database.New(logger, "")
+	dbInstance := database.New(logger, path, file)
 	exists := dbInstance.CheckDefaultTables()
 	if !exists {
 		dbInstance.CreateTables()
@@ -63,8 +68,6 @@ func Init() *LitoApp {
 		DB: dbInstance,
 	}	
 	
-	logger.Info().Msg(fmt.Sprint(lito.DB.Health()))
-	logger.Info().Msg("Finished initializing lito")
 	return lito
 }
 
@@ -72,6 +75,7 @@ func (l *LitoApp) Run() error {
 	// Ensure database connection is closed when app exits
 	defer l.DB.Close()
 
+	l.Logger.Debug().Msg("Starting Watcher")
 	// Begin watcher on archive file
 	l.Watcher()
 

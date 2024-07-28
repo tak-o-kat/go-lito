@@ -12,22 +12,22 @@ func (s *service) CheckDefaultTables() bool {
 	tableExists := `SELECT name FROM sqlite_master WHERE type='table' AND name=?`
 	row := dbInstance.db.QueryRow(tableExists, "proposed")
 	if err := row.Scan(&name); err != nil {
-		logger.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
+		logger.Warn().Msg(fmt.Sprintf("No Table info => %v", err))
 		return false
 	}
 	row = dbInstance.db.QueryRow(tableExists, "votes")
 	if err := row.Scan(&name); err != nil {
-		logger.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
+		logger.Warn().Msg(fmt.Sprintf("No Table info => %v", err))
 		return false
 	}
 	row = dbInstance.db.QueryRow(tableExists, "types")
 	if err := row.Scan(&name); err != nil {
-		logger.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
+		logger.Warn().Msg(fmt.Sprintf("No Table info => %v", err))
 		return false
 	}
 	row = dbInstance.db.QueryRow(tableExists, "totals")
 	if err := row.Scan(&name); err != nil {
-		logger.Warn().Msg(fmt.Sprintf("Error checking if tables exist => %v", err))
+		logger.Warn().Msg(fmt.Sprintf("No Table info => %v", err))
 		return false
 	}
 	return exists

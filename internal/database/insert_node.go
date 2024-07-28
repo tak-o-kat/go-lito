@@ -3,7 +3,6 @@ package database
 import (
 	"fmt"
 	"go-lito/internal/parser"
-	"time"
 )
 
 type typeIds struct {
@@ -53,8 +52,7 @@ func (s *service) getTotalCountFrom (id int) int {
 
 
 func (s *service) InsertTotals(totals *parser.Totals) error {
-	logger.Debug().Msgf("Inserting: %v", totals.SoftVotes)
-
+	logger.Debug().Msgf("Inserting: %v", *totals)
 
 	current.soft = s.getTotalCountFrom(typeId.soft)
 	current.cert = s.getTotalCountFrom(typeId.cert)
@@ -166,15 +164,16 @@ func (s *service) InsertProposals(proposed *[]parser.Blocks) error {
 		logger.Error().Msg(fmt.Sprintf("Error committing transaction: %v", err))
 		return err
 	}
-	
+
 	logger.Debug().Msg(fmt.Sprintf("Inserted: %d records", len(*proposed)))
-	dateString := (*proposed)[0].TimeStamp
-	date, err := time.Parse(time.RFC3339, dateString)
-	if err != nil {
-		logger.Error().Msg(fmt.Sprintf("Error parsing date: %v", err))
-		return err
-	}
-	logger.Debug().Msgf("Date: %v", date.Format("2006-01-02 15:04:05"))
-	logger.Debug().Msgf("Date: %T", date)
+
+	// dateString := (*proposed)[0].TimeStamp
+	// date, err := time.Parse(time.RFC3339, dateString)
+	// if err != nil {
+	// 	logger.Error().Msg(fmt.Sprintf("Error parsing date: %v", err))
+	// 	return err
+	// }
+	// logger.Debug().Msgf("Date: %v", date.Format("2006-01-02 15:04:05"))
+	// logger.Debug().Msgf("Date: %T", date)
 	return nil
 }
