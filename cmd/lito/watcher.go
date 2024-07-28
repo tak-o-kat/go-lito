@@ -14,7 +14,8 @@ func (la *LitoApp) Watcher() {
 		la.Logger.Fatal().Msgf("creating a new watcher: %s", err)
 	}
 	defer w.Close()
-	file := os.Getenv("ALGORAND_DATA") + "/node.test.log"
+	la.Logger.Debug().Msg(la.AlgodInfo.ArchiveFile)
+	file := la.AlgodInfo.ArchiveFile
 
 	// Start listening for events.
 	go la.watcherLoop(w, file)

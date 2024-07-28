@@ -23,7 +23,7 @@ func NewAlgodInfo(l *zerolog.Logger, file string) *AlgodInfo {
 
 	// Check if archive file exists, if not create one
 	if !exists {
-		l.Debug().Msg("Creating archive file: " + archiveFile)
+		l.Debug().Msg("Creating archive file: " + filepath.Join(archivePath, archiveLog))
 		_, err := os.Create(archiveFile)
 		if err != nil {
 			l.Error().Msg(fmt.Sprintf("%s",err))
