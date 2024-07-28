@@ -70,7 +70,7 @@ func (la *LitoApp) watcherLoop(w *fsnotify.Watcher, file string) {
 			// **TODO: May need to set a time delay in case the CREATE event isn't instant
 
 			// Wait for the WRITE even trigger before contintuing
-			if (e.Op.String() == "WRITE") {
+			if (e.Op.String() == "CREATE") {
 				// After file trigger is set log the event
 				la.Logger.Info().Msgf("%s %q", e.Op.String(), e.Name)
 
