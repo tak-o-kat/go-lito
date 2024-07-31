@@ -12,8 +12,19 @@ import (
 )
 
 func NewAlgodInfo(l *zerolog.Logger, file string) *AlgodInfo {
-	archiveLog := os.Getenv("LOG_FILE")
-	archivePath := os.Getenv("ALGORAND_DATA")
+	// The default log file is node.archive.log
+	// But we can change this for testing purposes using .env
+	archiveLog, isSet := os.LookupEnv("LOG_FILE")
+	if !isSet || archiveLog == "" {
+		archiveLog = "node.archive.log"
+	}
+
+	archivePath, isSet := os.LookupEnv("ALGORAND_DATA")
+	if !isSet {
+		l.Fatal().Msg("ALGORAND_DATA env variable is not set")
+	}
+	
+	// Add the archive log file to the archive path
 	archiveFile := filepath.Join(archivePath, archiveLog)
 
 	exists, err := Exists(archiveFile)
@@ -36,7 +47,7 @@ func NewAlgodInfo(l *zerolog.Logger, file string) *AlgodInfo {
 		token: "",
 		ArchivePath: archivePath,
 		ArchiveFile: archiveFile,
-		PartAccount: os.Getenv("ACCOUNT"),
+		PartAccount: "",
 	}
 	return algodInfo
 }
@@ -53,6 +64,7 @@ func Exists(name string) (bool, error) {
 }
 
 func GetAccountAddress() (string, error) {
+	// Get the part account address
 	cmd := "goal account partkeyinfo | " +
 			"sed -n '/Parent/p' | " +
 			"awk '{print $3}'"

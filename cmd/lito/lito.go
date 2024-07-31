@@ -26,11 +26,6 @@ type LitoApp struct {
 }
 
 func Init() *LitoApp {
-	// Check to see if the .env file exists
-	if _, err := os.Stat(".env"); os.IsNotExist(err) {
-	  panic(err)
-	}
-
 	// Get a new zerolog logger
 	logger := misc.NewLogger()
 	misc.LoadEnvSettings(logger)
@@ -47,8 +42,13 @@ func Init() *LitoApp {
 	logger.Info().Msg("algod running and prequisites passed")
 	logger.Debug().Msg("Part Account: " + algodInfo.PartAccount)
 
-	path := GetLitoPath()
-	file := os.Getenv("DB_NAME")
+	path := GetLitoPath()	
+	file, isSet := os.LookupEnv("DB_NAME")
+	if !isSet {
+		// if not set use default
+		logger.Info().Msg("DB_NAME env variable not set, using default")
+		file = "golito.db"
+	}
 
 	logger.Debug().Msgf("DB path: %v - DB file: %v", path, file)
 

@@ -65,12 +65,14 @@ func Prerequisites(algod *AlgodInfo) error {
 		return err
 	}
 
-	 if algod.PartAccount == "" {
-		algod.PartAccount, err = GetAccountAddress()
+	account, isSet := os.LookupEnv("ACCOUNT")
+	if !isSet || account == "" {
+		account, err = GetAccountAddress()
 		if err != nil{
 			return err
 		}
 	}
-	
+
+	algod.PartAccount = account
 	return nil
 }

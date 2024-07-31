@@ -64,13 +64,13 @@ func New(l *zerolog.Logger, dbPath string, dbFile string) Service {
 		l.Debug().Msg("Reusing dbInstance")
 		return dbInstance
 	}
+
 	l.Debug().Msg("Creating new dbInstance")
 	// Add logger to service
 	logger = l
 
-	if dbFile == "" {
-		l.Debug().Msg("dbFile is Empty, using default env variable")
-		dbFile = os.Getenv("DB_NAME")
+	if dbFile == "" || dbPath == "" {
+		logger.Fatal().Msg("No path and/or file specified for database")
 	} 
 	dburl = filepath.Join(dbPath, dbFile)
 

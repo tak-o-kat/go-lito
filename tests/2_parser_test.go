@@ -4,6 +4,7 @@ import (
 	"go-lito/cmd/lito"
 	"go-lito/internal/misc"
 	"go-lito/internal/parser"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -20,6 +21,13 @@ func TestParser(t *testing.T) {
 	t.Run("Get AlgodInfo", func(t *testing.T) {
 		la.AlgodInfo = lito.NewAlgodInfo(la.Logger, "node.test.log")
 		assert.NotEmpty(t, la.AlgodInfo)
+
+		// if the following errors then it means we didn't set 
+		// the env variable for testing purposes
+		account := os.Getenv("ACCOUNT")
+		assert.NotEqual(t, account, "")
+
+		la.AlgodInfo.PartAccount = account
 	})
 	
 	// Use a known archive.log file for testing any old log file will do

@@ -17,6 +17,8 @@ func NewLogger() *zerolog.Logger {
 		level = zerolog.TraceLevel
 	case "debug":
 		level = zerolog.DebugLevel
+	default:
+		level = zerolog.InfoLevel
 	}
 
 	// Create a nice looking output to stderr
