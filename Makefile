@@ -11,7 +11,7 @@ build:
 
 # Run the application
 run:
-	@goal node start && go run cmd/main.go
+	@go run cmd/main.go
 
 
 
