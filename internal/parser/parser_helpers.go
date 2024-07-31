@@ -50,6 +50,7 @@ func ProposalBroadcastParser(line *string, ld *LogData) {
 
 	// Save this round in order to extrac block time end time in RoundConcluded
 	ld.round = uint64(parsedJson.Round)
+	ld.isProposed = true
 
 	// Add Block to Round Slice for sorting later on
 	*ld.orderedRounds = append(*ld.orderedRounds, parsedJson.Round)
@@ -58,7 +59,7 @@ func ProposalBroadcastParser(line *string, ld *LogData) {
 }
 
 func RoundConcludedParser(line *string, ld *LogData) {
-	// Check see if this round is in the block map
+	// Check to see if this round is in the block map
 	if _, ok := (*ld.Blocks)[ld.round]; ok {
 		parsedJson := Blocks{}
 		jsonErr := json.Unmarshal([]byte(*line), &parsedJson)
@@ -79,6 +80,8 @@ func RoundConcludedParser(line *string, ld *LogData) {
 			block.IsOnChain = true
 			ld.totals.BlocksOnChain++
 		}
+
+		ld.isProposed = false
 
 		// Add block to block map
 		(*ld.Blocks)[parsedJson.Round] = block

@@ -14,11 +14,19 @@ func (la *LitoApp) Watcher() {
 		la.Logger.Fatal().Msgf("creating a new watcher: %s", err)
 	}
 	defer w.Close()
-	la.Logger.Debug().Msg(la.AlgodInfo.ArchiveFile)
+	
+	// Used for testing os.Getenv("ALGORAND_DATA")	+ "/node.test.log"
 	file := la.AlgodInfo.ArchiveFile
 
+	watchType, isSet := os.LookupEnv("WATCH_TYPE")
+	if !isSet || watchType == "" {
+		watchType = "CREATE"
+	}
+
+	la.Logger.Info().Msgf("Watch type: %s", watchType)
+
 	// Start listening for events.
-	go la.watcherLoop(w, file)
+	go la.watcherLoop(w, file, watchType)
 
 	// Make sure what we'ere watching is a file
 	
@@ -42,7 +50,7 @@ func (la *LitoApp) Watcher() {
 }
 
 // TODO: Remove file and use la.AlgodInfo.archiveFile
-func (la *LitoApp) watcherLoop(w *fsnotify.Watcher, file string) {
+func (la *LitoApp) watcherLoop(w *fsnotify.Watcher, file string, watchType string) {
 	for {
 		select {
 		// Read from Errors.
@@ -71,7 +79,7 @@ func (la *LitoApp) watcherLoop(w *fsnotify.Watcher, file string) {
 			// **TODO: May need to set a time delay in case the CREATE event isn't instant
 
 			// Wait for the WRITE even trigger before contintuing
-			if (e.Op.String() == "CREATE") {
+			if (e.Op.String() == watchType) {
 				// After file trigger is set log the event
 				la.Logger.Info().Msgf("%s %q", e.Op.String(), e.Name)
 

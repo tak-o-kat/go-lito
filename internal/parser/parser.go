@@ -3,7 +3,6 @@ package parser
 import (
 	//"runtime"
 	"bufio"
-	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -41,6 +40,7 @@ type LogData struct {
 	orderedRounds *[]uint64
 	votes *[]Votes
 	round uint64
+	isProposed bool
 	startTime time.Time
 	sender string
 }
@@ -69,6 +69,7 @@ func Parser(l *zerolog.Logger, logFile string, account string) *SortedData {
 		orderedRounds: new([]uint64),
 		votes: new([]Votes),
 		round: 0,
+		isProposed: false,
 		startTime: time.Now(),
 		sender: account,
 	}
@@ -105,7 +106,7 @@ func Parser(l *zerolog.Logger, logFile string, account string) *SortedData {
 
 		// Check if the RoundConcluded is any blocks we have proposed from the ProposalBroadcast step 
 		// and get the block time and if our node proposed that block on chain
-		if strings.Contains(line, "RoundConcluded")  && strings.Contains(line, fmt.Sprintf("%d", parsedData.round)) {
+		if strings.Contains(line, "RoundConcluded")  && parsedData.isProposed {
 			RoundConcludedParser(&line, &parsedData)
 			continue
 		}
