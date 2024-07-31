@@ -34,3 +34,6 @@ main
 
 # executable
 litod
+
+# nohup
+nohup.out
