@@ -34,12 +34,12 @@ func CheckEnvVar() error {
 func Prerequisites(algod *AlgodInfo) error {
 	// Make sure OS is linux
 	if runtime.GOOS != "linux" {
-			return fmt.Errorf("this program is currently only supported on linux")
+		return fmt.Errorf("this program is currently only supported on linux")
 	}
 
 	// Make sure GOAL is installed
 	if !commandExists("goal") {
-			return fmt.Errorf("goal is not installed")
+		return fmt.Errorf("goal is not installed")
 	}
 
 	// Make sure ALGORAND_DATA is set

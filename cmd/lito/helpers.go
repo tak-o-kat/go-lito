@@ -55,10 +55,10 @@ func NewAlgodInfo(l *zerolog.Logger, file string) *AlgodInfo {
 func Exists(name string) (bool, error) {
 	_, err := os.Stat(name)
 	if err == nil {
-			return true, nil
+		return true, nil
 	}
 	if errors.Is(err, os.ErrNotExist) {
-			return false, nil
+		return false, nil
 	}
 	return false, err
 }

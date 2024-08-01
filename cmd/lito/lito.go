@@ -76,6 +76,7 @@ func (l *LitoApp) Run() error {
 	defer l.DB.Close()
 
 	l.Logger.Debug().Msg("Starting Watcher")
+	
 	// Begin watcher on archive file
 	l.Watcher()
 
