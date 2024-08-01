@@ -29,7 +29,6 @@ func (la *LitoApp) Watcher() {
 	go la.watcherLoop(w, file, watchType)
 
 	// Make sure what we'ere watching is a file
-	
 	st, err := os.Lstat(file)  //la.AlgodInfo.archiveFile)
 	if err != nil {
 		la.Logger.Fatal().Msgf("%s", err)
@@ -95,7 +94,7 @@ func (la *LitoApp) watcherLoop(w *fsnotify.Watcher, file string, watchType strin
 
 				// Insert all the parsed data into the database
 				la.Inserter(nodeData)
-
+				
 			}
 		}
 	}
