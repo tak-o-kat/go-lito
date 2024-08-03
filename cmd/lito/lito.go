@@ -5,15 +5,14 @@ import (
 	"os"
 
 	"go-lito/internal/database"
-	"go-lito/internal/misc"
 
 	_ "github.com/joho/godotenv/autoload"
 	"github.com/rs/zerolog"
 )
 
 type AlgodInfo struct {
-	url string
-	token string
+	url         string
+	token       string
 	ArchivePath string
 	ArchiveFile string
 	PartAccount string
@@ -21,14 +20,14 @@ type AlgodInfo struct {
 
 type LitoApp struct {
 	AlgodInfo *AlgodInfo
-	Logger *zerolog.Logger
-	DB database.Service
+	Logger    *zerolog.Logger
+	DB        database.Service
 }
 
-func Init() *LitoApp {
+func Init(dbCreated chan<- bool, logger *zerolog.Logger) *LitoApp {
 	// Get a new zerolog logger
-	logger := misc.NewLogger()
-	misc.LoadEnvSettings(logger)
+	// logger := misc.NewLogger()
+	// misc.LoadEnvSettings(logger)
 
 	// Get algod info
 	algodInfo := NewAlgodInfo(logger, os.Getenv("LOG_FILE"))
@@ -36,13 +35,13 @@ func Init() *LitoApp {
 	// Run prerequisites
 	err := Prerequisites(algodInfo)
 	if err != nil {
-		logger.Fatal().Msg(fmt.Sprintf("%s",err))
+		logger.Fatal().Msg(fmt.Sprintf("%s", err))
 	}
 
 	logger.Info().Msg("algod running and prequisites passed")
-	logger.Debug().Msg("Part Account: " + algodInfo.PartAccount)
+	// logger.Debug().Msg("Part Account: " + algodInfo.PartAccount)
 
-	path := GetLitoPath()	
+	path := GetLitoPath()
 	file, isSet := os.LookupEnv("DB_NAME")
 	if !isSet {
 		// if not set use default
@@ -64,10 +63,13 @@ func Init() *LitoApp {
 	// Set up LitoApp struct
 	lito := &LitoApp{
 		AlgodInfo: algodInfo,
-		Logger: logger,
-		DB: dbInstance,
-	}	
-	
+		Logger:    logger,
+		DB:        dbInstance,
+	}
+
+	// After all the prerequisites are done inform the http server
+	dbCreated <- true
+
 	return lito
 }
 
@@ -76,7 +78,7 @@ func (l *LitoApp) Run() error {
 	defer l.DB.Close()
 
 	l.Logger.Debug().Msg("Starting Watcher")
-	
+
 	// Begin watcher on archive file
 	l.Watcher()
 
