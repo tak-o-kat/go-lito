@@ -34,7 +34,7 @@ func (s *service) CheckDefaultTables() bool {
 }
 
 func (s *service) CreateTables() {
-	
+
 	// Check if tables exist
 	exists := s.CheckDefaultTables()
 
@@ -45,8 +45,8 @@ func (s *service) CreateTables() {
 		logger.Debug().Msg("Creating tables")
 		blocks := `CREATE TABLE IF NOT EXISTS types (
 		id 					INTEGER NOT NULL,
-		type 				TEXT NOT NULL,
-		created_at 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+		typeName 				TEXT NOT NULL,
+		createdAt 	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
 		PRIMARY KEY (id AUTOINCREMENT)
 		);
