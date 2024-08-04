@@ -40,12 +40,12 @@ func main() {
 	}()
 
 	// Wait for the database to be created
-	continueRunning := <-dbCreated
+	runApiServer := <-dbCreated
 
-	logger.Debug().Msgf("Starting http server: %v", continueRunning)
+	logger.Debug().Msgf("Starting http server: %v", runApiServer)
 
 	// Used to start the http server **
-	if continueRunning {
+	if runApiServer {
 		server := server.NewServer(logger)
 
 		err := server.ListenAndServe()

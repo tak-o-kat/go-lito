@@ -31,7 +31,7 @@ type Service interface {
 	// It returns an error if the connection cannot be closed.
 	Close() error
 
-	// InsertNodeData inserts node data into the database
+	// The following methods do CRUD operations on the database
 	InsertNodeData(data *parser.SortedData)
 
 	InsertTotals(totals *parser.Totals) error
@@ -40,11 +40,13 @@ type Service interface {
 
 	InsertVotes(votes *[]parser.Votes) error
 
-	GetAllTotals() *parser.Totals
-
 	GetVotes(rows int) *[]parser.Votes
 
 	GetProposals(rows int) *[]parser.Blocks
+
+	GetAllTotals() *map[string]tMaps
+
+	GetTotalFor(typeId int) tMaps
 }
 
 type service struct {
@@ -54,7 +56,7 @@ type service struct {
 var (
 	dburl      = os.Getenv("DB_NAME")
 	dbInstance *service
-	logger *zerolog.Logger
+	logger     *zerolog.Logger
 )
 
 func New(l *zerolog.Logger, dbPath string, dbFile string) Service {
@@ -71,7 +73,7 @@ func New(l *zerolog.Logger, dbPath string, dbFile string) Service {
 
 	if dbFile == "" || dbPath == "" {
 		logger.Fatal().Msg("No path and/or file specified for database")
-	} 
+	}
 	dburl = filepath.Join(dbPath, dbFile)
 
 	err := os.MkdirAll(dbPath, os.ModePerm)
@@ -93,7 +95,6 @@ func New(l *zerolog.Logger, dbPath string, dbFile string) Service {
 
 	return dbInstance
 }
-
 
 // Health checks the health of the database connection by pinging the database.
 // It returns a map with keys indicating various health statistics.
