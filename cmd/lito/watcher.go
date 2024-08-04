@@ -14,7 +14,7 @@ func (la *LitoApp) Watcher() {
 		la.Logger.Fatal().Msgf("creating a new watcher: %s", err)
 	}
 	defer w.Close()
-	
+
 	// Used for testing os.Getenv("ALGORAND_DATA")	+ "/node.test.log"
 	file := la.AlgodInfo.ArchiveFile
 
@@ -29,7 +29,7 @@ func (la *LitoApp) Watcher() {
 	go la.watcherLoop(w, file, watchType)
 
 	// Make sure what we'ere watching is a file
-	st, err := os.Lstat(file)  //la.AlgodInfo.archiveFile)
+	st, err := os.Lstat(file) //la.AlgodInfo.archiveFile)
 	if err != nil {
 		la.Logger.Fatal().Msgf("%s", err)
 	}
@@ -78,14 +78,14 @@ func (la *LitoApp) watcherLoop(w *fsnotify.Watcher, file string, watchType strin
 			// **TODO: May need to set a time delay in case the CREATE event isn't instant
 
 			// Wait for the WRITE even trigger before contintuing
-			if (e.Op.String() == watchType) {
+			if e.Op.String() == watchType {
 				// After file trigger is set log the event
 				la.Logger.Info().Msgf("%s %q", e.Op.String(), e.Name)
 
 				// Begin parsing the archive log file and get the saved data
-				nodeData := parser.Parser(la.Logger, 
-																	la.AlgodInfo.ArchiveFile, 
-																	la.AlgodInfo.PartAccount)
+				nodeData := parser.Parser(la.Logger,
+					la.AlgodInfo.ArchiveFile,
+					la.AlgodInfo.PartAccount)
 
 				la.Logger.Debug().Msgf("Node Totals: %v", *nodeData.Totals)
 				for _, round := range *nodeData.Proposed {
@@ -94,7 +94,7 @@ func (la *LitoApp) watcherLoop(w *fsnotify.Watcher, file string, watchType strin
 
 				// Insert all the parsed data into the database
 				la.Inserter(nodeData)
-				
+
 			}
 		}
 	}
