@@ -28,9 +28,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.GET("/api/totals/:id", s.totalsIdHandler)
 
 	// TODO: Add routes for /api/votes and /api/votes/:id
-	r.GET("/api/votes/:limit", s.votesHandler)         // returns num votes determined by limit
-	r.GET("/api/votes/:id", s.votesIdHandler)          // return 1 vote by it's id
-	r.GET("/api/votes/type/:id", s.votesTypeIdHandler) // return votes by type (SOFT or CERT)
+	r.GET("/api/votes/asc/:num", s.votesAscHandler)         // returns num votes asc by limit
+	r.GET("/api/votes/desc/:num", s.votesDescHandler)       // returns num votes desc by limit
+	r.GET("/api/votes/type/:id/:num", s.votesTypeIdHandler) // return votes by type (SOFT or CERT)
+	r.GET("/api/vote/:id", s.voteIdHandler)                 // return 1 vote by it's id
 
 	return r
 }
@@ -79,8 +80,20 @@ func (s *Server) totalsIdHandler(w http.ResponseWriter, r *http.Request, ps http
 	_, _ = w.Write(jsonResp)
 }
 
-func (s *Server) votesHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	jsonResp, err := json.Marshal(s.db.GetAllTotals())
+func (s *Server) votesAscHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	num := ps.ByName("num")
+	if num == "" {
+		http.Error(w, "Missing id parameter", http.StatusBadRequest)
+		return
+	}
+
+	limit, err := strconv.Atoi(num)
+	if err != nil {
+		http.Error(w, "Invalid id parameter", http.StatusBadRequest)
+		return
+	}
+
+	jsonResp, err := json.Marshal(s.db.GetOrderedVotes(limit, "ASC"))
 
 	if err != nil {
 		log.Fatalf("error handling JSON marshal. Err: %v", err)
@@ -89,7 +102,29 @@ func (s *Server) votesHandler(w http.ResponseWriter, r *http.Request, ps httprou
 	_, _ = w.Write(jsonResp)
 }
 
-func (s *Server) votesIdHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (s *Server) votesDescHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	num := ps.ByName("num")
+	if num == "" {
+		http.Error(w, "Missing id parameter", http.StatusBadRequest)
+		return
+	}
+
+	limit, err := strconv.Atoi(num)
+	if err != nil {
+		http.Error(w, "Invalid id parameter", http.StatusBadRequest)
+		return
+	}
+
+	jsonResp, err := json.Marshal(s.db.GetOrderedVotes(limit, "DESC"))
+
+	if err != nil {
+		log.Fatalf("error handling JSON marshal. Err: %v", err)
+	}
+
+	_, _ = w.Write(jsonResp)
+}
+
+func (s *Server) voteIdHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	jsonResp, err := json.Marshal(s.db.GetAllTotals())
 
 	if err != nil {

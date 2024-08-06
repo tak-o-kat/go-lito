@@ -40,7 +40,7 @@ type Service interface {
 
 	InsertVotes(votes *[]parser.Votes) error
 
-	GetVotes(rows int) *[]parser.Votes
+	GetOrderedVotes(rows int, order string) *[]roundColumns
 
 	GetProposals(rows int) *[]parser.Blocks
 
