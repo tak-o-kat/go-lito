@@ -40,13 +40,20 @@ type Service interface {
 
 	InsertVotes(votes *[]parser.Votes) error
 
-	GetOrderedVotes(rows int, order string) *[]roundColumns
-
-	GetProposals(rows int) *[]parser.Blocks
-
+	// Methods used to query totals table
 	GetAllTotals() *map[string]tMaps
 
 	GetTotalFor(typeId int) tMaps
+
+	// Methods used to query Votes table
+	GetOrderedVotes(rows int, order string) *VotesJson
+
+	GetOrderedVotesByType(numRows int, order string, typeId int) *VotesJson
+
+	GetVoteById(id int) *roundColumns
+
+	// Methods used to query Proposals table
+	GetProposals(rows int) *[]parser.Blocks
 }
 
 type service struct {

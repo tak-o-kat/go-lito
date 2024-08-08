@@ -1,10 +1,8 @@
 package database
 
 import (
-	"fmt"
 	"go-lito/internal/parser"
 	"strconv"
-	"strings"
 )
 
 type totalsColumns struct {
@@ -13,14 +11,6 @@ type totalsColumns struct {
 	typeId    int
 	createdAt string
 	updatedAt string
-}
-
-type roundColumns struct {
-	id        int
-	round     uint64
-	timeStamp string
-	typeName  string
-	typeId    int
 }
 
 type tMaps map[string]string
@@ -94,54 +84,6 @@ func (s *service) GetAllTotals() *map[string]tMaps {
 	}
 
 	return &t
-}
-
-func (s *service) GetOrderedVotes(numRows int, order string) *[]roundColumns {
-	columns := `v.id, v.round, v.timestamp, v.typeId, t.typeName`
-	inner := `INNER JOIN types as t ON v.typeId = t.id`
-	asc := fmt.Sprintf(`SELECT %s FROM votes as v %s ORDER BY v.id ASC LIMIT ?`, columns, inner)
-	desc := fmt.Sprintf(`SELECT %s FROM votes as v %s ORDER BY v.id DESC LIMIT ?`, columns, inner)
-
-	var query string
-	if strings.ToLower(order) == "asc" {
-		query = asc
-	} else {
-		query = desc
-	}
-
-	rows, err := s.db.Query(query, numRows)
-	if err != nil {
-		logger.Error().Msgf("Error preparing: %v", err)
-	}
-
-	var row = new(roundColumns)
-	votes := new([]roundColumns)
-
-	defer rows.Close()
-	for rows.Next() {
-		err := rows.Scan(
-			&row.id,
-			&row.round,
-			&row.timeStamp,
-			&row.typeId,
-			&row.typeName)
-		if err != nil {
-			logger.Error().Msgf("Error scanning: %v", err)
-		}
-		// Add to votes to slice
-		logger.Debug().Msgf("id: %v", row.id)
-		*votes = append(*votes, roundColumns{
-			id:        row.id,
-			round:     row.round,
-			timeStamp: row.timeStamp,
-			typeId:    row.typeId,
-			typeName:  row.typeName,
-		})
-
-		logger.Debug().Msgf("Votes: %v", *votes)
-	}
-
-	return votes
 }
 
 func (s *service) GetProposals(numRows int) *[]parser.Blocks {

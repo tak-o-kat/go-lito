@@ -2,10 +2,8 @@ package main
 
 import (
 	"fmt"
-	"go-lito/cmd/lito"
 	"go-lito/internal/misc"
 	"go-lito/internal/server"
-	"log/slog"
 
 	_ "github.com/joho/godotenv/autoload"
 )
@@ -28,19 +26,19 @@ func main() {
 	misc.LoadEnvSettings(logger)
 
 	// Use channel to inform the http server to continue running
-	dbCreated := make(chan bool)
+	// dbCreated := make(chan bool)
 
-	go func() {
-		lito := lito.Init(dbCreated, logger)
+	// go func() {
+	// 	lito := lito.Init(dbCreated, logger)
 
-		err := lito.Run()
-		if err != nil {
-			slog.Error(fmt.Sprintf("%s", err))
-		}
-	}()
+	// 	err := lito.Run()
+	// 	if err != nil {
+	// 		slog.Error(fmt.Sprintf("%s", err))
+	// 	}
+	// }()
 
 	// Wait for the database to be created
-	runApiServer := <-dbCreated
+	runApiServer := true //<-dbCreated
 
 	logger.Debug().Msgf("Starting http server: %v", runApiServer)
 
