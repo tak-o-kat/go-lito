@@ -91,7 +91,6 @@ func TestInserterTotals(t *testing.T) {
 
 		dbProposals := db.GetProposals(len(*proposals))
 
-		// logger.Debug().Msgf("%v", *dbProposals)
 		assert.Equal(t, *proposals, *dbProposals)
 	})
 }

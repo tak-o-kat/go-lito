@@ -7,7 +7,7 @@ import (
 
 type VotesJson struct {
 	Count    int             `json:"count"`
-	RootType string          `json:"typeName"`
+	RootType string          `json:"rootType"`
 	Votes    *[]roundColumns `json:"votes"`
 }
 
