@@ -52,7 +52,7 @@ type Service interface {
 
 	GetVoteById(id int) *roundColumns
 
-	GetVotesByDateRange(from string, to string) *VotesJson
+	GetVotesByDateRange(from time.Time, to time.Time) *VotesJson
 
 	// Methods used to query Proposals table
 	GetProposals(rows int) *[]parser.Blocks

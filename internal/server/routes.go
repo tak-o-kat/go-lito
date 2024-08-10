@@ -38,8 +38,12 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// Add all votes in the last day, 2 days, 3 days, and 7 days
 	// add all votes in the last 1 week or 2 weeks
 	// add all votes in the last 1 month or 2 months, 6 months, or 1 year
+
+	// ex. /api/votes/from/{timestamp}/to/{timestamp}
 	r.GET("/api/votes/from/:from/to/:to", s.votesDateRange)
-	r.HandlerFunc(http.MethodGet, "/api/votes/", s.votesDateRangeHandler)
+
+	// ex. /api/votes?from={timestamp}&to={timestamp}
+	r.HandlerFunc(http.MethodGet, "/api/votes/range/", s.votesDateRangeHandler)
 
 	// Add routes for proposals and onchain
 

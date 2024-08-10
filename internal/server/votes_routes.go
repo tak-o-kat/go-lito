@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -45,6 +46,21 @@ func sanitizeId(num string) (int, error) {
 	}
 
 	return id, nil
+}
+
+func sanitizeTime(fp string) (time.Time, error) {
+	if fp == "" {
+		return time.Time{}, fmt.Errorf("empty from value")
+	}
+
+	fmt.Println(fp)
+
+	from, err := time.Parse(time.RFC3339, fp)
+	if err != nil {
+		return time.Time{}, fmt.Errorf("invalid from value: %v", err)
+	}
+
+	return from, nil
 }
 
 func (s *Server) votesHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -137,10 +153,16 @@ func (s *Server) voteIdHandler(w http.ResponseWriter, r *http.Request, ps httpro
 }
 
 func (s *Server) votesDateRange(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	fromParam := ps.ByName("from")
-	toParam := ps.ByName("to")
-	if fromParam == "" || toParam == "" {
-		http.Error(w, "Missing id parameter", http.StatusBadRequest)
+
+	fromParam, err := sanitizeTime(ps.ByName("from"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	toParam, err := sanitizeTime(ps.ByName("to"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
