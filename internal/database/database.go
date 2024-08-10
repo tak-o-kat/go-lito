@@ -52,6 +52,8 @@ type Service interface {
 
 	GetVoteById(id int) *roundColumns
 
+	GetVotesByDateRange(from string, to string) *VotesJson
+
 	// Methods used to query Proposals table
 	GetProposals(rows int) *[]parser.Blocks
 }

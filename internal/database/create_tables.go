@@ -87,7 +87,7 @@ func (s *service) CreateTables() {
 			logger.Error().Msg(fmt.Sprintf("%s", err))
 		}
 
-		addTypes := `INSERT INTO types (type) VALUES
+		addTypes := `INSERT INTO types (typeName) VALUES
 			('soft'),
 			('certified'),
 			('proposed'),

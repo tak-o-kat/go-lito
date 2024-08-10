@@ -69,7 +69,16 @@ func TestInserterTotals(t *testing.T) {
 		err := db.InsertVotes(votes)
 		assert.NoError(t, err)
 
-		dbVotes := db.GetVotes(len(*votes))
+		jsonVotes := db.GetOrderedVotes(len(*votes), "ASC")
+		var dbVotes = new([]parser.Votes)
+		for _, v := range *jsonVotes.Votes {
+			var vote = new(parser.Votes)
+			vote.Round = v.Round
+			vote.TimeStamp = v.TimeStamp
+			vote.Type = int64(v.TypeId)
+			*dbVotes = append(*dbVotes, *vote)
+		}
+
 		assert.Equal(t, *votes, *dbVotes)
 	})
 
@@ -81,6 +90,7 @@ func TestInserterTotals(t *testing.T) {
 		assert.NoError(t, err)
 
 		dbProposals := db.GetProposals(len(*proposals))
+
 		// logger.Debug().Msgf("%v", *dbProposals)
 		assert.Equal(t, *proposals, *dbProposals)
 	})

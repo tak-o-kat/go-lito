@@ -35,6 +35,15 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.GET("/api/vote/:id", s.voteIdHandler)                         // return 1 vote by it's id
 
 	// Add a range for votes by type and all
+	r.GET("/api/votes/from/:from/to/:to", s.votesDateRangeHandler)
+
+	// The Following will also have endpoints for counts of vote types and all votes
+	// Add all votes in the last 1, 6, 12, and 24 hours
+	// Add all votes in the last day, 2 days, 3 days, and 7 days
+	// add all votes in the last 1 week or 2 weeks
+	// add all votes in the last 1 month or 2 months, 6 months, or 1 year
+
+	// Add routes for proposals and onchain
 
 	return r
 }
