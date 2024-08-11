@@ -43,9 +43,9 @@ func Init(dbCreated chan<- bool, logger *zerolog.Logger) *LitoApp {
 
 	path := GetLitoPath()
 	file, isSet := os.LookupEnv("DB_NAME")
-	if !isSet {
+	if !isSet || file == "" {
 		// if not set use default
-		logger.Info().Msg("DB_NAME env variable not set, using default")
+		logger.Info().Msg("DB_NAME env variable not set or empty, using default")
 		file = "golito.db"
 	}
 
