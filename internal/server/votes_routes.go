@@ -14,6 +14,11 @@ import (
 
 const UPPER_NUM_LIMIT = 10000
 
+type Range struct {
+	From string `json:"from"`
+	To   string `json:"to"`
+}
+
 func sanitizeLimit(num string) (int, error) {
 	if num == "" {
 		return 0, fmt.Errorf("empty limit value")
@@ -153,37 +158,74 @@ func (s *Server) voteIdHandler(w http.ResponseWriter, r *http.Request, ps httpro
 }
 
 func (s *Server) votesDateRange(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	fromParam, err := sanitizeTime(ps.ByName("from"))
+	// fromParam, err := sanitizeTime(ps.ByName("from"))
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusBadRequest)
+	// 	return
+	// }
+
+	// minTimeStamp := s.db.GetMinTimeStamp()
+	// if fromParam < minTimeStamp {
+	// 	http.Error(w, fmt.Sprintf("from value must be greater than or equal to %s", minTimeStamp), http.StatusBadRequest)
+	// 	return
+	// }
+
+	// toParam, err := sanitizeTime(ps.ByName("to"))
+	// if err != nil {
+	// 	http.Error(w, err.Error(), http.StatusBadRequest)
+	// 	return
+	// }
+
+	// maxTimeStamp := time.Now().UTC().Format(time.RFC3339Nano)
+	// if toParam > maxTimeStamp {
+	// 	http.Error(w, fmt.Sprintf("to value must be less than or equal to %s", maxTimeStamp), http.StatusBadRequest)
+	// 	return
+	// }
+
+	timeRange, err := s.sanitizeTimeStampRange(ps.ByName("from"), ps.ByName("to"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	minTimeStamp := s.db.GetMinTimeStamp()
-	if fromParam < minTimeStamp {
-		http.Error(w, fmt.Sprintf("from value must be greater than or equal to %s", minTimeStamp), http.StatusBadRequest)
-		return
-	}
-
-	toParam, err := sanitizeTime(ps.ByName("to"))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	maxTimeStamp := time.Now().UTC().Format(time.RFC3339Nano)
-	if toParam > maxTimeStamp {
-		http.Error(w, fmt.Sprintf("to value must be less than or equal to %s", maxTimeStamp), http.StatusBadRequest)
-		return
-	}
-
-	jsonResp, err := json.Marshal(s.db.GetVotesByDateRange(fromParam, toParam))
+	jsonResp, err := json.Marshal(s.db.GetVotesByDateRange(timeRange.From, timeRange.To))
 
 	if err != nil {
 		s.logger.Fatal().Msgf("error handling JSON marshal. Err: %v", err)
 	}
 
 	_, _ = w.Write(jsonResp)
+}
+
+func (s *Server) sanitizeTimeStampRange(from string, to string) (Range, error) {
+	fromParam, err := sanitizeTime(from)
+	if err != nil {
+		s.logger.Error().Msgf("error handling JSON marshal. Err: %v", err)
+		return Range{}, err
+	}
+
+	minTimeStamp := s.db.GetMinTimeStamp()
+	if fromParam < minTimeStamp {
+		return Range{}, fmt.Errorf("'from' value must be greater than or equal to %s", minTimeStamp)
+	}
+
+	toParam, err := sanitizeTime(to)
+	if err != nil {
+		s.logger.Error().Msgf("error handling JSON marshal. Err: %v", err)
+		return Range{}, err
+	}
+
+	maxTimeStamp := time.Now().UTC().Format(time.RFC3339Nano)
+	if toParam > maxTimeStamp {
+		return Range{}, fmt.Errorf("'to' value must be less than or equal to %s", maxTimeStamp)
+	}
+
+	// Finally make sure from is less than to
+	if fromParam >= toParam {
+		return Range{}, fmt.Errorf("'from' value must be less than the 'to' value")
+	}
+
+	return Range{fromParam, toParam}, nil
 }
 
 func (s *Server) votesDateRangeHandler(w http.ResponseWriter, r *http.Request) {
