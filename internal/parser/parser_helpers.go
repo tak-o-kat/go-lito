@@ -2,6 +2,7 @@ package parser
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -18,13 +19,26 @@ func durationToSeconds(et time.Time, st time.Time) float64 {
 	return blockTime
 }
 
+func convertToUtc(t string) (string, error) {
+	// convert string to local RFC3339 format
+	parsedLocalDate, err := time.Parse(time.RFC3339Nano, t)
+	if err != nil {
+		return "", fmt.Errorf("failed to parse local date: %w", err)
+	}
+
+	// Convert the parsed date to UTC in RFC3339 format
+	utcDate := parsedLocalDate.UTC().Format(time.RFC3339Nano)
+
+	return utcDate, nil
+}
+
 func ProposalAssembledParser(line *string) time.Time {
 	parsedJson := Blocks{}
 	jsonErr := json.Unmarshal([]byte(*line), &parsedJson)
 	if jsonErr != nil {
 		panic(jsonErr)
 	}
-	
+
 	// Save the start time of each round, and save for later if needed
 	startTime, err := time.Parse(time.RFC3339Nano, parsedJson.TimeStamp)
 	if err != nil {
@@ -37,7 +51,6 @@ func ProposalBroadcastParser(line *string, ld *LogData) {
 	// Collect all the rounds we have proposed in an array
 	// this array will serve as a key sorter for the block map
 
-
 	// extract json log data from line
 	parsedJson := Blocks{}
 	jsonErr := json.Unmarshal([]byte(*line), &parsedJson)
@@ -45,10 +58,17 @@ func ProposalBroadcastParser(line *string, ld *LogData) {
 		panic(jsonErr)
 	}
 
+	var err error
+	// Convert time to UTC
+	parsedJson.TimeStamp, err = convertToUtc(parsedJson.TimeStamp)
+	if err != nil {
+		panic(err)
+	}
+
 	// Add to the map
 	(*ld.Blocks)[parsedJson.Round] = parsedJson
 
-	// Save this round in order to extrac block time end time in RoundConcluded
+	// Save this round in order to extract block time end time in RoundConcluded
 	ld.round = uint64(parsedJson.Round)
 	ld.isProposed = true
 
@@ -89,24 +109,38 @@ func RoundConcludedParser(line *string, ld *LogData) {
 }
 
 func SoftVotesParser(line *string, ld *LogData) {
-	parsedJson := Votes{}
+	parsedJson := new(Votes)
 	jsonErr := json.Unmarshal([]byte(*line), &parsedJson)
 	if jsonErr != nil {
 		panic(jsonErr)
 	}
 
-	(*ld.votes) = append(*ld.votes, parsedJson)
+	var err error
+	// Convert time to UTC
+	parsedJson.TimeStamp, err = convertToUtc(parsedJson.TimeStamp)
+	if err != nil {
+		panic(err)
+	}
+
+	(*ld.votes) = append(*ld.votes, *parsedJson)
 	ld.totals.SoftVotes++
 }
 
 func CertVotesParser(line *string, ld *LogData) {
-	parsedJson := Votes{}
+	parsedJson := new(Votes)
 	jsonErr := json.Unmarshal([]byte(*line), &parsedJson)
 	if jsonErr != nil {
 		panic(jsonErr)
 	}
 
-	(*ld.votes) = append(*ld.votes, parsedJson)
+	var err error
+	// Convert time to UTC
+	parsedJson.TimeStamp, err = convertToUtc(parsedJson.TimeStamp)
+	if err != nil {
+		panic(err)
+	}
+
+	(*ld.votes) = append(*ld.votes, *parsedJson)
 	ld.totals.CertVotes++
 }
 
