@@ -48,19 +48,19 @@ func sanitizeId(num string) (int, error) {
 	return id, nil
 }
 
-func sanitizeTime(fp string) (time.Time, error) {
-	if fp == "" {
-		return time.Time{}, fmt.Errorf("empty from value")
+func sanitizeTime(tp string) (string, error) {
+	if tp == "" {
+		return "", fmt.Errorf("empty from value")
 	}
 
-	fmt.Println(fp)
-
-	from, err := time.Parse(time.RFC3339, fp)
+	timeParam, err := time.Parse(time.RFC3339Nano, tp)
 	if err != nil {
-		return time.Time{}, fmt.Errorf("invalid from value: %v", err)
+		return "", fmt.Errorf("invalid timestamp value: %v", err)
 	}
 
-	return from, nil
+	utcTime := timeParam.UTC().Format(time.RFC3339Nano)
+
+	return utcTime, nil
 }
 
 func (s *Server) votesHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -153,16 +153,27 @@ func (s *Server) voteIdHandler(w http.ResponseWriter, r *http.Request, ps httpro
 }
 
 func (s *Server) votesDateRange(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-
 	fromParam, err := sanitizeTime(ps.ByName("from"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
+	minTimeStamp := s.db.GetMinTimeStamp()
+	if fromParam < minTimeStamp {
+		http.Error(w, fmt.Sprintf("from value must be greater than or equal to %s", minTimeStamp), http.StatusBadRequest)
+		return
+	}
+
 	toParam, err := sanitizeTime(ps.ByName("to"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	maxTimeStamp := time.Now().UTC().Format(time.RFC3339Nano)
+	if toParam > maxTimeStamp {
+		http.Error(w, fmt.Sprintf("to value must be less than or equal to %s", maxTimeStamp), http.StatusBadRequest)
 		return
 	}
 
@@ -176,6 +187,9 @@ func (s *Server) votesDateRange(w http.ResponseWriter, r *http.Request, ps httpr
 }
 
 func (s *Server) votesDateRangeHandler(w http.ResponseWriter, r *http.Request) {
+	// fromParam := r.URL.Query().Get("from")
+	// toParam := r.URL.Query().Get("to")
+	// typeIdParam := r.URL.Query().Get("typeid")
 
 	// jsonResp, err := json.Marshal(s.db.GetVotesByDateRange(fromParam, toParam))
 

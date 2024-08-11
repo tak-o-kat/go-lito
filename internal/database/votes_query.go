@@ -3,7 +3,6 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"time"
 )
 
 type VotesJson struct {
@@ -68,7 +67,7 @@ func (s *service) GetOrderedVotesByType(numRows int, order string, typeId int) *
 	return generateVotesJson(rows)
 }
 
-func (s *service) GetVotesByDateRange(from time.Time, to time.Time) *VotesJson {
+func (s *service) GetVotesByDateRange(from string, to string) *VotesJson {
 	query := `
 		SELECT v.id, v.round, v.timestamp, v.typeId, t.typeName
 		FROM votes as v

@@ -52,10 +52,12 @@ type Service interface {
 
 	GetVoteById(id int) *roundColumns
 
-	GetVotesByDateRange(from time.Time, to time.Time) *VotesJson
+	GetVotesByDateRange(from string, to string) *VotesJson
 
 	// Methods used to query Proposals table
 	GetProposals(rows int) *[]parser.Blocks
+
+	GetMinTimeStamp() string
 }
 
 type service struct {
@@ -183,4 +185,27 @@ func (s *service) InsertNodeData(data *parser.SortedData) {
 	if err != nil {
 		logger.Error().Msg(fmt.Sprintf("Error inserting: %v", err))
 	}
+}
+
+func (s *service) GetMinTimeStamp() string {
+	// Create query and execute
+	query := `
+		SELECT MIN(v.timestamp) AS min_time
+		FROM votes AS v
+		UNION
+		SELECT MIN(p.timestamp) AS min_time
+		FROM proposed AS p
+		LIMIT 1`
+
+	row := s.db.QueryRow(query)
+	var minTimeStamp string
+	if err := row.Scan(&minTimeStamp); err != nil {
+		logger.Error().Msg(fmt.Sprintf("Error scanning: %v", err))
+	}
+
+	if minTimeStamp == "" {
+		minTimeStamp = time.Now().UTC().Format(time.RFC3339Nano)
+	}
+
+	return minTimeStamp
 }

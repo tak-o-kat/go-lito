@@ -25,10 +25,6 @@ type LitoApp struct {
 }
 
 func Init(dbCreated chan<- bool, logger *zerolog.Logger) *LitoApp {
-	// Get a new zerolog logger
-	// logger := misc.NewLogger()
-	// misc.LoadEnvSettings(logger)
-
 	// Get algod info
 	algodInfo := NewAlgodInfo(logger, os.Getenv("LOG_FILE"))
 
