@@ -24,7 +24,7 @@ type LitoApp struct {
 	DB        database.Service
 }
 
-func Init(dbCreated chan<- bool, logger *zerolog.Logger) *LitoApp {
+func Init(logger *zerolog.Logger) *LitoApp {
 	// Get algod info
 	algodInfo := NewAlgodInfo(logger, os.Getenv("LOG_FILE"))
 
@@ -62,9 +62,6 @@ func Init(dbCreated chan<- bool, logger *zerolog.Logger) *LitoApp {
 		Logger:    logger,
 		DB:        dbInstance,
 	}
-
-	// After all the prerequisites are done inform the http server
-	dbCreated <- true
 
 	return lito
 }
