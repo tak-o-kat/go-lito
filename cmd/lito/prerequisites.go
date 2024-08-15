@@ -23,15 +23,15 @@ func GetDataFolderInfo(command string) (string, error) {
 	return strings.TrimSuffix(string(stdout), "\n"), nil
 }
 
-func CheckEnvVar() error {
-	_, isSet := os.LookupEnv("ALGORAND_DATA")
+func CheckEnvVar(envVar string) error {
+	_, isSet := os.LookupEnv(envVar)
 	if !isSet {
-		return fmt.Errorf("ALGORAND_DATA env variable is not set")
+		return fmt.Errorf("%s env variable is not set", envVar)
 	}
 	return nil
 }
 
-func Prerequisites(algod *AlgodInfo) error {
+func Prerequisites(algod *AlgodInfo, cfg *Config) error {
 	// Make sure OS is linux
 	if runtime.GOOS != "linux" {
 		return fmt.Errorf("this program is currently only supported on linux")
@@ -43,33 +43,44 @@ func Prerequisites(algod *AlgodInfo) error {
 	}
 
 	// Make sure ALGORAND_DATA is set
-	err := CheckEnvVar()
+	err := CheckEnvVar(cfg.EnvVar)
 	if err != nil {
 		return err
 	}
 
-		// Check if algod is running
+	// Check if algod is running
 	_, err = exec.Command("pgrep", "algod").Output()
 	if err != nil {
 		return fmt.Errorf("algod is not running")
 	}
 
 	// Now that algod and ALGORAND_DATA are checked, chekc NET and TOKEN
-	algod.url, err = GetDataFolderInfo("cat $ALGORAND_DATA/algod.net")
-	if err != nil{
+	cmd := "cat $" + cfg.EnvVar + "/algod.net"
+	algod.url, err = GetDataFolderInfo(cmd)
+	if err != nil {
 		return err
 	}
 
-	algod.token, err = GetDataFolderInfo("cat $ALGORAND_DATA/algod.token")
-	if err != nil{
+	cmd = "cat $" + cfg.EnvVar + "/algod.token"
+	algod.token, err = GetDataFolderInfo(cmd)
+	if err != nil {
 		return err
 	}
-
-	account, isSet := os.LookupEnv("ACCOUNT")
-	if !isSet || account == "" {
-		account, err = GetAccountAddress()
-		if err != nil{
-			return err
+	// Get the part account
+	var account string
+	if cfg.Account != "" {
+		account = cfg.Account
+	} else {
+		// if no account was passed in by the config, check .env file
+		var isSet bool
+		account, isSet = os.LookupEnv("ACCOUNT")
+		if !isSet || account == "" {
+			// if no .env file found or ACCOUNT env variable not set
+			// extract the account using goal
+			account, err = GetAccountAddress()
+			if err != nil {
+				return err
+			}
 		}
 	}
 

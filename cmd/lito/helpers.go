@@ -11,25 +11,27 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func NewAlgodInfo(l *zerolog.Logger, file string) *AlgodInfo {
+func NewAlgodInfo(l *zerolog.Logger, cfg *Config) *AlgodInfo {
 	// The default log file is node.archive.log
-	// But we can change this for testing purposes using .env
+	// But we can change this for testing purposes using .env or cli flags
 	archiveLog, isSet := os.LookupEnv("LOG_FILE")
 	if !isSet || archiveLog == "" {
-		archiveLog = "node.archive.log"
+		archiveLog = cfg.LogFile
 	}
 
-	archivePath, isSet := os.LookupEnv("ALGORAND_DATA")
+	l.Debug().Msg("Archive log file: " + archiveLog)
+
+	archivePath, isSet := os.LookupEnv(cfg.EnvVar)
 	if !isSet {
-		l.Fatal().Msg("ALGORAND_DATA env variable is not set")
+		l.Fatal().Msgf("%s env variable is not set", cfg.EnvVar)
 	}
-	
+
 	// Add the archive log file to the archive path
 	archiveFile := filepath.Join(archivePath, archiveLog)
 
 	exists, err := Exists(archiveFile)
 	if err != nil {
-		l.Error().Msg(fmt.Sprintf("%s",err))
+		l.Error().Msg(fmt.Sprintf("%s", err))
 	}
 
 	// Check if archive file exists, if not create one
@@ -37,18 +39,19 @@ func NewAlgodInfo(l *zerolog.Logger, file string) *AlgodInfo {
 		l.Debug().Msg("Creating archive file: " + filepath.Join(archivePath, archiveLog))
 		_, err := os.Create(archiveFile)
 		if err != nil {
-			l.Error().Msg(fmt.Sprintf("%s",err))
+			l.Error().Msg(fmt.Sprintf("%s", err))
 		}
 	}
 
 	// Set up default AlgodInfo
 	algodInfo := &AlgodInfo{
-		url: "",
-		token: "",
+		url:         "",
+		token:       "",
 		ArchivePath: archivePath,
 		ArchiveFile: archiveFile,
 		PartAccount: "",
 	}
+
 	return algodInfo
 }
 
@@ -66,8 +69,8 @@ func Exists(name string) (bool, error) {
 func GetAccountAddress() (string, error) {
 	// Get the part account address
 	cmd := "goal account partkeyinfo | " +
-			"sed -n '/Parent/p' | " +
-			"awk '{print $3}'"
+		"sed -n '/Parent/p' | " +
+		"awk '{print $3}'"
 	stdout, err := exec.Command("bash", "-c", cmd).Output()
 	_ = stdout
 	if err != nil {

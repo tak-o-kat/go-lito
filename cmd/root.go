@@ -16,13 +16,10 @@ import (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "lito",
-	Short: "Algod persistent log tool",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Algod persistent log tool suite",
+	Long: `Allows a Algorand node runner to use select tools to parse log data and store 
+	it in a sqlite database. Using these tools a user can get access to the database using
+	sqlite query tools, an API interface, a web dashboard, and finaly a terminal based CLI.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },

@@ -10,15 +10,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type config struct {
-	envVar   string
-	path     string
-	database string
-	output   string
-	loglevel string
-	port     int
-}
-
 var daemonCmd = &cobra.Command{
 	Use:   "daemon",
 	Short: "Start litod in daemon mode",
@@ -32,41 +23,40 @@ options or flags are used the default settings will be used.`,
 func init() {
 	rootCmd.AddCommand(daemonCmd)
 
-	daemonCmd.Flags().StringP("envvar", "e", "ALGORAND_DATA", "Algod data environment variable")
-	daemonCmd.Flags().StringP("path", "p", "lito", "Path to lito folder")
-	daemonCmd.Flags().StringP("database", "d", "golito.db", "Database file")
-	daemonCmd.Flags().StringP("output", "o", "lito.log", "File to store lito logs")
-	daemonCmd.Flags().StringP("loglevel", "s", "local", "Set log level")
-	// daemonCmd.Flags().StringP("env", "e", "local", "Set environment level")
+	daemonCmd.Flags().StringP("envvar", "e", "ALGORAND_DATA", "algod data environment variable")
+	daemonCmd.Flags().StringP("path", "p", "lito", "path to lito folder")
+	daemonCmd.Flags().StringP("database", "d", "golito.db", "database file")
+	daemonCmd.Flags().StringP("logfile", "l", "node.archive.log", "archive log file from algod")
+	daemonCmd.Flags().StringP("output", "o", "lito.log", "file to store lito logs")
+	daemonCmd.Flags().StringP("loglevel", "s", "info", "set log level")
+	daemonCmd.Flags().StringP("account", "a", "", "set participation account")
 }
 
 func daemon(cmd *cobra.Command, args []string) {
 	envVar, _ := cmd.Flags().GetString("envvar")
-	path, _ := cmd.Flags().GetString("path")
+	litoPath, _ := cmd.Flags().GetString("path")
 	database, _ := cmd.Flags().GetString("database")
+	logFile, _ := cmd.Flags().GetString("logfile")
 	output, _ := cmd.Flags().GetString("output")
 	loglevel, _ := cmd.Flags().GetString("loglevel")
-	// env, _ := cmd.Flags().GetBool("env")
+	account, _ := cmd.Flags().GetString("account")
 
 	// extract path from env variable
 	envPath := os.Getenv(envVar)
 
-	cmdSettings := config{
-		envVar:   envVar,
-		path:     filepath.Join(envPath, path),
-		database: database,
-		output:   output,
-		loglevel: loglevel,
-	}
-	_ = cmdSettings
+	cfg := new(lito.Config)
+	cfg.EnvVar = envVar
+	cfg.LitoPath = filepath.Join(envPath, litoPath)
+	cfg.Database = database
+	cfg.LogFile = logFile
+	cfg.Output = output
+	cfg.Loglevel = loglevel
+	cfg.Account = account
 
-	fmt.Println(cmdSettings.path)
-
-	logger := misc.NewLogger(cmdSettings.path, output)
+	logger := misc.NewLogger(cfg.LitoPath, output)
 	misc.LoadEnvSettings(logger)
 
-	// Use channel to inform the http server to continue running
-	lito := lito.Init(logger)
+	lito := lito.Init(logger, cfg)
 
 	err := lito.Run()
 	if err != nil {
