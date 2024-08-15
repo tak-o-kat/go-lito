@@ -13,15 +13,26 @@ import (
 	"github.com/rs/zerolog"
 )
 
+const PORT_DEFAULT = "8081"
+
 type Server struct {
 	port   int
 	logger *zerolog.Logger
 	db     database.Service
 }
 
-func NewServer(l *zerolog.Logger) *http.Server {
-	port, _ := strconv.Atoi(os.Getenv("PORT"))
-	path := lito.GetLitoPath()
+func NewServer(l *zerolog.Logger, cfg *lito.Config) *http.Server {
+	portNum, _ := os.LookupEnv("PORT")
+	if portNum == "" {
+		portNum = cfg.Port
+	}
+
+	if cfg.Port != PORT_DEFAULT {
+		portNum = cfg.Port
+	}
+
+	port, _ := strconv.Atoi(portNum)
+	path := cfg.LitoPath
 
 	NewServer := &Server{
 		port:   port,
@@ -37,6 +48,8 @@ func NewServer(l *zerolog.Logger) *http.Server {
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
 	}
+
+	l.Info().Msg(fmt.Sprintf("Starting server on port %d", NewServer.port))
 
 	return server
 }

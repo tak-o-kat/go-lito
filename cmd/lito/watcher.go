@@ -23,7 +23,7 @@ func (la *LitoApp) Watcher() {
 		watchType = "CREATE"
 	}
 
-	la.Logger.Info().Msgf("Watch type: %s", watchType)
+	la.Logger.Debug().Msgf("Watch type: %s", watchType)
 
 	// Start listening for events.
 	go la.watcherLoop(w, file, watchType)

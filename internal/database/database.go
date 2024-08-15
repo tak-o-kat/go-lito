@@ -74,11 +74,11 @@ func New(l *zerolog.Logger, dbPath string, dbFile string) Service {
 
 	// Reuse Connection
 	if dbInstance != nil {
-		l.Debug().Msg("Reusing dbInstance")
+		l.Info().Msg("Reusing dbInstance")
 		return dbInstance
 	}
 
-	l.Debug().Msg("Creating new dbInstance")
+	l.Info().Msg("Creating new dbInstance")
 	// Add logger to service
 	logger = l
 

@@ -19,8 +19,6 @@ func NewAlgodInfo(l *zerolog.Logger, cfg *Config) *AlgodInfo {
 		archiveLog = cfg.LogFile
 	}
 
-	l.Debug().Msg("Archive log file: " + archiveLog)
-
 	archivePath, isSet := os.LookupEnv(cfg.EnvVar)
 	if !isSet {
 		l.Fatal().Msgf("%s env variable is not set", cfg.EnvVar)

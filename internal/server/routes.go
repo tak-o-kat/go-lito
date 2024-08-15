@@ -18,14 +18,14 @@ const (
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
-	s.logger.Debug().Msg("Registering routes")
+	s.logger.Info().Msg("Registering routes")
 	r := httprouter.New()
 
 	r.HandlerFunc(http.MethodGet, "/health", s.healthHandler)
 
 	// Routes for /api/totals
 	r.HandlerFunc(http.MethodGet, "/api/totals/", s.totalsHandler)
-	r.GET("/api/totals/:id", s.totalsIdHandler)
+	r.GET("/api/totalid/:id", s.totalsIdHandler)
 
 	// TODO: Add routes for /api/votes and /api/votes/:id
 	r.GET("/api/votes/limit/:limit/:order", s.votesHandler)           // returns num votes asc by limit
@@ -54,10 +54,10 @@ func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) totalsHandler(w http.ResponseWriter, r *http.Request) {
+	s.logger.Info().Msgf("GET /api/totals/")
 	jsonResp, err := json.Marshal(s.db.GetAllTotals())
-
 	if err != nil {
-		log.Fatalf("error handling JSON marshal. Err: %v", err)
+		s.logger.Fatal().Msgf("error handling JSON marshal. Err: %v", err)
 	}
 
 	_, _ = w.Write(jsonResp)
@@ -73,15 +73,17 @@ func (s *Server) totalsIdHandler(w http.ResponseWriter, r *http.Request, ps http
 	idInt, err := strconv.Atoi(id)
 	if err != nil {
 		http.Error(w, "Invalid id parameter", http.StatusBadRequest)
+		s.logger.Error().Msgf("Invalid id parameter. Err: %v", err)
 		return
 	}
+	s.logger.Info().Msgf("GET /api/totals/%d", idInt)
 
 	// TODO: Add condition to check if id is valid less than or equal to 5
 
 	jsonResp, err := json.Marshal(s.db.GetTotalFor(idInt))
 
 	if err != nil {
-		log.Fatalf("error handling JSON marshal. Err: %v", err)
+		s.logger.Fatal().Msgf("error handling JSON marshal. Err: %v", err)
 	}
 
 	_, _ = w.Write(jsonResp)

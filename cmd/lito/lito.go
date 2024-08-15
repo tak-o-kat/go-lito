@@ -18,7 +18,7 @@ type Config struct {
 	Output   string // Output log file to store lito logs
 	Loglevel string // Set log level
 	Account  string // Set participation account
-	Port     int    // Server port
+	Port     string // Server port
 }
 
 type AlgodInfo struct {
@@ -80,7 +80,7 @@ func Init(logger *zerolog.Logger, cfg *Config) *LitoApp {
 		Logger:    logger,
 		DB:        dbInstance,
 	}
-
+	logger.Info().Msg("DB setup complete")
 	return lito
 }
 
