@@ -41,9 +41,9 @@ type Service interface {
 	InsertVotes(votes *[]parser.Votes) error
 
 	// Methods used to query totals table
-	GetAllTotals() *map[string]tMaps
+	GetAllTotals() *TotalsJson
 
-	GetTotalFor(typeId int) tMaps
+	GetTotalFor(typeId int) *TotalsColumns
 
 	// Methods used to query Votes table
 	GetOrderedVotes(rows int, order string) *VotesJson

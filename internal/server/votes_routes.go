@@ -134,7 +134,7 @@ func (s *Server) votesHandler(w http.ResponseWriter, r *http.Request, ps httprou
 	if err != nil {
 		log.Fatalf("error handling JSON marshal. Err: %v", err)
 	}
-
+	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(jsonResp)
 }
 
@@ -169,7 +169,7 @@ func (s *Server) voteTypeIdHandler(w http.ResponseWriter, r *http.Request, ps ht
 	if err != nil {
 		log.Fatalf("error handling JSON marshal. Err: %v", err)
 	}
-
+	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(jsonResp)
 }
 
@@ -185,7 +185,7 @@ func (s *Server) voteIdHandler(w http.ResponseWriter, r *http.Request, ps httpro
 	if err != nil {
 		log.Fatalf("error handling JSON marshal. Err: %v", err)
 	}
-
+	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(jsonResp)
 }
 
@@ -201,7 +201,7 @@ func (s *Server) votesDateRangeHandler(w http.ResponseWriter, r *http.Request, p
 	if err != nil {
 		s.logger.Fatal().Msgf("error handling JSON marshal. Err: %v", err)
 	}
-
+	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(jsonResp)
 }
 
@@ -221,6 +221,6 @@ func (s *Server) votesDateRangeParamHandler(w http.ResponseWriter, r *http.Reque
 	if err != nil {
 		s.logger.Fatal().Msgf("error handling JSON marshal. Err: %v", err)
 	}
-
+	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(jsonResp)
 }

@@ -2,80 +2,76 @@ package database
 
 import (
 	"go-lito/internal/parser"
-	"strconv"
 )
 
-type totalsColumns struct {
-	id        int
-	count     int
-	typeId    int
-	createdAt string
-	updatedAt string
+type TotalsColumns struct {
+	Id        int    `json:"id"`
+	Count     int    `json:"count"`
+	TypeId    int    `json:"typeId"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
 }
 
-type tMaps map[string]string
+type TotalsJson struct {
+	Cert     *TotalsColumns `json:"cert"`
+	Soft     *TotalsColumns `json:"soft"`
+	Proposed *TotalsColumns `json:"proposed"`
+	OnChain  *TotalsColumns `json:"onChain"`
+}
 
-func (s *service) GetTotalFor(typeId int) tMaps {
+func (s *service) GetTotalFor(typeId int) *TotalsColumns {
 	row := s.db.QueryRow(`
 		SELECT * 
 		FROM totals 
 		WHERE typeId = ?`, typeId)
 
-	var record = new(totalsColumns)
-	total := make(map[string]string)
+	var record = new(TotalsColumns)
 
-	err := row.Scan(&record.id, &record.count, &record.typeId, &record.createdAt, &record.updatedAt)
+	err := row.Scan(&record.Id, &record.Count, &record.TypeId, &record.CreatedAt, &record.UpdatedAt)
 	if err != nil {
 		logger.Error().Msgf("Error scanning: %v", err)
 	}
 
-	// Covert struct to map
-	total["id"] = strconv.Itoa(record.id)
-	total["count"] = strconv.Itoa(record.count)
-	total["typeId"] = strconv.Itoa(record.typeId)
-	total["createdAt"] = string(record.createdAt)
-	total["updatedAt"] = string(record.updatedAt)
-
-	return total
+	return record
 }
 
-func (s *service) GetAllTotals() *map[string]tMaps {
+func (s *service) GetAllTotals() *TotalsJson {
 	rows, err := s.db.Query(`SELECT * FROM totals`)
 	if err != nil {
 		logger.Error().Msgf("Error preparing: %v", err)
 	}
 
-	var row = new(totalsColumns)
-	var t = make(map[string]tMaps)
+	var row = new(TotalsColumns)
+	var t = new(TotalsJson)
 
 	defer rows.Close()
 	for rows.Next() {
-		err := rows.Scan(&row.id,
-			&row.count,
-			&row.typeId,
-			&row.createdAt,
-			&row.updatedAt)
+		err := rows.Scan(&row.Id,
+			&row.Count,
+			&row.TypeId,
+			&row.CreatedAt,
+			&row.UpdatedAt)
 		if err != nil {
 			logger.Error().Msgf("Error scanning: %v", err)
 		}
 
-		total := make(tMaps)
+		total := new(TotalsColumns)
 		// Covert struct to map
-		total["id"] = strconv.Itoa(row.id)
-		total["count"] = strconv.Itoa(row.count)
-		total["typeId"] = strconv.Itoa(row.typeId)
-		total["createdAt"] = string(row.createdAt)
-		total["updatedAt"] = string(row.updatedAt)
+		total.Id = row.Id
+		total.Count = row.Count
+		total.TypeId = row.TypeId
+		total.CreatedAt = string(row.CreatedAt)
+		total.UpdatedAt = string(row.UpdatedAt)
 
-		switch row.typeId {
+		switch row.TypeId {
 		case typeId.soft:
-			t["soft"] = total
+			t.Soft = total
 		case typeId.cert:
-			t["cert"] = total
+			t.Cert = total
 		case typeId.onChain:
-			t["onChain"] = total
+			t.OnChain = total
 		case typeId.proposed:
-			t["proposed"] = total
+			t.Proposed = total
 		}
 	}
 
@@ -83,7 +79,7 @@ func (s *service) GetAllTotals() *map[string]tMaps {
 		logger.Error().Msgf("Error iterating: %v", err)
 	}
 
-	return &t
+	return t
 }
 
 func (s *service) GetProposals(numRows int) *[]parser.Blocks {

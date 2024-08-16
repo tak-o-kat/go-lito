@@ -7,14 +7,17 @@ build:
 	@echo "Building..."
 	
 	
-	@go build -o litod main.go
+	@go build -o main main.go
 
 # Run the application
 run:
-	@go run main.go daemon
+	@go run main.go daemon -s
 
 daemon:
-	@go run main.go daemon 
+	@go run main.go daemon
+
+server:
+	@go run main.go server
 
 # Test the application
 test:

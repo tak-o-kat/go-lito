@@ -35,8 +35,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	// ex. /api/votes/from/{timestamp}/to/{timestamp}
 	r.GET("/api/votes/from/:from/to/:to", s.votesDateRangeHandler)
 
-	// ex. /api/votes?from={timestamp}&to={timestamp}
-	r.HandlerFunc(http.MethodGet, "/api/votes/range/", s.votesDateRangeParamHandler)
+	// ex. /api/votes?from={timestamp}&to={timestamp}&limit={number}&order={asc|desc}
+	r.HandlerFunc(http.MethodGet, "/api/votes/range", s.votesDateRangeParamHandler)
 
 	// Add routes for proposals and onchain
 
@@ -56,11 +56,16 @@ func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) totalsHandler(w http.ResponseWriter, r *http.Request) {
 	s.logger.Info().Msgf("GET /api/totals/")
 	jsonResp, err := json.Marshal(s.db.GetAllTotals())
+
 	if err != nil {
 		s.logger.Fatal().Msgf("error handling JSON marshal. Err: %v", err)
 	}
 
-	_, _ = w.Write(jsonResp)
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write(jsonResp)
+	if err != nil {
+		s.logger.Fatal().Msgf("error writing response. Err: %v", err)
+	}
 }
 
 func (s *Server) totalsIdHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -86,5 +91,9 @@ func (s *Server) totalsIdHandler(w http.ResponseWriter, r *http.Request, ps http
 		s.logger.Fatal().Msgf("error handling JSON marshal. Err: %v", err)
 	}
 
-	_, _ = w.Write(jsonResp)
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write(jsonResp)
+	if err != nil {
+		s.logger.Fatal().Msgf("error writing response. Err: %v", err)
+	}
 }

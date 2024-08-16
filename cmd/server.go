@@ -35,7 +35,7 @@ func init() {
 
 func serverCli(cmd *cobra.Command, args []string) {
 	envVar, _ := cmd.Flags().GetString("envvar")
-	litoPath, _ := cmd.Flags().GetString("path")
+	litoPath, _ := cmd.Flags().GetString("litofolder")
 	database, _ := cmd.Flags().GetString("database")
 	logFile, _ := cmd.Flags().GetString("logfile")
 	output, _ := cmd.Flags().GetString("output")

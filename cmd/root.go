@@ -17,9 +17,9 @@ import (
 var rootCmd = &cobra.Command{
 	Use:   "lito",
 	Short: "Algod persistent log tool suite",
-	Long: `Allows a Algorand node runner to use select tools to parse log data and store 
-	it in a sqlite database. Using these tools a user can get access to the database using
-	sqlite query tools, an API interface, a web dashboard, and finaly a terminal based CLI.`,
+	Long: `Allows an   Algorand node runner to use select tools to parse log data and store 
+it in a sqlite database. Using these tools a user can get access to the database using
+sqlite query tools, an API interface, a web dashboard, and finaly a terminal based CLI.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
