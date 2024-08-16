@@ -95,6 +95,12 @@ func (s *Server) TotalsIdHandler(w http.ResponseWriter, r *http.Request, ps http
 	}
 	s.logger.Info().Msgf("GET /api/totals/%d", idInt)
 
+	if idInt < 1 || idInt > 5 {
+		http.Error(w, "Invalid id parameter", http.StatusBadRequest)
+		s.logger.Error().Msgf("Invalid id parameter. Err: %v", idInt)
+		return
+	}
+
 	// TODO: Add condition to check if id is valid less than or equal to 5
 
 	jsonResp, err := json.Marshal(s.db.GetTotalFor(idInt))
