@@ -92,7 +92,10 @@ func (s *Server) sanitizeTimeStampRange(from string, to string) (Range, error) {
 		return Range{}, err
 	}
 
-	minTimeStamp := s.db.GetMinTimeStamp()
+	minTimeStamp, err := s.db.GetMinTimeStamp()
+	if err != nil {
+		return Range{}, err
+	}
 	if fromParam < minTimeStamp {
 		return Range{}, fmt.Errorf("'from' value must be greater than or equal to %s", minTimeStamp)
 	}
@@ -116,6 +119,28 @@ func (s *Server) sanitizeTimeStampRange(from string, to string) (Range, error) {
 	return Range{fromParam, toParam}, nil
 }
 
+func (s *Server) voteIdHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	id, err := sanitizeId(ps.ByName("id"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	resp, err := s.db.GetVoteById(id)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	jsonResp, err := json.Marshal(resp)
+
+	if err != nil {
+		log.Fatalf("error handling JSON marshal. Err: %v", err)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	_, _ = w.Write(jsonResp)
+}
+
 func (s *Server) votesHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	limit, err := sanitizeLimit(ps.ByName("limit"))
 	if err != nil {
@@ -123,7 +148,7 @@ func (s *Server) votesHandler(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	order, err := sanitizeOrder(ps.ByName("order"))
+	order, err := sanitizeOrder(ps.ByName("sort"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -151,7 +176,7 @@ func (s *Server) voteTypeIdHandler(w http.ResponseWriter, r *http.Request, ps ht
 		return
 	}
 
-	order, err := sanitizeOrder(ps.ByName("order"))
+	order, err := sanitizeOrder(ps.ByName("sort"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -165,22 +190,6 @@ func (s *Server) voteTypeIdHandler(w http.ResponseWriter, r *http.Request, ps ht
 
 	// Make db query call
 	jsonResp, err := json.Marshal(s.db.GetOrderedVotesByType(limit, order, id))
-
-	if err != nil {
-		log.Fatalf("error handling JSON marshal. Err: %v", err)
-	}
-	w.Header().Set("Content-Type", "application/json")
-	_, _ = w.Write(jsonResp)
-}
-
-func (s *Server) voteIdHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	id, err := sanitizeId(ps.ByName("id"))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	jsonResp, err := json.Marshal(s.db.GetVoteById(id))
 
 	if err != nil {
 		log.Fatalf("error handling JSON marshal. Err: %v", err)

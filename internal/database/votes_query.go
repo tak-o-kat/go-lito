@@ -8,10 +8,10 @@ import (
 type VotesJson struct {
 	Count    int             `json:"count"`
 	RootType string          `json:"rootType"`
-	Votes    *[]roundColumns `json:"votes"`
+	Votes    *[]RoundColumns `json:"votes"`
 }
 
-type roundColumns struct {
+type RoundColumns struct {
 	Id        int    `json:"id"`
 	Round     uint64 `json:"round"`
 	TimeStamp string `json:"timestamp"`
@@ -19,7 +19,7 @@ type roundColumns struct {
 	TypeId    int    `json:"typeId"`
 }
 
-func (s *service) GetVoteById(id int) *roundColumns {
+func (s *service) GetVoteById(id int) (*RoundColumns, error) {
 	row := s.db.QueryRow(`
 		SELECT v.id, v.round, v.timestamp, v.typeId, t.typeName 
 		FROM votes as v 
@@ -27,14 +27,15 @@ func (s *service) GetVoteById(id int) *roundColumns {
 		ON v.typeId = t.id 
 		WHERE v.id = ?`, id)
 
-	var record = new(roundColumns)
+	var record = new(RoundColumns)
 
 	err := row.Scan(&record.Id, &record.Round, &record.TimeStamp, &record.TypeId, &record.TypeName)
 	if err != nil {
 		logger.Error().Msgf("Error scanning: %v", err)
+		return nil, fmt.Errorf("no vote found with id %d", id)
 	}
 
-	return record
+	return record, nil
 }
 
 func (s *service) GetOrderedVotes(numRows int, order string) *VotesJson {
@@ -86,8 +87,8 @@ func (s *service) GetVotesByDateRange(from string, to string) *VotesJson {
 }
 
 func generateVotesJson(rows *sql.Rows) *VotesJson {
-	var row = new(roundColumns)
-	votes := new([]roundColumns)
+	var row = new(RoundColumns)
+	votes := new([]RoundColumns)
 
 	defer rows.Close()
 	for rows.Next() {
@@ -101,7 +102,7 @@ func generateVotesJson(rows *sql.Rows) *VotesJson {
 			logger.Error().Msgf("Error scanning: %v", err)
 		}
 		// Add to votes to slice
-		*votes = append(*votes, roundColumns{
+		*votes = append(*votes, RoundColumns{
 			Id:        row.Id,
 			Round:     row.Round,
 			TimeStamp: row.TimeStamp,

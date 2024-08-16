@@ -29,9 +29,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.GET("/api/totalid/:id", s.TotalsIdHandler)
 
 	// TODO: Add routes for /api/votes and /api/votes/:id
-	r.GET("/api/votes/limit/:limit/:order", s.votesHandler)           // returns num votes asc by limit
-	r.GET("/api/votes/typeid/:id/:limit/:order", s.voteTypeIdHandler) // return votes by type (SOFT or CERT) asc
-	r.GET("/api/voteid/:id", s.voteIdHandler)                         // return 1 vote by it's id
+	r.GET("/api/votes/limit/:limit/:sort", s.votesHandler)           // returns num votes asc by limit
+	r.GET("/api/votes/typeid/:id/:limit/:sort", s.voteTypeIdHandler) // return votes by type (SOFT or CERT) asc
+	r.GET("/api/voteid/:id", s.voteIdHandler)                        // return 1 vote by it's id
 
 	// ex. /api/votes/from/{timestamp}/to/{timestamp}
 	r.GET("/api/votes/from/:from/to/:to", s.votesDateRangeHandler)

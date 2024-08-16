@@ -50,14 +50,14 @@ type Service interface {
 
 	GetOrderedVotesByType(numRows int, order string, typeId int) *VotesJson
 
-	GetVoteById(id int) *roundColumns
+	GetVoteById(id int) (*RoundColumns, error)
 
 	GetVotesByDateRange(from string, to string) *VotesJson
 
 	// Methods used to query Proposals table
 	GetProposals(rows int) *[]parser.Blocks
 
-	GetMinTimeStamp() string
+	GetMinTimeStamp() (string, error)
 }
 
 type service struct {
@@ -187,7 +187,7 @@ func (s *service) InsertNodeData(data *parser.SortedData) {
 	}
 }
 
-func (s *service) GetMinTimeStamp() string {
+func (s *service) GetMinTimeStamp() (string, error) {
 	// Create query and execute
 	query := `
 		SELECT MIN(v.timestamp) AS min_time
@@ -201,11 +201,12 @@ func (s *service) GetMinTimeStamp() string {
 	var minTimeStamp string
 	if err := row.Scan(&minTimeStamp); err != nil {
 		logger.Error().Msg(fmt.Sprintf("Error scanning: %v", err))
+		return "", fmt.Errorf("no min timestamp found, wait for database to be populated")
 	}
 
 	if minTimeStamp == "" {
 		minTimeStamp = time.Now().UTC().Format(time.RFC3339Nano)
 	}
 
-	return minTimeStamp
+	return minTimeStamp, nil
 }
