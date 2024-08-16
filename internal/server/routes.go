@@ -22,10 +22,11 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r := httprouter.New()
 
 	r.HandlerFunc(http.MethodGet, "/health", s.healthHandler)
+	r.HandlerFunc(http.MethodGet, "/test", s.TestHandler)
 
 	// Routes for /api/totals
-	r.HandlerFunc(http.MethodGet, "/api/totals/", s.totalsHandler)
-	r.GET("/api/totalid/:id", s.totalsIdHandler)
+	r.HandlerFunc(http.MethodGet, "/api/totals/", s.TotalsHandler)
+	r.GET("/api/totalid/:id", s.TotalsIdHandler)
 
 	// TODO: Add routes for /api/votes and /api/votes/:id
 	r.GET("/api/votes/limit/:limit/:order", s.votesHandler)           // returns num votes asc by limit
@@ -43,6 +44,17 @@ func (s *Server) RegisterRoutes() http.Handler {
 	return r
 }
 
+func (s *Server) TestHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	resp := make(map[string]string)
+	resp["message"] = "Test World!"
+	jsonResp, err := json.Marshal(resp)
+	if err != nil {
+		log.Fatalf("error handling JSON marshal. Err: %v", err)
+	}
+	_, _ = w.Write(jsonResp)
+}
+
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	jsonResp, err := json.Marshal(s.db.Health())
 
@@ -53,7 +65,7 @@ func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(jsonResp)
 }
 
-func (s *Server) totalsHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Server) TotalsHandler(w http.ResponseWriter, r *http.Request) {
 	s.logger.Info().Msgf("GET /api/totals/")
 	jsonResp, err := json.Marshal(s.db.GetAllTotals())
 
@@ -68,7 +80,7 @@ func (s *Server) totalsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (s *Server) totalsIdHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (s *Server) TotalsIdHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	id := ps.ByName("id")
 	if id == "" {
 		http.Error(w, "Missing id parameter", http.StatusBadRequest)

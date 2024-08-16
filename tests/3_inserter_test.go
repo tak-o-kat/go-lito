@@ -6,26 +6,38 @@ import (
 	"go-lito/internal/misc"
 	"go-lito/internal/parser"
 	"os"
-	"strconv"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
+var Path3 = lito.GetLitoPath()
+
+var CFG3 = lito.Config{
+	EnvVar:   "ALGORAND_DATA",
+	LitoPath: filepath.Join(Path3, "test"),
+	Database: "test.db",
+	LogFile:  "archives.log",
+	Output:   "test.log",
+	Loglevel: "DEBUG",
+	Account:  "",
+	Port:     "8081",
+}
+
 func TestInserterTotals(t *testing.T) {
-	logger := misc.NewLogger()
+	logger := misc.NewLogger(CFG3.LitoPath, CFG3.Output)
 
 	// get database instance and create tables
-	path := lito.GetLitoPath()
-	path += "test/"
-	file := "test.db"
+	file := filepath.Join(CFG3.LitoPath, CFG3.Database)
+	_ = file
 
-	err := os.MkdirAll(path, 0777)
+	err := os.MkdirAll(CFG3.LitoPath, 0664)
 	if err != nil {
 		t.Errorf("%s", err)
 	}
 
-	db := database.New(logger, path, file)
+	db := database.New(logger, CFG3.LitoPath, CFG3.Database)
 	db.CreateTables()
 
 	expected := true
@@ -36,7 +48,8 @@ func TestInserterTotals(t *testing.T) {
 
 	// delete db
 	defer db.Close()
-	defer os.Remove(path + file)
+	defer os.Remove(file)
+	defer os.Remove(filepath.Join(CFG3.LitoPath, CFG3.LogFile))
 
 	t.Run("Test Insert Totals", func(t *testing.T) {
 		// Get node data
@@ -50,14 +63,14 @@ func TestInserterTotals(t *testing.T) {
 		err := db.InsertTotals(totals)
 		assert.NoError(t, err)
 
-		mapTotals := db.GetAllTotals()
+		jsonResp := db.GetAllTotals()
 
 		// Convert map to struct
 		dbTotals := new(parser.Totals)
-		dbTotals.SoftVotes, _ = strconv.Atoi((*mapTotals)["soft"]["count"])
-		dbTotals.CertVotes, _ = strconv.Atoi((*mapTotals)["cert"]["count"])
-		dbTotals.BlocksOnChain, _ = strconv.Atoi((*mapTotals)["onChain"]["count"])
-		dbTotals.BlocksProposed, _ = strconv.Atoi((*mapTotals)["proposed"]["count"])
+		dbTotals.SoftVotes = jsonResp.Soft.Count
+		dbTotals.CertVotes = jsonResp.Cert.Count
+		dbTotals.BlocksOnChain = jsonResp.OnChain.Count
+		dbTotals.BlocksProposed = jsonResp.Proposed.Count
 
 		assert.Equal(t, *totals, *dbTotals)
 	})

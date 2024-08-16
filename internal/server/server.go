@@ -32,12 +32,11 @@ func NewServer(l *zerolog.Logger, cfg *lito.Config) *http.Server {
 	}
 
 	port, _ := strconv.Atoi(portNum)
-	path := cfg.LitoPath
 
 	NewServer := &Server{
 		port:   port,
 		logger: l,
-		db:     database.New(l, path, "golito.db"),
+		db:     database.New(l, cfg.LitoPath, cfg.Database),
 	}
 
 	// Declare Server config

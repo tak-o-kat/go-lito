@@ -5,10 +5,24 @@ import (
 	"fmt"
 	"go-lito/cmd/lito"
 	"os/exec"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+var Path1 = lito.GetLitoPath()
+
+var CFG1 = lito.Config{
+	EnvVar:   "ALGORAND_DATA",
+	LitoPath: filepath.Join(Path1, "test"),
+	Database: "test.db",
+	LogFile:  "archives.log",
+	Output:   "test.log",
+	Loglevel: "DEBUG",
+	Account:  "",
+	Port:     "8081",
+}
 
 func TestGoalRunning(t *testing.T) {
 	// Shutdown algod before running these tests
@@ -37,7 +51,7 @@ func TestGoalNotRunning(t *testing.T) {
 	expected := errors.New("algod is not running")
 
 	var algod lito.AlgodInfo
-	got := lito.Prerequisites(&algod)
+	got := lito.Prerequisites(&algod, &CFG1)
 
 	if expected.Error() != got.Error() {
 		t.Errorf("expected %v; got %v", expected, got)
@@ -54,9 +68,8 @@ func TestAlgorandDataFolder(t *testing.T) {
 
 	token, _ := lito.GetDataFolderInfo("cat $ALGORAND_DATA/algod.net")
 	assert.NotEmpty(t, token)
-	
+
 	// Stop algod
 	stop := "goal node stop"
 	exec.Command("bash", "-c", stop).Run()
 }
-
