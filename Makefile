@@ -7,7 +7,7 @@ build:
 	@echo "Building..."
 	
 	
-	@go build -o main main.go
+	@go build -o lito main.go
 
 # Run the application
 run:

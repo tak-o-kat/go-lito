@@ -35,6 +35,12 @@ main
 
 # executable
 litod
+lito
+main
+
+# tars
+lito.tar.bz2
+lito.tar.bz
 
 # nohup
 nohup.out

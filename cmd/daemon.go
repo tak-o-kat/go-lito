@@ -33,7 +33,7 @@ func init() {
 	daemonCmd.Flags().StringP("loglevel", "l", "info", "set log level")
 	daemonCmd.Flags().StringP("account", "a", "", "set participation account")
 	daemonCmd.Flags().IntP("port", "p", 8081, "set server port")
-	daemonCmd.Flags().BoolP("server", "s", true, "start api server along with daemon")
+	daemonCmd.Flags().BoolP("server", "s", false, "start api server along with daemon")
 }
 
 func daemon(cmd *cobra.Command, args []string) {
