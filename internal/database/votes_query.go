@@ -38,7 +38,7 @@ func (s *service) GetVoteById(id int) (*RoundColumns, error) {
 	return record, nil
 }
 
-func (s *service) GetOrderedVotes(numRows int, order string) *VotesJson {
+func (s *service) GetSortedVotes(numRows int, order string) *VotesJson {
 	// Define query types
 	columns := `v.id, v.round, v.timestamp, v.typeId, t.typeName`
 	inner := `INNER JOIN types as t ON v.typeId = t.id`
@@ -53,7 +53,7 @@ func (s *service) GetOrderedVotes(numRows int, order string) *VotesJson {
 	return generateVotesJson(rows)
 }
 
-func (s *service) GetOrderedVotesByType(numRows int, order string, typeId int) *VotesJson {
+func (s *service) GetSortedVotesByType(numRows int, order string, typeId int) *VotesJson {
 	// Define query types
 	columns := `v.id, v.round, v.timestamp, v.typeId, t.typeName`
 	inner := fmt.Sprintf(`INNER JOIN types as t ON v.typeId = t.id WHERE t.id = %d`, typeId)

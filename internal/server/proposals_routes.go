@@ -8,14 +8,14 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
-func (s *Server) voteIdHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (s *Server) proposalIdHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	id, err := sanitizeId(ps.ByName("id"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	resp, err := s.db.GetVoteById(id)
+	resp, err := s.db.GetProposalById(id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -30,7 +30,7 @@ func (s *Server) voteIdHandler(w http.ResponseWriter, r *http.Request, ps httpro
 	_, _ = w.Write(jsonResp)
 }
 
-func (s *Server) votesHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (s *Server) proposalsHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	limit, err := sanitizeLimit(ps.ByName("limit"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -43,7 +43,7 @@ func (s *Server) votesHandler(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	jsonResp, err := json.Marshal(s.db.GetSortedVotes(limit, order))
+	jsonResp, err := json.Marshal(s.db.GetSortedProposals(limit, order))
 
 	if err != nil {
 		log.Fatalf("error handling JSON marshal. Err: %v", err)
@@ -52,7 +52,7 @@ func (s *Server) votesHandler(w http.ResponseWriter, r *http.Request, ps httprou
 	_, _ = w.Write(jsonResp)
 }
 
-func (s *Server) votesTypeIdHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (s *Server) proposalsTypeIdHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	id, err := sanitizeId(ps.ByName("id"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -72,13 +72,13 @@ func (s *Server) votesTypeIdHandler(w http.ResponseWriter, r *http.Request, ps h
 	}
 
 	// Check to make sure the typeid is valid for votes
-	if id != SOFT && id != CERT {
+	if id != PROPOSED && id != ONCHAIN {
 		http.Error(w, "invalid type id for votes", http.StatusBadRequest)
 		return
 	}
 
 	// Make db query call
-	jsonResp, err := json.Marshal(s.db.GetSortedVotesByType(limit, order, id))
+	jsonResp, err := json.Marshal(s.db.GetSortedProposalsByType(limit, order, id))
 
 	if err != nil {
 		log.Fatalf("error handling JSON marshal. Err: %v", err)
@@ -87,34 +87,14 @@ func (s *Server) votesTypeIdHandler(w http.ResponseWriter, r *http.Request, ps h
 	_, _ = w.Write(jsonResp)
 }
 
-func (s *Server) votesDateRangeHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (s *Server) proposalsDateRangeHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	timeRange, err := s.sanitizeTimeStampRange(ps.ByName("from"), ps.ByName("to"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	jsonResp, err := json.Marshal(s.db.GetVotesByDateRange(timeRange.From, timeRange.To))
-
-	if err != nil {
-		s.logger.Fatal().Msgf("error handling JSON marshal. Err: %v", err)
-	}
-	w.Header().Set("Content-Type", "application/json")
-	_, _ = w.Write(jsonResp)
-}
-
-func (s *Server) votesDateRangeParamHandler(w http.ResponseWriter, r *http.Request) {
-	fromParam := r.URL.Query().Get("from")
-	toParam := r.URL.Query().Get("to")
-	// typeIdParam := r.URL.Query().Get("typeid")
-
-	timeRange, err := s.sanitizeTimeStampRange(fromParam, toParam)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	jsonResp, err := json.Marshal(s.db.GetVotesByDateRange(timeRange.From, timeRange.To))
+	jsonResp, err := json.Marshal(s.db.GetProposalsByDateRange(timeRange.From, timeRange.To))
 
 	if err != nil {
 		s.logger.Fatal().Msgf("error handling JSON marshal. Err: %v", err)

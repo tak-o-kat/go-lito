@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -29,9 +28,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.GET("/api/totalid/:id", s.TotalsIdHandler)
 
 	// TODO: Add routes for /api/votes and /api/votes/:id
-	r.GET("/api/votes/limit/:limit/:sort", s.votesHandler)           // returns num votes asc by limit
-	r.GET("/api/votes/typeid/:id/:limit/:sort", s.voteTypeIdHandler) // return votes by type (SOFT or CERT) asc
-	r.GET("/api/voteid/:id", s.voteIdHandler)                        // return 1 vote by it's id
+	r.GET("/api/votes/limit/:limit/:sort", s.votesHandler)            // returns num votes asc by limit
+	r.GET("/api/votes/typeid/:id/:limit/:sort", s.votesTypeIdHandler) // return votes by type (SOFT or CERT) asc
+	r.GET("/api/voteid/:id", s.voteIdHandler)                         // return 1 vote by it's id
 
 	// ex. /api/votes/from/{timestamp}/to/{timestamp}
 	r.GET("/api/votes/from/:from/to/:to", s.votesDateRangeHandler)
@@ -40,6 +39,12 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandlerFunc(http.MethodGet, "/api/votes/range", s.votesDateRangeParamHandler)
 
 	// Add routes for proposals and onchain
+	r.GET("/api/proposals/limit/:limit/:sort", s.proposalsHandler)            // returns num proposals asc by limit
+	r.GET("/api/proposals/typeid/:id/:limit/:sort", s.proposalsTypeIdHandler) // return votes by type (SOFT or CERT) asc
+	r.GET("/api/proposalid/:id", s.proposalIdHandler)
+
+	// ex. /api/proposals/from/{timestamp}/to/{timestamp}
+	r.GET("/api/proposals/from/:from/to/:to", s.proposalsDateRangeHandler)
 
 	return r
 }
@@ -65,53 +70,10 @@ func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(jsonResp)
 }
 
-func (s *Server) TotalsHandler(w http.ResponseWriter, r *http.Request) {
-	s.logger.Info().Msgf("GET /api/totals/")
-	jsonResp, err := json.Marshal(s.db.GetAllTotals())
+// type allowedTypes interface {
+// 	*database.VotesJson | *database.ProposalsJson
+// }
 
-	if err != nil {
-		s.logger.Fatal().Msgf("error handling JSON marshal. Err: %v", err)
-	}
+// type transformFn[T allowedTypes] func(T) T
 
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(jsonResp)
-	if err != nil {
-		s.logger.Fatal().Msgf("error writing response. Err: %v", err)
-	}
-}
-
-func (s *Server) TotalsIdHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	id := ps.ByName("id")
-	if id == "" {
-		http.Error(w, "Missing id parameter", http.StatusBadRequest)
-		return
-	}
-
-	idInt, err := strconv.Atoi(id)
-	if err != nil {
-		http.Error(w, "Invalid id parameter", http.StatusBadRequest)
-		s.logger.Error().Msgf("Invalid id parameter. Err: %v", err)
-		return
-	}
-	s.logger.Info().Msgf("GET /api/totals/%d", idInt)
-
-	if idInt < 1 || idInt > 5 {
-		http.Error(w, "Invalid id parameter", http.StatusBadRequest)
-		s.logger.Error().Msgf("Invalid id parameter. Err: %v", idInt)
-		return
-	}
-
-	// TODO: Add condition to check if id is valid less than or equal to 5
-
-	jsonResp, err := json.Marshal(s.db.GetTotalFor(idInt))
-
-	if err != nil {
-		s.logger.Fatal().Msgf("error handling JSON marshal. Err: %v", err)
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	_, err = w.Write(jsonResp)
-	if err != nil {
-		s.logger.Fatal().Msgf("error writing response. Err: %v", err)
-	}
-}
+// func callDatabase() {

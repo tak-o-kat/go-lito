@@ -46,16 +46,24 @@ type Service interface {
 	GetTotalFor(typeId int) *TotalsColumns
 
 	// Methods used to query Votes table
-	GetOrderedVotes(rows int, order string) *VotesJson
-
-	GetOrderedVotesByType(numRows int, order string, typeId int) *VotesJson
-
 	GetVoteById(id int) (*RoundColumns, error)
+
+	GetSortedVotes(rows int, order string) *VotesJson
+
+	GetSortedVotesByType(numRows int, order string, typeId int) *VotesJson
 
 	GetVotesByDateRange(from string, to string) *VotesJson
 
 	// Methods used to query Proposals table
 	GetProposals(rows int) *[]parser.Blocks
+
+	GetProposalById(id int) (*ProposalsColumns, error)
+
+	GetSortedProposals(numRows int, order string) *ProposalsJson
+
+	GetSortedProposalsByType(numRows int, order string, typeId int) *ProposalsJson
+
+	GetProposalsByDateRange(from string, to string) *ProposalsJson
 
 	GetMinTimeStamp() (string, error)
 }

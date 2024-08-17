@@ -82,7 +82,7 @@ func TestInserterTotals(t *testing.T) {
 		err := db.InsertVotes(votes)
 		assert.NoError(t, err)
 
-		jsonVotes := db.GetOrderedVotes(len(*votes), "ASC")
+		jsonVotes := db.GetSortedVotes(len(*votes), "ASC")
 		var dbVotes = new([]parser.Votes)
 		for _, v := range *jsonVotes.Votes {
 			var vote = new(parser.Votes)
