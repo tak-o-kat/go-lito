@@ -15,7 +15,7 @@ func (la *LitoApp) Watcher() {
 	}
 	defer w.Close()
 
-	// Used for testing os.Getenv("ALGORAND_DATA")	+ "/node.test.log"
+	// Used for testing filepath.Join(os.Getenv("ALGORAND_DATA"), "/node.test.log")
 	file := la.AlgodInfo.ArchiveFile
 
 	watchType, isSet := os.LookupEnv("WATCH_TYPE")

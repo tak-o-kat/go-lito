@@ -78,8 +78,6 @@ func GetAccountAddress() (string, error) {
 }
 
 func GetLitoPath() string {
-	path := os.Getenv("ALGORAND_DATA")
-	path += "/lito/"
-
+	path := filepath.Join(os.Getenv("ALGORAND_DATA"), "lito")
 	return path
 }

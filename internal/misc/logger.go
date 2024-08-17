@@ -22,8 +22,8 @@ func NewLogger(path string, logFile string) *zerolog.Logger {
 		level = zerolog.InfoLevel
 	}
 
-	// Creata the path to the log file
-	err := os.MkdirAll(path, 0664)
+	// Create the path to the log file
+	err := os.MkdirAll(path, os.ModePerm)
 	if err != nil {
 		panic(err)
 	}
@@ -34,8 +34,8 @@ func NewLogger(path string, logFile string) *zerolog.Logger {
 	// Open log file and/or create it
 	log, err := os.OpenFile(
 		file,
-		os.O_APPEND|os.O_CREATE|os.O_WRONLY,
-		0664,
+		os.O_CREATE|os.O_APPEND|os.O_RDWR,
+		os.ModeAppend|os.ModePerm,
 	)
 	if err != nil {
 		panic(err)
