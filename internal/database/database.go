@@ -65,6 +65,7 @@ type Service interface {
 
 	GetProposalsByDateRange(from string, to string) *ProposalsJson
 
+	// Method to get min timestamp
 	GetMinTimeStamp() (string, error)
 }
 
