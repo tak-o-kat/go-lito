@@ -58,7 +58,7 @@ func (s *service) InsertTotals(totals *parser.Totals) error {
 	current.proposed = s.getTotalCountFrom(typeId.proposed)
 	current.onChain = s.getTotalCountFrom(typeId.onChain)
 
-	query := `UPDATE totals SET count = ? WHERE id = ?`
+	query := `UPDATE totals SET count = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ?`
 
 	// Update soft votes totals
 	_, err := s.db.Exec(query, current.soft+totals.SoftVotes, typeId.soft)
