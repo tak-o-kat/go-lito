@@ -210,7 +210,15 @@ func (s *service) GetMinTimeStamp() (string, error) {
 	var minTimeStamp string
 	if err := row.Scan(&minTimeStamp); err != nil {
 		logger.Error().Msg(fmt.Sprintf("Error scanning: %v", err))
-		return "", fmt.Errorf("no min timestamp found, wait for database to be populated")
+
+		// We can grab the timestamp from the types table until data is added
+		query = `SELECT createdAt FROM types LIMIT 1`
+		row = s.db.QueryRow(query)
+		logger.Warn().Msg("No MinTimeStamp found, using createdAt from types table")
+		if err := row.Scan(&minTimeStamp); err != nil {
+			logger.Error().Msg(fmt.Sprintf("Error scanning: %v", err))
+			return "", err
+		}
 	}
 
 	if minTimeStamp == "" {
