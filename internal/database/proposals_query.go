@@ -8,7 +8,7 @@ import (
 type ProposalsJson struct {
 	Count         int                 `json:"count"`
 	RootType      string              `json:"rootType"`
-	hasCurrentLog bool                `json:"hasCurrentLog"`
+	HasCurrentLog bool                `json:"hasCurrentLog"`
 	Proposals     *[]ProposalsColumns `json:"proposals"`
 }
 
@@ -120,7 +120,7 @@ func generateProposalsJson(rows *sql.Rows) *ProposalsJson {
 	var json = new(ProposalsJson)
 	json.Count = len(proposals)
 	json.RootType = "proposals"
-	json.hasCurrentLog = false
+	json.HasCurrentLog = false
 	json.Proposals = &proposals
 
 	return json

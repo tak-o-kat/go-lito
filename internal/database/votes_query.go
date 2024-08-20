@@ -8,7 +8,7 @@ import (
 type VotesJson struct {
 	Count         int             `json:"count"`
 	RootType      string          `json:"rootType"`
-	hasCurrentLog bool            `json:"hasCurrentLog"`
+	HasCurrentLog bool            `json:"hasCurrentLog"`
 	Votes         *[]RoundColumns `json:"votes"`
 }
 
@@ -116,7 +116,7 @@ func generateVotesJson(rows *sql.Rows) *VotesJson {
 	var json = new(VotesJson)
 	json.Count = len(votes)
 	json.RootType = "votes"
-	logger.Debug().Msg(fmt.Sprintf("Found %v", votes))
+	json.HasCurrentLog = false
 	json.Votes = &votes
 
 	return json
