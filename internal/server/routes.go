@@ -16,6 +16,8 @@ const (
 	FROZEN   = 5
 )
 
+const BAD_REQUEST = "400 Bad Request | "
+
 func (s *Server) RegisterRoutes() http.Handler {
 	s.logger.Info().Msg("Registering routes")
 	r := httprouter.New()

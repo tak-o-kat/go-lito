@@ -89,7 +89,7 @@ func (s *service) GetProposalsByDateRange(from string, to string) *ProposalsJson
 
 func generateProposalsJson(rows *sql.Rows) *ProposalsJson {
 	var row = new(ProposalsColumns)
-	proposals := new([]ProposalsColumns)
+	proposals := make([]ProposalsColumns, 0)
 
 	defer rows.Close()
 	for rows.Next() {
@@ -105,7 +105,7 @@ func generateProposalsJson(rows *sql.Rows) *ProposalsJson {
 			logger.Error().Msgf("Error scanning: %v", err)
 		}
 		// Add to votes to slice
-		*proposals = append(*proposals, ProposalsColumns{
+		proposals = append(proposals, ProposalsColumns{
 			Id:        row.Id,
 			Round:     row.Round,
 			TimeStamp: row.TimeStamp,
@@ -117,9 +117,9 @@ func generateProposalsJson(rows *sql.Rows) *ProposalsJson {
 
 	// Create json and return
 	var json = new(ProposalsJson)
-	json.Count = len(*proposals)
+	json.Count = len(proposals)
 	json.RootType = "proposals"
-	json.Proposals = proposals
+	json.Proposals = &proposals
 
 	return json
 }

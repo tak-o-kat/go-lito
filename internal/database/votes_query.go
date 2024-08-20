@@ -32,7 +32,7 @@ func (s *service) GetVoteById(id int) (*RoundColumns, error) {
 	err := row.Scan(&record.Id, &record.Round, &record.TimeStamp, &record.TypeId, &record.TypeName)
 	if err != nil {
 		logger.Error().Msgf("Error scanning: %v", err)
-		return nil, fmt.Errorf("no vote found with id %d", id)
+		return new(RoundColumns), fmt.Errorf("no vote found with id %d", id)
 	}
 
 	return record, nil
@@ -88,7 +88,7 @@ func (s *service) GetVotesByDateRange(from string, to string) *VotesJson {
 
 func generateVotesJson(rows *sql.Rows) *VotesJson {
 	var row = new(RoundColumns)
-	votes := new([]RoundColumns)
+	votes := make([]RoundColumns, 0)
 
 	defer rows.Close()
 	for rows.Next() {
@@ -102,7 +102,7 @@ func generateVotesJson(rows *sql.Rows) *VotesJson {
 			logger.Error().Msgf("Error scanning: %v", err)
 		}
 		// Add to votes to slice
-		*votes = append(*votes, RoundColumns{
+		votes = append(votes, RoundColumns{
 			Id:        row.Id,
 			Round:     row.Round,
 			TimeStamp: row.TimeStamp,
@@ -113,9 +113,10 @@ func generateVotesJson(rows *sql.Rows) *VotesJson {
 
 	// Create json and return
 	var json = new(VotesJson)
-	json.Count = len(*votes)
+	json.Count = len(votes)
 	json.RootType = "votes"
-	json.Votes = votes
+	logger.Debug().Msg(fmt.Sprintf("Found %v", votes))
+	json.Votes = &votes
 
 	return json
 }

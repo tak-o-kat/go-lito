@@ -17,7 +17,7 @@ daemon:
 	@go run main.go daemon
 
 server:
-	@go run main.go server -d golito2.db
+	@go run main.go server
 
 # Test the application
 test:

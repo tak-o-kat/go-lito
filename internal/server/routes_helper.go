@@ -83,7 +83,7 @@ func sanitizeTime(tp string) (string, error) {
 func (s *Server) sanitizeTimeStampRange(from string, to string) (Range, error) {
 	fromParam, err := sanitizeTime(from)
 	if err != nil {
-		s.logger.Error().Msgf("error handling JSON marshal. Err: %v", err)
+		s.logger.Error().Msgf("error handling %v", err)
 		return Range{}, err
 	}
 
