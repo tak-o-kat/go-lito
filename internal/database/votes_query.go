@@ -6,9 +6,10 @@ import (
 )
 
 type VotesJson struct {
-	Count    int             `json:"count"`
-	RootType string          `json:"rootType"`
-	Votes    *[]RoundColumns `json:"votes"`
+	Count         int             `json:"count"`
+	RootType      string          `json:"rootType"`
+	hasCurrentLog bool            `json:"hasCurrentLog"`
+	Votes         *[]RoundColumns `json:"votes"`
 }
 
 type RoundColumns struct {
