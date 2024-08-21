@@ -53,9 +53,7 @@ type SortedData struct {
 }
 
 func Parser(l *zerolog.Logger, logFile string, account string) *SortedData {
-	l.Debug().Msg("Parsing: " + logFile)
-	l.Debug().Msg("Account: " + account)
-
+	l.Info().Msgf("Parsing: %s", logFile)
 	file, ferr := os.Open(logFile)
 	if ferr != nil {
 		l.Error().Msg(fmt.Sprintf("%s", ferr))

@@ -25,6 +25,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.HandlerFunc(http.MethodGet, "/health", s.healthHandler)
 	r.HandlerFunc(http.MethodGet, "/test", s.TestHandler)
 
+	// Route for latest/current data, data in node.log, not the database
+	r.HandlerFunc(http.MethodGet, "/api/logs/", s.logsHandler)
+
 	// Routes for /api/totals
 	r.HandlerFunc(http.MethodGet, "/api/totals/", s.TotalsHandler)
 	r.GET("/api/totalid/:id", s.TotalsIdHandler)

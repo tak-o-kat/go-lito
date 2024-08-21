@@ -2,36 +2,27 @@ package server
 
 import (
 	"encoding/json"
-	"go-lito/internal/parser"
 	"net/http"
 	"strconv"
 
 	"github.com/julienschmidt/httprouter"
 )
 
-func getCurrentLogData(s *Server, data chan<- *parser.SortedData) {
-	nodeData := parser.Parser(s.logger, s.logFile, s.account)
-	data <- nodeData
-}
-
 func (s *Server) TotalsHandler(w http.ResponseWriter, r *http.Request) {
 	s.logger.Info().Msgf("GET /api/totals/")
 
 	// Grab the total votes from the current log
-	resultData := make(chan *parser.SortedData)
+	// resultData := make(chan *parser.SortedData)
 
-	go getCurrentLogData(s, resultData)
-
+	// go getCurrentLogData(s, resultData)
 	totals := s.db.GetAllTotals()
-
-	result := <-resultData
-	s.logger.Debug().Msgf("Total votes: %d", result.Totals)
+	// result := <-resultData
 
 	// add current totals to database totals
-	totals.Cert.Count += result.Totals.CertVotes
-	totals.Soft.Count += result.Totals.SoftVotes
-	totals.Proposed.Count += result.Totals.BlocksProposed
-	totals.OnChain.Count += result.Totals.BlocksOnChain
+	// totals.Cert.Count += result.Totals.CertVotes
+	// totals.Soft.Count += result.Totals.SoftVotes
+	// totals.Proposed.Count += result.Totals.BlocksProposed
+	// totals.OnChain.Count += result.Totals.BlocksOnChain
 
 	jsonResp, err := json.Marshal(totals)
 	if err != nil {

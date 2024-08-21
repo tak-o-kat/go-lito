@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"go-lito/internal/parser"
 	"strconv"
 	"strings"
 	"time"
@@ -13,6 +14,11 @@ const MAX_TYPE_ID = 5
 type Range struct {
 	From string `json:"from"`
 	To   string `json:"to"`
+}
+
+func getCurrentLogData(s *Server, data chan<- *parser.SortedData) {
+	nodeData := parser.Parser(s.logger, s.logFile, s.account)
+	data <- nodeData
 }
 
 func sanitizeLimit(num string) (int, error) {
