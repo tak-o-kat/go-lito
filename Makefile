@@ -1,4 +1,10 @@
 # Simple Makefile for a Go project
+BINARY_NAME=lito
+
+# Compile flags
+GCFLAGS=-gcflags="all=-trimpath=$(CURDIR)" -asmflags="all=-trimpath=$(CURDIR)"
+
+VERSION?=v0.1.4
 
 # Build the application
 all: build
@@ -7,7 +13,7 @@ build:
 	@echo "Building..."
 	
 	
-	@go build -o lito main.go
+	@go build $(GCFLAGS) -o $(BINARY_NAME)
 
 # Run the application
 run:
