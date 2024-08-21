@@ -1,0 +1,16 @@
+[Unit]
+Description=Service is used to collect algod logs in a persistent database.
+Requires=algorand.service
+After=algorand.service
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+ExecStart=/location/of/lito daemon -s
+WorkingDirectory=/location/of/lito
+Environment="ALGORAND_DATA=/var/lib/algorand"
+Environment="APP_ENV=debug"
