@@ -27,6 +27,7 @@ func (s *Server) proposalIdHandler(w http.ResponseWriter, r *http.Request, ps ht
 		s.logger.Error().Msgf("error handling JSON marshal. %v", err)
 		return
 	}
+
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(jsonResp)
 }

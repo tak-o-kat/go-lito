@@ -6,6 +6,7 @@ import (
 	"go-lito/internal/database"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -16,9 +17,11 @@ import (
 const PORT_DEFAULT = "8081"
 
 type Server struct {
-	port   int
-	logger *zerolog.Logger
-	db     database.Service
+	port    int
+	logger  *zerolog.Logger
+	db      database.Service
+	account string
+	logFile string
 }
 
 func NewServer(l *zerolog.Logger, cfg *lito.Config) *http.Server {
@@ -33,10 +36,30 @@ func NewServer(l *zerolog.Logger, cfg *lito.Config) *http.Server {
 
 	port, _ := strconv.Atoi(portNum)
 
+	// Get the part account
+	account := cfg.Account
+	if account == "" {
+		account = os.Getenv("ACCOUNT")
+		if account == "" {
+			account, _ = lito.GetAccountAddress()
+		}
+	}
+
+	logFile := os.Getenv("CURRENT_LOG")
+	if logFile == "" {
+		logFile = "node.log"
+	}
+
+	// Create the path to the log file
+	path := os.Getenv("ALGORAND_DATA")
+	pathFile := filepath.Join(path, logFile)
+
 	NewServer := &Server{
-		port:   port,
-		logger: l,
-		db:     database.New(l, cfg.LitoPath, cfg.Database),
+		port:    port,
+		logger:  l,
+		db:      database.New(l, cfg.LitoPath, cfg.Database),
+		account: account,
+		logFile: pathFile,
 	}
 
 	// Declare Server config
