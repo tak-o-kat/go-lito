@@ -1,10 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "./app/actions/session-actions";
 
-const LOGIN_REQUIRED = true;
-const MATCHER = LOGIN_REQUIRED
-  ? "/((?!_next/static|_next/image|favicon.ico|login).*)"
-  : "/:path*";
 export default async function middleware(req: NextRequest) {
   const session = await getSession();
   if (!session.isLoggedIn) {
