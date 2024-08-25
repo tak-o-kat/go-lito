@@ -3,7 +3,6 @@ import { hashPassword } from "@/lib/hashing";
 
 export async function storeUser(username: string, password: string) {
   // Create users table if not exists
-  console.log("Storing user in database");
   try {
     await createTable(
       `CREATE TABLE IF NOT EXISTS users (
