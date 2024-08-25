@@ -12,6 +12,7 @@ export interface FormValues {
   username?: string;
   password: string;
   confirmPassword?: string;
+  currentPassword?: string;
   error?: {
     name?: boolean;
     password?: boolean;
@@ -35,6 +36,8 @@ export function getFormValues(typeName: string, formData: FormData) {
     password: formData.get("password") as string,
     confirmPassword:
       typeName !== "login" ? (formData.get("confirm-password") as string) : "",
+    currentPassword:
+      typeName === "renew" ? (formData.get("current-password") as string) : "",
     error: undefined,
   };
 

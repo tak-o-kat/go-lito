@@ -106,6 +106,25 @@ function getConfirmPasswordInput(state: any) {
   );
 }
 
+function getCurrentPasswordInput(state: any) {
+  const inputType = state?.error?.split(" ")[0];
+  return (
+    <div className="grid gap-2">
+      <Label htmlFor="current-password">Current Password</Label>
+      <Input
+        id="current-password"
+        type="password"
+        name="current-password"
+        className={`${inputType === "current" ? "border-destructive" : ""}`}
+        required
+      />
+      {inputType === "current" && (
+        <p className="text-destructive">{state?.error}</p>
+      )}
+    </div>
+  );
+}
+
 export function getAuthInputs(typeName: authTypes, state: any) {
   // If error doesn't equal the input types then it's an alt error
   const errorType = state?.error?.split(" ")[0];
@@ -139,6 +158,35 @@ export function getAuthInputs(typeName: authTypes, state: any) {
       </CardContent>
       <CardFooter>
         <Button className="w-full">{getPageButton(typeName)}</Button>
+      </CardFooter>
+    </Card>
+  );
+}
+
+export function getUpdatePassword(typeName: authTypes, state: any) {
+  return (
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle className="text-2xl">{getPageTitle(typeName)}</CardTitle>
+        <CardDescription className="">
+          {getPageDescription(typeName)}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-4 ">
+        <div className="gap-2 hidden">
+          <input
+            value={typeName}
+            id="type-name"
+            type="hidden"
+            name="type-name"
+          />
+        </div>
+        {getCurrentPasswordInput(state)}
+        {getPasswordInput(state)}
+        {getConfirmPasswordInput(state)}
+      </CardContent>
+      <CardFooter className="border-t px-6 py-4">
+        <Button className="">{getPageButton(typeName)}</Button>
       </CardFooter>
     </Card>
   );

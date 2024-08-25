@@ -1,5 +1,6 @@
 import { createTable, doesTableExist, executeQuery, queryOne } from "@/lib/db";
 import { hashPassword } from "@/lib/hashing";
+import { FormValues } from "./session";
 
 export async function storeUser(username: string, password: string) {
   // Create users table if not exists
@@ -26,9 +27,12 @@ export async function storeUser(username: string, password: string) {
   }
 }
 
-export async function updateUserPassword(username: string, password: string) {
+export async function updateUserPassword(
+  username: string,
+  formValues: FormValues
+) {
   const query = `UPDATE users SET password = ? WHERE username = ?`;
-  const hashedPassword = await hashPassword(password);
+  const hashedPassword = await hashPassword(formValues.password);
   try {
     await executeQuery(query, [hashedPassword, username]);
   } catch (error) {

@@ -112,14 +112,34 @@ export async function renew(_prevState: authFormState, formData: FormData) {
 
   const typeName = formData.get("type-name") as string;
   const formValues: FormValues = getFormValues(typeName, formData);
-
+  console.log("renew", formValues);
   if (formValues.error) {
     return { error: formValues.error.message };
   }
 
-  // Update the users password
-  session.username = "test@gmail.com";
-  updateUserPassword(session.username!, formValues.password);
+  // check if the current password is correct
+  const currentPasswordQuery = `SELECT * FROM users WHERE username = ? LIMIT 1`;
+  const currPass = (await queryOne(currentPasswordQuery, [
+    session.username as string,
+  ])) as user;
+
+  if (currPass) {
+    const match = await comparePasswords(
+      formValues.currentPassword!,
+      currPass.password
+    );
+    // If passwords do not match return error
+    if (!match) {
+      return {
+        error: "current password is incorrect",
+      };
+    }
+  } else {
+    return {
+      error: "user in session not found",
+    };
+  }
+  updateUserPassword(session.username!, formValues);
 
   // Verify updated password
   const query = `SELECT * FROM users WHERE username = ? LIMIT 1`;
@@ -133,6 +153,7 @@ export async function renew(_prevState: authFormState, formData: FormData) {
   } else {
     console.log("Something went wrong with username");
   }
+  // TODO: Add notification on success
   await session.save();
 }
 
