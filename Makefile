@@ -33,7 +33,7 @@ test:
 # Clean the binary
 clean:
 	@echo "Cleaning..."
-	@rm -f litod
+	@rm -f lito
 
 # Live Reload
 watch:

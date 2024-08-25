@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/common/theme-toggle";
-import { getSession } from "@/app/actions/session-actions";
+import { getSession, logout } from "@/app/actions/session-actions";
 
 export default async function NavBar() {
   const session = await getSession();
@@ -138,7 +138,16 @@ export default async function NavBar() {
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuItem>Support</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Logout</DropdownMenuItem>
+                <DropdownMenuItem>
+                  <form action={logout} className="w-full">
+                    <Button
+                      variant="ghost"
+                      className="w-full h-6 justify-start px-0"
+                    >
+                      Logout
+                    </Button>
+                  </form>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

@@ -3,7 +3,7 @@
 import { SessionData, sessionOptions, defaultSession } from "@/lib/session";
 // import { defaultSession, sessionOptions } from "@/libs/lib";
 import { getIronSession } from "iron-session";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 // ADD THE GETSESSION ACTION
@@ -23,6 +23,11 @@ export async function login(
   prevState: { error: undefined | string },
   formData: FormData
 ) {
+  const headersList = headers();
+  const referer = headersList.get("referer") as string | URL;
+  const url = new URL(referer);
+  const searchParams = url.searchParams;
+
   const session = await getSession();
 
   const formUsername = formData.get("username") as string;
@@ -49,10 +54,13 @@ export async function login(
   session.username = user.username;
 
   await session.save();
-  redirect("/");
+  const redirectTo = searchParams.get("redirectTo") || "/";
+  console.log("here " + redirectTo);
+
+  redirect(redirectTo);
 }
 
-export async function logout(formData: FormData) {
+export async function logout() {
   const session = await getSession();
   session.destroy();
   redirect("/login");
