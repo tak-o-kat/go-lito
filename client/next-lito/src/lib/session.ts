@@ -13,6 +13,9 @@ export interface FormValues {
   password: string;
   confirmPassword?: string;
   error?: {
+    name?: boolean;
+    password?: boolean;
+    confirmPassword?: boolean;
     message?: string;
   };
 }
@@ -32,11 +35,12 @@ export function getFormValues(typeName: string, formData: FormData) {
     password: formData.get("password") as string,
     confirmPassword:
       typeName !== "login" ? (formData.get("confirm-password") as string) : "",
+    error: undefined,
   };
 
   if (typeName !== "login" && retValue.password !== retValue.confirmPassword) {
     retValue.error = {
-      message: "Passwords do not match!",
+      message: "passwords do not match!",
     };
   }
 

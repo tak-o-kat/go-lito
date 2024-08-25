@@ -4,19 +4,34 @@ import { hashPassword } from "@/lib/hashing";
 export async function storeUser(username: string, password: string) {
   // Create users table if not exists
   console.log("Storing user in database");
-  await createTable(
-    `CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT, 
-      username TEXT, 
-      password TEXT
-    )`
-  );
+  try {
+    await createTable(
+      `CREATE TABLE IF NOT EXISTS users (
+          id INTEGER PRIMARY KEY AUTOINCREMENT, 
+          username TEXT UNIQUE NOT NULL, 
+          password TEXT NOT NULL
+        )`
+    );
+  } catch (error) {
+    throw error;
+  }
 
   // Hash password and store in DB
   const query = `INSERT INTO users (username, password) VALUES (?, ?)`;
   const hashedPassword = await hashPassword(password);
   try {
     await executeQuery(query, [username, hashedPassword]);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function updateUserPassword(username: string, password: string) {
+  const query = `UPDATE users SET password = ? WHERE username = ?`;
+  const hashedPassword = await hashPassword(password);
+  try {
+    await executeQuery(query, [hashedPassword, username]);
   } catch (error) {
     console.log(error);
     throw error;

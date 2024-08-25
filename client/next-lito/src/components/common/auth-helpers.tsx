@@ -46,15 +46,73 @@ function getPageButton(typeName: authTypes) {
 }
 
 function getUsernameInput(state: any) {
+  const inputType = state?.error?.split(" ")[0];
   return (
     <div className="grid gap-2">
       <Label htmlFor="username">Username</Label>
-      <Input id="username" type="username" name="username" required />
+      <Input
+        id="username"
+        type="username"
+        name="username"
+        className={`${inputType === "username" ? "border-destructive" : ""}`}
+        required
+      />
+      {inputType === "username" && (
+        <p className="text-destructive">{state?.error}</p>
+      )}
+    </div>
+  );
+}
+
+function getPasswordInput(state: any) {
+  const inputType = state?.error?.split(" ")[0];
+  return (
+    <div className="grid gap-2">
+      <Label htmlFor="password">Password</Label>
+      <Input
+        id="password"
+        type="password"
+        name="password"
+        className={`${
+          inputType === "password" || inputType === "passwords"
+            ? "border-destructive"
+            : ""
+        }`}
+        required
+      />
+      {inputType === "password" && (
+        <p className="text-destructive">{state?.error}</p>
+      )}
+    </div>
+  );
+}
+
+function getConfirmPasswordInput(state: any) {
+  const inputType = state?.error?.split(" ")[0];
+  return (
+    <div className="grid gap-2">
+      <Label htmlFor="confirm-password">Confirm Password</Label>
+      <Input
+        id="confirm-password"
+        type="password"
+        name="confirm-password"
+        className={`${inputType === "passwords" ? "border-destructive" : ""}`}
+        required
+      />
+      {inputType === "passwords" && (
+        <p className="text-destructive">{state?.error}</p>
+      )}
     </div>
   );
 }
 
 export function getAuthInputs(typeName: authTypes, state: any) {
+  // If error doesn't equal the input types then it's an alt error
+  const errorType = state?.error?.split(" ")[0];
+  const altErr =
+    errorType !== "username" &&
+    errorType !== "passwords" &&
+    errorType !== "password";
   return (
     <Card className="w-full sm:w-96 max-w-sm p-3">
       <CardHeader>
@@ -75,28 +133,9 @@ export function getAuthInputs(typeName: authTypes, state: any) {
           />
         </div>
         {typeName !== "renew" && getUsernameInput(state)}
-        <div className="grid gap-2">
-          <Label htmlFor="password">Password</Label>
-          <Input
-            id={`${typeName}-password`}
-            type="password"
-            name="password"
-            required
-          />
-          {state?.error && <p className="text-destructive">{state?.error}</p>}
-        </div>
-        {typeName !== "login" && (
-          <div className="grid gap-2">
-            <Label htmlFor="confirm-password">Confirm Password</Label>
-            <Input
-              id={`confirm-password`}
-              type="password"
-              name="confirm-password"
-              required
-            />
-            {state?.error && <p className="text-destructive">{state?.error}</p>}
-          </div>
-        )}
+        {getPasswordInput(state)}
+        {typeName !== "login" && getConfirmPasswordInput(state)}
+        {altErr && <p className="text-destructive">{state?.error}</p>}
       </CardContent>
       <CardFooter>
         <Button className="w-full">{getPageButton(typeName)}</Button>

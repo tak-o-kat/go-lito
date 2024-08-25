@@ -23,7 +23,7 @@ export async function executeQuery(query: string, params: string[] = []) {
 export async function queryOne(query: string, params: string[] = []) {
   const db = await getDb();
   const statement = db.prepare(query);
-  return statement.get();
+  return statement.get(params);
 }
 
 export async function createTable(query: string) {
