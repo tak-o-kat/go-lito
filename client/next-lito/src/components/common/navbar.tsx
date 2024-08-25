@@ -14,6 +14,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/common/theme-toggle";
 import { logout } from "@/app/actions/auth-actions";
 import { getSession } from "@/lib/session";
+import ThemeDropdown from "./theme-dropdown";
 
 export default async function NavBar() {
   const session = await getSession();
@@ -31,7 +32,7 @@ export default async function NavBar() {
               <span className="sr-only">Lito UI</span>
             </Link>
             <Link
-              href="/"
+              href="/dashboard"
               className="text-muted-foreground transition-colors hover:text-foreground"
             >
               Dashboard
@@ -55,7 +56,7 @@ export default async function NavBar() {
               Proposals
             </Link>
             <Link
-              href="/settings"
+              href="/dashboard/settings"
               className="text-foreground transition-colors hover:text-foreground"
             >
               Settings
@@ -82,7 +83,7 @@ export default async function NavBar() {
                   <span className="sr-only">Acme Inc</span>
                 </Link>
                 <Link
-                  href="#"
+                  href="/dashboard"
                   className="text-muted-foreground hover:text-foreground"
                 >
                   Dashboard
@@ -100,12 +101,9 @@ export default async function NavBar() {
                   Products
                 </Link>
                 <Link
-                  href="#"
-                  className="text-muted-foreground hover:text-foreground"
+                  href="/dashboard/settings"
+                  className="hover:text-foreground"
                 >
-                  Customers
-                </Link>
-                <Link href="#" className="hover:text-foreground">
                   Settings
                 </Link>
               </nav>
@@ -136,14 +134,16 @@ export default async function NavBar() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Support</DropdownMenuItem>
+                <DropdownMenuItem className="flex justify-center">
+                  Settings
+                </DropdownMenuItem>
+                <ThemeDropdown />
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
                   <form action={logout} className="w-full">
                     <Button
                       variant="ghost"
-                      className="w-full h-6 justify-start px-0"
+                      className="w-full h-6 justify-center px-0"
                     >
                       Logout
                     </Button>

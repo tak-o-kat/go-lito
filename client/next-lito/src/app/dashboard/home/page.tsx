@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/session";
-import { logout } from "./actions/auth-actions";
+import { logout } from "@/app/actions/auth-actions";
 import { Button } from "@/components/ui/button";
 
 export default async function Home() {

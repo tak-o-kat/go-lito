@@ -11,7 +11,7 @@ export default async function LoginLayout({
     redirect("/");
   }
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between px-4 py-20">
+    <main className="flex min-h-screen flex-col items-center justify-start px-4 py-24">
       <div className="z-10 w-full max-w-5xl items-center justify-center text-sm lg:flex">
         {children}
       </div>
