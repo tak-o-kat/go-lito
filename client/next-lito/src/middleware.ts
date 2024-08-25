@@ -5,7 +5,6 @@ export default async function middleware(req: NextRequest) {
   const session = await getSession();
   if (!session.isLoggedIn) {
     // Get the current path
-    console.log("not logged in: " + session.isLoggedIn);
     const url = req.nextUrl.clone();
     const currentPath = url.pathname;
 

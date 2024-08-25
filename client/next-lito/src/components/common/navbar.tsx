@@ -11,14 +11,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { ThemeToggle } from "@/components/common/theme-toggle";
 import { logout } from "@/app/actions/auth-actions";
-import { getSession } from "@/lib/session";
 import ThemeDropdown from "./theme-dropdown";
 
 export default async function NavBar() {
-  const session = await getSession();
-  console.log(session);
   return (
     <div className="flex flex-row justify-center h-[4rem] w-full border-b">
       <div className="flex min-h-screen w-full flex-col">

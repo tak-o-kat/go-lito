@@ -83,7 +83,6 @@ export async function login(_prevState: authFormState, formData: FormData) {
   const query = `SELECT * FROM users WHERE username = ? LIMIT 1`;
   const user = (await queryOne(query, [formValues.username as string])) as user;
 
-  console.log(user);
   if (user) {
     const match = await comparePasswords(formValues.password, user.password);
     // If passwords do not match return error
@@ -105,7 +104,6 @@ export async function login(_prevState: authFormState, formData: FormData) {
   await session.save();
 
   const redirectTo = getRedirectToUrl();
-  console.log(redirectTo);
   redirect(redirectTo);
 }
 
