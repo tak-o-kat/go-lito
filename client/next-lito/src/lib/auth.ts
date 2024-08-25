@@ -1,4 +1,4 @@
-import { createTable, executeQuery, queryOne } from "@/lib/db";
+import { createTable, doesTableExist, executeQuery, queryOne } from "@/lib/db";
 import { hashPassword } from "@/lib/hashing";
 
 export async function storeUser(username: string, password: string) {
@@ -36,4 +36,17 @@ export async function updateUserPassword(username: string, password: string) {
     console.log(error);
     throw error;
   }
+}
+
+export async function doesAtLeastOneUserExist() {
+  // check if users table exists
+  const tableExists = await doesTableExist("users");
+  if (!tableExists) {
+    return false;
+  }
+
+  const query = `SELECT * FROM users LIMIT 1`;
+  const user = await queryOne(query, []);
+  const userExists = user ? true : false;
+  return userExists;
 }

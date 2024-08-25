@@ -30,3 +30,13 @@ export async function createTable(query: string) {
   const db = await getDb();
   db.exec(query);
 }
+
+export async function doesTableExist(tableName: string) {
+  const db = await getDb();
+  const query = `SELECT name FROM sqlite_master WHERE type='table' AND name = '${tableName}'`;
+  const stmt = db.prepare(query);
+  const rows = stmt.get();
+
+  // if no rows are returned, then the table doesn't exist
+  return rows ? true : false;
+}
