@@ -17,14 +17,20 @@ import (
 const PORT_DEFAULT = "8081"
 
 type Server struct {
-	port    int
-	logger  *zerolog.Logger
-	db      database.Service
-	account string
-	logFile string
+	netInterface string
+	port         int
+	logger       *zerolog.Logger
+	db           database.Service
+	account      string
+	logFile      string
 }
 
 func NewServer(l *zerolog.Logger, cfg *lito.Config) *http.Server {
+	netInterface := os.Getenv("NET_INTERFACE")
+	if cfg.NetInterface != "" {
+		netInterface = cfg.NetInterface
+	}
+
 	portNum, _ := os.LookupEnv("PORT")
 	if portNum == "" {
 		portNum = cfg.Port
@@ -55,22 +61,24 @@ func NewServer(l *zerolog.Logger, cfg *lito.Config) *http.Server {
 	pathFile := filepath.Join(path, logFile)
 
 	NewServer := &Server{
-		port:    port,
-		logger:  l,
-		db:      database.New(l, cfg.LitoPath, cfg.Database),
-		account: account,
-		logFile: pathFile,
+		netInterface: netInterface,
+		port:         port,
+		logger:       l,
+		db:           database.New(l, cfg.LitoPath, cfg.Database),
+		account:      account,
+		logFile:      pathFile,
 	}
 
 	// Declare Server config
 	server := &http.Server{
-		Addr:         fmt.Sprintf(":%d", NewServer.port),
+		Addr:         fmt.Sprintf("%s:%d", NewServer.netInterface, NewServer.port),
 		Handler:      NewServer.RegisterRoutes(),
 		IdleTimeout:  time.Minute,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 30 * time.Second,
 	}
 
+	l.Info().Msg(fmt.Sprintf("Starting server on interface %s", NewServer.netInterface))
 	l.Info().Msg(fmt.Sprintf("Starting server on port %d", NewServer.port))
 
 	return server

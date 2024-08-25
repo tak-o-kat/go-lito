@@ -32,6 +32,7 @@ func init() {
 	daemonCmd.Flags().StringP("output", "o", "lito.log", "file to store lito logs")
 	daemonCmd.Flags().StringP("loglevel", "l", "info", "set log level")
 	daemonCmd.Flags().StringP("account", "a", "", "set participation account")
+	daemonCmd.Flags().StringP("net", "n", "127.0.0.1", "set network interface")
 	daemonCmd.Flags().IntP("port", "p", 8081, "set server port")
 	daemonCmd.Flags().BoolP("server", "s", false, "start api server along with daemon")
 }
@@ -44,6 +45,7 @@ func daemon(cmd *cobra.Command, args []string) {
 	output, _ := cmd.Flags().GetString("output")
 	loglevel, _ := cmd.Flags().GetString("loglevel")
 	account, _ := cmd.Flags().GetString("account")
+	netInterface, _ := cmd.Flags().GetString("net")
 	port, _ := cmd.Flags().GetInt("port")
 	isServer, _ := cmd.Flags().GetBool("server")
 
@@ -58,6 +60,7 @@ func daemon(cmd *cobra.Command, args []string) {
 	cfg.Output = output
 	cfg.Loglevel = loglevel
 	cfg.Account = account
+	cfg.NetInterface = netInterface
 	cfg.Port = strconv.Itoa(port)
 
 	logger := misc.NewLogger(cfg.LitoPath, output)

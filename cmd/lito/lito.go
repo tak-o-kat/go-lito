@@ -11,14 +11,15 @@ import (
 )
 
 type Config struct {
-	EnvVar   string // Algod data environment variable
-	LitoPath string // Lito folder path
-	Database string // Database file
-	LogFile  string // Algod archive Log file to parse/watch
-	Output   string // Output log file to store lito logs
-	Loglevel string // Set log level
-	Account  string // Set participation account
-	Port     string // Server port
+	EnvVar       string // Algod data environment variable
+	LitoPath     string // Lito folder path
+	Database     string // Database file
+	LogFile      string // Algod archive Log file to parse/watch
+	Output       string // Output log file to store lito logs
+	Loglevel     string // Set log level
+	Account      string // Set participation account
+	NetInterface string // Network interface
+	Port         string // Server port
 }
 
 type AlgodInfo struct {

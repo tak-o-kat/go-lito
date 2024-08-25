@@ -30,6 +30,7 @@ func init() {
 	serverCmd.Flags().StringP("logfile", "f", "node.log", "current log file from algod")
 	serverCmd.Flags().StringP("output", "o", "lito.log", "file to store lito logs")
 	serverCmd.Flags().StringP("loglevel", "l", "info", "set log level")
+	serverCmd.Flags().StringP("net", "n", "127.0.0.1", "set network interface")
 	serverCmd.Flags().IntP("port", "p", 8081, "set server port")
 }
 
@@ -40,6 +41,7 @@ func serverCli(cmd *cobra.Command, args []string) {
 	logFile, _ := cmd.Flags().GetString("logfile")
 	output, _ := cmd.Flags().GetString("output")
 	loglevel, _ := cmd.Flags().GetString("loglevel")
+	netInterface, _ := cmd.Flags().GetString("net")
 	port, _ := cmd.Flags().GetInt("port")
 
 	// extract path from env variable
@@ -52,6 +54,7 @@ func serverCli(cmd *cobra.Command, args []string) {
 	cfg.LogFile = logFile
 	cfg.Output = output
 	cfg.Loglevel = loglevel
+	cfg.NetInterface = netInterface
 	cfg.Port = strconv.Itoa(port)
 
 	logger := misc.NewLogger(cfg.LitoPath, output)
