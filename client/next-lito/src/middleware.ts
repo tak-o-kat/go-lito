@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "./app/actions/session-actions";
+import { getSession } from "@/lib/session";
 
 export default async function middleware(req: NextRequest) {
   const session = await getSession();
@@ -20,5 +20,5 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|login).*)"],
+  matcher: ["/((?!_next|api|favicon.ico|public|images|signup|login|renew).*)"],
 };

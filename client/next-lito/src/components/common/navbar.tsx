@@ -12,7 +12,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/common/theme-toggle";
-import { getSession, logout } from "@/app/actions/session-actions";
+import { logout } from "@/app/actions/auth-actions";
+import { getSession } from "@/lib/session";
 
 export default async function NavBar() {
   const session = await getSession();
