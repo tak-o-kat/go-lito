@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function LoginLayout({
+export default function SettingsLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

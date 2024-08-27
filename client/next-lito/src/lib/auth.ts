@@ -1,6 +1,6 @@
 import { createTable, doesTableExist, executeQuery, queryOne } from "@/lib/db";
 import { hashPassword } from "@/lib/hashing";
-import { FormValues } from "./session";
+import { FormValues, getSession } from "./session";
 
 export async function storeUser(username: string, password: string) {
   // Create users table if not exists
@@ -9,7 +9,8 @@ export async function storeUser(username: string, password: string) {
       `CREATE TABLE IF NOT EXISTS users (
           id INTEGER PRIMARY KEY AUTOINCREMENT, 
           username TEXT UNIQUE NOT NULL, 
-          password TEXT NOT NULL
+          password TEXT NOT NULL,
+          theme TEXT NOT NULL
         )`
     );
   } catch (error) {
@@ -17,7 +18,7 @@ export async function storeUser(username: string, password: string) {
   }
 
   // Hash password and store in DB
-  const query = `INSERT INTO users (username, password) VALUES (?, ?)`;
+  const query = `INSERT INTO users (username, password, theme) VALUES (?, ?, 'theme-default')`;
   const hashedPassword = await hashPassword(password);
   try {
     await executeQuery(query, [username, hashedPassword]);

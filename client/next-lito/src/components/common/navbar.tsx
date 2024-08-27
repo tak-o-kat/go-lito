@@ -52,7 +52,7 @@ export default async function NavBar() {
               Proposals
             </Link>
             <Link
-              href="/dashboard/settings"
+              href="/dashboard/settings/"
               className="text-foreground transition-colors hover:text-foreground"
             >
               Settings
@@ -97,7 +97,7 @@ export default async function NavBar() {
                   Products
                 </Link>
                 <Link
-                  href="/dashboard/settings"
+                  href="/dashboard/settings/"
                   className="hover:text-foreground"
                 >
                   Settings

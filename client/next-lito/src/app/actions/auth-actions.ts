@@ -21,6 +21,7 @@ type user = {
   id: number;
   username: string;
   password: string;
+  theme: string;
 };
 
 export async function signup(
@@ -56,12 +57,13 @@ export async function signup(
   const user = (await queryOne(query, [formValues.username as string])) as user;
 
   if (user) {
-    session.username = user?.username!;
-    session.userId = user?.id!;
+    session.username = user?.username;
+    session.userId = user?.id;
+    session.theme = user?.theme;
     session.isLoggedIn = true;
+    await session.save();
   }
 
-  await session.save();
   redirect(getRedirectToUrl());
 }
 
@@ -100,6 +102,7 @@ export async function login(_prevState: authFormState, formData: FormData) {
   // Store session
   session.username = user?.username!;
   session.userId = user?.id!;
+  session.theme = user?.theme!;
   session.isLoggedIn = true;
   await session.save();
 
