@@ -1,18 +1,41 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-export default function Component() {
+export default function SettingsMenu() {
+  const pathname = usePathname();
+  console.log(pathname);
+  const textHighlight = "font-semibold text-primary";
   return (
-    <nav className="grid gap-4 text-sm text-muted-foreground">
-      <Link href="#" className="font-semibold text-primary">
+    <nav
+      className="grid gap-4 text-sm text-muted-foreground"
+      x-chunk="dashboard-04-chunk-0"
+    >
+      <Link
+        href="/dashboard/settings/general"
+        className={`${
+          pathname === "/dashboard/settings/general" && textHighlight
+        }`}
+      >
         General
       </Link>
-      <Link href="#">Security</Link>
-      <Link href="#">Integrations</Link>
-      <Link href="#">Support</Link>
-      <Link href="#">Organizations</Link>
-      <Link href="#">Advanced</Link>
+      <Link
+        className={`${
+          pathname === "/dashboard/settings/account" && textHighlight
+        }`}
+        href="/dashboard/settings/account"
+      >
+        Account
+      </Link>
+      <Link
+        href="/dashboard/settings/themes"
+        className={`${
+          pathname === "/dashboard/settings/themes" && textHighlight
+        }`}
+      >
+        Themes
+      </Link>
     </nav>
   );
 }
