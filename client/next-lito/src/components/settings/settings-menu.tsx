@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 
 export default function SettingsMenu() {
   const pathname = usePathname();
-  console.log(pathname);
   const textHighlight = "font-semibold text-primary";
   return (
     <nav

@@ -32,7 +32,7 @@ export default function ThemeSelect() {
         <CardHeader>
           <CardTitle>Theme Selector</CardTitle>
           <CardDescription>
-            Used to identify your store in the marketplace.
+            Used to change the theme of your app.
           </CardDescription>
         </CardHeader>
         <CardContent>
