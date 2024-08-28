@@ -3,5 +3,5 @@ export default async function LoginLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div>{children}</div>;
+  return <div className="bg-muted/10  min-h-screen">{children}</div>;
 }

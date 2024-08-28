@@ -34,24 +34,6 @@ export default async function NavBar() {
               Dashboard
             </Link>
             <Link
-              href="#"
-              className="text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Totals
-            </Link>
-            <Link
-              href="#"
-              className="text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Votes
-            </Link>
-            <Link
-              href="#"
-              className="text-muted-foreground transition-colors hover:text-foreground"
-            >
-              Proposals
-            </Link>
-            <Link
               href="/dashboard/settings/"
               className="text-foreground transition-colors hover:text-foreground"
             >
@@ -83,18 +65,6 @@ export default async function NavBar() {
                   className="text-muted-foreground hover:text-foreground"
                 >
                   Dashboard
-                </Link>
-                <Link
-                  href="#"
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  Orders
-                </Link>
-                <Link
-                  href="#"
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  Products
                 </Link>
                 <Link
                   href="/dashboard/settings/"

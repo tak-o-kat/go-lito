@@ -3,10 +3,11 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { getFormValues, getSession, type FormValues } from "@/lib/session";
-import { queryOne } from "@/lib/db";
-import { storeUser, updateUserPassword } from "@/lib/auth";
-import { comparePasswords } from "@/lib/hashing";
+import { getFormValues, getSession, type FormValues } from "@/lib/auth/session";
+import { queryOne } from "@/lib/db/db";
+import { storeUser } from "@/lib/auth/auth";
+import { comparePasswords } from "@/lib/auth/hashing";
+import { updateUserPassword } from "./update-actions";
 
 function getRedirectToUrl() {
   const headersList = headers();

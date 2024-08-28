@@ -1,14 +1,11 @@
 "use server";
 
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { executeQuery } from "@/lib/db";
-import { FormValues, getSession } from "@/lib/session";
-import { hashPassword } from "@/lib/hashing";
+import { executeQuery } from "@/lib/db/db";
+import { FormValues, getSession } from "@/lib/auth/session";
+import { hashPassword } from "@/lib/auth/hashing";
 import { revalidatePath } from "next/cache";
 
 export async function updateUserTheme(_prevState: any, formData: FormData) {
-  console.log("Theme here");
   const session = await getSession();
   if (!session) {
     return {

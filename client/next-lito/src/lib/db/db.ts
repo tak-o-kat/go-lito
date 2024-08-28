@@ -1,9 +1,7 @@
 "use server";
 
 import Database from "better-sqlite3";
-
-const algoPath = process.env.ALGORAND_DATA;
-const DB_PATH = `${algoPath}/lito/golito.db`;
+import { DB_PATH } from "../const";
 
 let db: Database.Database | null = null;
 

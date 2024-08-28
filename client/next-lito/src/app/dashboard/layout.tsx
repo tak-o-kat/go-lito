@@ -6,7 +6,7 @@ export default async function LoginLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div>
+    <div className="flex flex-col justify-center w-full">
       <NavBar />
       {children}
     </div>

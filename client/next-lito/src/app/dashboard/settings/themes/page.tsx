@@ -1,5 +1,4 @@
 import ThemeSelect from "@/components/settings/theme-select";
-import { Button } from "@/components/ui/button";
 
 export default function ThemePage() {
   return (
