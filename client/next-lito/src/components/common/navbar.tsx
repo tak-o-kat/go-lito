@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 import { CircleUser, Menu, Package2, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +18,9 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { logout } from "@/app/actions/auth-actions";
 import ThemeDropdown from "./theme-dropdown";
 
-export default async function NavBar() {
+export default function NavBar() {
+  const pathname = usePathname();
+  console.log(pathname + " " + pathname.includes("/dashboard/settings/"));
   return (
     <div className="flex flex-row justify-center h-[4rem] w-full border-b">
       <div className="flex min-h-screen w-full flex-col">
@@ -28,14 +34,22 @@ export default async function NavBar() {
               <span className="sr-only">Lito UI</span>
             </Link>
             <Link
-              href="/dashboard"
-              className="text-muted-foreground transition-colors hover:text-foreground"
+              href="/dashboard/home"
+              className={`${
+                pathname === "/dashboard/home"
+                  ? "text-foreground font-semibold"
+                  : "text-muted-foreground"
+              }  transition-colors hover:text-foreground`}
             >
               Dashboard
             </Link>
             <Link
               href="/dashboard/settings/"
-              className="text-foreground transition-colors hover:text-foreground"
+              className={`${
+                pathname.includes("/dashboard/settings/")
+                  ? "text-foreground font-semibold"
+                  : "text-muted-foreground"
+              } transition-colors hover:text-foreground`}
             >
               Settings
             </Link>
