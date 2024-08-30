@@ -14,13 +14,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { logout } from "@/app/actions/auth-actions";
 import ThemeDropdown from "./theme-dropdown";
 
 export default function NavBar() {
   const pathname = usePathname();
-  console.log(pathname + " " + pathname.includes("/dashboard/settings/"));
   return (
     <div className="flex flex-row justify-center h-[4rem] w-full border-b">
       <div className="flex min-h-screen w-full flex-col">
@@ -36,7 +41,7 @@ export default function NavBar() {
             <Link
               href="/dashboard/home"
               className={`${
-                pathname === "/dashboard/home"
+                pathname.includes("/dashboard/home")
                   ? "text-foreground font-semibold"
                   : "text-muted-foreground"
               }  transition-colors hover:text-foreground`}
@@ -54,35 +59,44 @@ export default function NavBar() {
               Settings
             </Link>
           </nav>
-          <Sheet>
+          {/* Mobile menu */}
+          <Sheet aria-label="Mobile menu">
             <SheetTrigger asChild>
               <Button
                 variant="outline"
                 size="icon"
                 className="shrink-0 md:hidden"
+                aria-describedby="mobile-menu"
               >
                 <Menu className="h-5 w-5" />
                 <span className="sr-only">Toggle navigation menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left">
+            <SheetContent side="left" aria-describedby="mobile-menu">
+              <SheetDescription></SheetDescription>
+              <SheetTitle></SheetTitle>
               <nav className="grid gap-6 text-lg font-medium">
-                <Link
-                  href="#"
-                  className="flex items-center gap-2 text-lg font-semibold"
-                >
+                <div className="flex items-center gap-2 text-lg font-semibold">
                   <Package2 className="h-6 w-6" />
-                  <span className="sr-only">Acme Inc</span>
-                </Link>
+                  <span className="sr-only">Lito UI</span>
+                </div>
                 <Link
-                  href="/dashboard"
-                  className="text-muted-foreground hover:text-foreground"
+                  href="/dashboard/home"
+                  className={`${
+                    pathname.includes("/dashboard/home")
+                      ? "text-foreground font-semibold"
+                      : "text-muted-foreground"
+                  } hover:text-foreground`}
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/dashboard/settings/"
-                  className="hover:text-foreground"
+                  className={`${
+                    pathname.includes("/dashboard/settings/")
+                      ? "text-foreground font-semibold"
+                      : "text-muted-foreground"
+                  } hover:text-foreground`}
                 >
                   Settings
                 </Link>
