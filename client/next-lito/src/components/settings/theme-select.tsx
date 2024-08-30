@@ -21,11 +21,16 @@ import { useFormState } from "react-dom";
 import { updateUserTheme } from "@/app/actions/update-actions";
 import { Button } from "../ui/button";
 
-export default function ThemeSelect() {
+interface propTypes {
+  currentTheme: string;
+}
+
+export default function ThemeSelect({ currentTheme }: propTypes) {
   const [state, formAction] = useFormState<any, FormData>(
     updateUserTheme,
     undefined
   );
+
   return (
     <form action={formAction}>
       <Card x-chunk="dashboard-04-chunk-1">
@@ -36,9 +41,9 @@ export default function ThemeSelect() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Select name="theme">
+          <Select name="theme" defaultValue={currentTheme}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select a Theme" />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
