@@ -19,9 +19,9 @@ export function ThemeSwitch() {
         onCheckedChange={setIsChecked}
         icon={
           isChecked ? (
-            <Sun className="h-4 w-4 text-primary" />
+            <Sun className="h-4 w-4 text-secondary-foreground" />
           ) : (
-            <Moon className="h-4 w-4 text-primary" />
+            <Moon className="h-4 w-4 text-secondary-foreground" />
           )
         }
       />

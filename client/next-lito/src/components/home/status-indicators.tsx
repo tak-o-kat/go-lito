@@ -14,9 +14,7 @@ export default function StatusIndicators() {
         </Card>
         <Card className="p-2 text-xs md:text-sm">
           Last block:{" "}
-          <span
-            className={`[--status-color:hsl(var(--status-indicator))] font-semibold  text-[var(--status-color)] `}
-          >
+          <span className={`font-semibold text-muted-foreground`}>
             42027714
           </span>
         </Card>
@@ -24,17 +22,13 @@ export default function StatusIndicators() {
       <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
         <Card className="p-2 text-xs md:text-sm">
           Network:{" "}
-          <span
-            className={`[--status-color:hsl(var(--status-indicator))] font-semibold text-[var(--status-color)] `}
-          >
+          <span className={`font-semibold text-muted-foreground`}>
             mainnet-v1.0
           </span>
         </Card>
         <Card className="p-2 text-xs md:text-sm">
           Version:{" "}
-          <span
-            className={`[--status-color:hsl(var(--status-indicator))] font-semibold text-[var(--status-color)] `}
-          >
+          <span className={`font-semibold text-muted-foreground`}>
             3.25.0.stable
           </span>
         </Card>

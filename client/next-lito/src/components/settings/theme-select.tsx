@@ -51,10 +51,8 @@ export default function ThemeSelect({ currentTheme }: propTypes) {
                 <SelectSeparator />
                 <SelectItem value="theme-default">Default</SelectItem>
                 <SelectItem value="theme-green">Green</SelectItem>
-                <SelectItem value="theme-blue">Blue</SelectItem>
                 <SelectItem value="theme-rose">Rose</SelectItem>
                 <SelectItem value="theme-teal">Teal</SelectItem>
-                <SelectItem value="theme-slate-blue">Slate Blue</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
