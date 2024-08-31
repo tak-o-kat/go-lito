@@ -104,8 +104,14 @@ export default function NavBar() {
               </nav>
             </SheetContent>
           </Sheet>
-          <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4 justify-end">
-            <ThemeSwitch />
+          <div className="absolute visible md:invisible left-1/2 transform -translate-x-1/2 flex flex-row items-center">
+            <LitoLogo />
+          </div>
+          <div className="flex flex-1 text-right w-auto items-center gap-4 md:ml-auto md:gap-2 lg:gap-4 justify-end">
+            <div className="invisible md:visible">
+              <ThemeSwitch />
+            </div>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button

@@ -5,14 +5,13 @@ export function LitoLogo() {
       xmlns="http://www.w3.org/2000/svg"
       width={30}
       height={30}
-      fill="#fff"
+      fill="currentColor"
       viewBox="0 0 300.000000 300.000000"
       preserveAspectRatio="xMidYMid meet"
     >
       {" "}
       <g
         transform="translate(0.000000,300.000000) scale(0.100000,-0.100000)"
-        fill="#fff"
         stroke="none"
       >
         {" "}
