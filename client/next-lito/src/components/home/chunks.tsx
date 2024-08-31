@@ -1,11 +1,6 @@
 import { ComponentType } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -34,7 +29,7 @@ export default function DashboardChunk(props: PropTypes) {
               <PopoverTrigger asChild className="cursor-help">
                 <CircleHelp className="ml-1 h-3 w-3 text-muted-foreground" />
               </PopoverTrigger>
-              <PopoverContent className="w-96">
+              <PopoverContent className="w-96 bg-primary">
                 <p>{props.title}</p>
                 <p className="text-xs">{props.description}</p>
               </PopoverContent>

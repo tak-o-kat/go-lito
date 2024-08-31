@@ -19,22 +19,6 @@ export default function SettingsMenu() {
       >
         General
       </Link>
-      <Link
-        className={`${
-          pathname === "/dashboard/settings/account" && textHighlight
-        }`}
-        href="/dashboard/settings/account"
-      >
-        Account
-      </Link>
-      <Link
-        href="/dashboard/settings/themes"
-        className={`${
-          pathname === "/dashboard/settings/themes" && textHighlight
-        }`}
-      >
-        Themes
-      </Link>
     </nav>
   );
 }
