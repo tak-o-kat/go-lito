@@ -13,7 +13,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
@@ -24,6 +23,7 @@ import {
 import { logout } from "@/app/actions/auth-actions";
 import ThemeDropdown from "./theme-dropdown";
 import { ThemeSwitch } from "./theme-switch";
+import { LitoLogo } from "./lito-logo";
 
 export default function NavBar() {
   const pathname = usePathname();
@@ -36,7 +36,7 @@ export default function NavBar() {
               href="#"
               className="flex items-center gap-2 text-lg font-semibold md:text-base"
             >
-              <Package2 className="h-6 w-6" />
+              <LitoLogo />
               <span className="sr-only">Lito UI</span>
             </Link>
             <Link
@@ -78,7 +78,7 @@ export default function NavBar() {
               <SheetTitle></SheetTitle>
               <nav className="grid gap-6 text-lg font-medium">
                 <div className="flex items-center gap-2 text-lg font-semibold">
-                  <Package2 className="h-6 w-6" />
+                  <LitoLogo />
                   <span className="sr-only">Lito UI</span>
                 </div>
                 <Link
