@@ -6,8 +6,9 @@ import { redirect } from "next/navigation";
 import { getFormValues, getSession, type FormValues } from "@/lib/auth/session";
 import { queryOne } from "@/lib/db/db";
 import { storeUser } from "@/lib/auth/auth";
-import { comparePasswords } from "@/lib/auth/hashing";
+import { comparePasswords, hashPassword } from "@/lib/auth/hashing";
 import { updateUserPassword } from "./update-actions";
+import { pause } from "@/utils/helpers";
 
 function getRedirectToUrl() {
   const headersList = headers();
@@ -116,7 +117,6 @@ export async function renew(_prevState: authFormState, formData: FormData) {
 
   const typeName = formData.get("type-name") as string;
   const formValues: FormValues = getFormValues(typeName, formData);
-  console.log("renew", formValues);
   if (formValues.error) {
     return { error: formValues.error.message };
   }
@@ -143,7 +143,13 @@ export async function renew(_prevState: authFormState, formData: FormData) {
       error: "user in session not found",
     };
   }
-  updateUserPassword(session.username!, formValues);
+
+  try {
+    await updateUserPassword(session.username!, formValues);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 
   // Verify updated password
   const query = `SELECT * FROM users WHERE username = ? LIMIT 1`;
@@ -152,7 +158,7 @@ export async function renew(_prevState: authFormState, formData: FormData) {
   if (user) {
     const match = await comparePasswords(formValues.password, user.password);
     if (!match) {
-      console.log("Something went wrong with the password update");
+      console.log("Form Password and password in db do not match");
     }
   } else {
     console.log("Something went wrong with username");

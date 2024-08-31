@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth/session";
 import { doesAtLeastOneUserExist } from "@/lib/auth/auth";
 
 export default async function LoginLayout({

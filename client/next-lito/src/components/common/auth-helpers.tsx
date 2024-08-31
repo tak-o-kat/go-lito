@@ -9,6 +9,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { useTransition } from "react";
+import { Loader2 } from "lucide-react";
+import { useFormStatus } from "react-dom";
 
 type authTypes = "login" | "signup" | "renew";
 
@@ -125,6 +128,20 @@ function getCurrentPasswordInput(state: any) {
   );
 }
 
+function SubmitButton({ typeName }: { typeName: authTypes }) {
+  const { pending } = useFormStatus();
+  const width = typeName === "renew" ? "w-40" : "w-full";
+  return (
+    <Button className={`${width}`} disabled={pending}>
+      {pending ? (
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+      ) : (
+        getPageButton(typeName)
+      )}
+    </Button>
+  );
+}
+
 export function getAuthInputs(typeName: authTypes, state: any) {
   // If error doesn't equal the input types then it's an alt error
   const errorType = state?.error?.split(" ")[0];
@@ -132,6 +149,7 @@ export function getAuthInputs(typeName: authTypes, state: any) {
     errorType !== "username" &&
     errorType !== "passwords" &&
     errorType !== "password";
+
   return (
     <Card className="w-full sm:w-96 max-w-sm p-3">
       <CardHeader>
@@ -157,7 +175,7 @@ export function getAuthInputs(typeName: authTypes, state: any) {
         {altErr && <p className="text-destructive">{state?.error}</p>}
       </CardContent>
       <CardFooter>
-        <Button className="w-full">{getPageButton(typeName)}</Button>
+        <SubmitButton typeName={typeName} />
       </CardFooter>
     </Card>
   );
@@ -186,7 +204,7 @@ export function getUpdatePassword(typeName: authTypes, state: any) {
         {getConfirmPasswordInput(state)}
       </CardContent>
       <CardFooter className="border-t px-6 py-4">
-        <Button className="">{getPageButton(typeName)}</Button>
+        <SubmitButton typeName={typeName} />
       </CardFooter>
     </Card>
   );
