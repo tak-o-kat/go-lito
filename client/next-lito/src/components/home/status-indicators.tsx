@@ -1,21 +1,40 @@
-import { Card } from "@/components/ui/card";
+"use server";
 
-export default function StatusIndicators() {
+import { Card } from "@/components/ui/card";
+import {
+  checkAlgodIsRunning,
+  getNodeStatus,
+  NodeStatus,
+} from "@/lib/cmd/goal-commands";
+
+export default async function StatusIndicators() {
+  const isRunning = await checkAlgodIsRunning();
+  const indicators: any | NodeStatus = await getNodeStatus();
+  let status: string = "";
+  let nodeStatusColor: string = "";
+
+  if (isRunning === false) {
+    status = "Down";
+    nodeStatusColor = "text-red-500";
+  } else if (indicators?.Sync! !== "0.0s") {
+    status = "Syncing";
+    nodeStatusColor = "text-yellow-500";
+  } else if (indicators?.Sync! === "0.0s") {
+    status = "Up";
+    nodeStatusColor = "text-green-500";
+  }
+
   return (
     <div className="flex items-center justify-center sm:justify-start gap-2 pt-4 sm:py-4">
       <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
         <Card className="p-2 text-xs md:text-sm">
           Node Status:{" "}
-          <span
-            className={`[--status-color:hsl(var(--status-indicator))] font-semibold text-[var(--status-color)] `}
-          >
-            Up
-          </span>
+          <span className={`${nodeStatusColor} font-semibold`}>{status}</span>
         </Card>
         <Card className="p-2 text-xs md:text-sm">
           Last block:{" "}
           <span className={`font-semibold text-muted-foreground`}>
-            42027714
+            {indicators?.Last}
           </span>
         </Card>
       </div>
@@ -23,13 +42,13 @@ export default function StatusIndicators() {
         <Card className="p-2 text-xs md:text-sm">
           Network:{" "}
           <span className={`font-semibold text-muted-foreground`}>
-            mainnet-v1.0
+            {indicators?.Genesis}
           </span>
         </Card>
         <Card className="p-2 text-xs md:text-sm">
           Version:{" "}
           <span className={`font-semibold text-muted-foreground`}>
-            3.25.0.stable
+            {indicators?.Version}
           </span>
         </Card>
       </div>
