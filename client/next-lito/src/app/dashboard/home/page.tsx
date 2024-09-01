@@ -3,16 +3,7 @@ import { getSession } from "@/lib/auth/session";
 import DashboardChunk from "@/components/home/chunks";
 import StatusIndicators from "@/components/home/status-indicators";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-  SelectSeparator,
-} from "@/components/ui/select";
+import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   CertDescription,
   OnChainDescription,
@@ -21,6 +12,8 @@ import {
 } from "@/lib/const";
 import { BarCharty } from "@/components/home/BarCharty";
 import { BarChartCard } from "@/components/charts/bar-chart-1";
+import TimeIntervalSelect from "@/components/common/time-interval-select";
+import { getUserTimeInterval } from "@/lib/db/get-user-data";
 
 export default async function Home() {
   const data1 = {
@@ -82,6 +75,9 @@ export default async function Home() {
       color: "hsl(var(--chart-1))",
     },
   };
+
+  const session = await getSession();
+
   return (
     <main className="mx-auto max-w-6xl px-2">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:gap-2">
@@ -89,23 +85,7 @@ export default async function Home() {
           <StatusIndicators />
         </div>
         <div className="flex md:justify-end md:w-auto py-3 sm:py-4">
-          <Select name="interval" defaultValue="24h">
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder={"Select an interval"} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Time Interval</SelectLabel>
-                <SelectSeparator />
-                <SelectItem value="24h">Last 24 Hours</SelectItem>
-                <SelectItem value="7d">Last 7 Days</SelectItem>
-                <SelectItem value="1m">Last 1 Month</SelectItem>
-                <SelectItem value="3m">Last 3 Months</SelectItem>
-                <SelectItem value="6m">Last 6 Months</SelectItem>
-                <SelectItem value="1y">Last Year</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <TimeIntervalSelect timeInterval={session?.interval as string} />
         </div>
       </div>
 

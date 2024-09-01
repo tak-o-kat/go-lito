@@ -14,7 +14,8 @@ export async function storeUser(username: string, password: string) {
           id INTEGER PRIMARY KEY AUTOINCREMENT, 
           username TEXT UNIQUE NOT NULL, 
           password TEXT NOT NULL,
-          theme TEXT NOT NULL
+          theme TEXT NOT NULL,
+          interval TEXT NOT NULL,
         )`
     );
   } catch (error) {
@@ -22,7 +23,7 @@ export async function storeUser(username: string, password: string) {
   }
 
   // Hash password and store in DB
-  const query = `INSERT INTO users (username, password, theme) VALUES (?, ?, 'theme-default')`;
+  const query = `INSERT INTO users (username, password, theme, interval) VALUES (?, ?, 'theme-default', '7d')`;
   const hashedPassword = await hashPassword(password);
   try {
     await executeQuery(query, [username, hashedPassword]);

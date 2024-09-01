@@ -8,7 +8,7 @@ import { queryOne } from "@/lib/db/db";
 import { storeUser } from "@/lib/auth/auth";
 import { comparePasswords, hashPassword } from "@/lib/auth/hashing";
 import { updateUserPassword } from "./update-actions";
-import { pause } from "@/utils/helpers";
+import { user } from "@/lib/types";
 
 function getRedirectToUrl() {
   const headersList = headers();
@@ -18,13 +18,6 @@ function getRedirectToUrl() {
   const redirect = searchParams.get("redirect");
   return redirect || "/";
 }
-
-type user = {
-  id: number;
-  username: string;
-  password: string;
-  theme: string;
-};
 
 export async function signup(
   prevState: { error: undefined | string },
@@ -59,12 +52,13 @@ export async function signup(
   const user = (await queryOne(query, [formValues.username as string])) as user;
 
   if (user) {
-    session.username = user?.username;
-    session.userId = user?.id;
-    session.theme = user?.theme;
+    Object.assign(session, user);
     session.isLoggedIn = true;
+
     await session.save();
   }
+
+  console.log(session);
 
   redirect(getRedirectToUrl());
 }
@@ -95,18 +89,19 @@ export async function login(_prevState: authFormState, formData: FormData) {
         error: "password is incorrect",
       };
     }
+
+    // Sync session data with the database
+    Object.assign(session, user);
+    session.isLoggedIn = true;
+
+    await session.save();
   } else {
     return {
       error: "username not found",
     };
   }
 
-  // Store session
-  session.username = user?.username!;
-  session.userId = user?.id!;
-  session.theme = user?.theme!;
-  session.isLoggedIn = true;
-  await session.save();
+  console.log(session);
 
   const redirectTo = getRedirectToUrl();
   redirect(redirectTo);

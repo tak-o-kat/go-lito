@@ -4,6 +4,11 @@ import { executeQuery } from "@/lib/db/db";
 import { FormValues, getSession } from "@/lib/auth/session";
 import { hashPassword } from "@/lib/auth/hashing";
 import { revalidatePath } from "next/cache";
+import { getIronSession } from "iron-session";
+import { cookies } from "next/headers";
+import { queryOne } from "@/lib/db/db";
+import { user } from "@/lib/types";
+import { SessionData, sessionOptions } from "@/lib/auth/session";
 
 export async function updateUserTheme(_prevState: any, formData: FormData) {
   const session = await getSession();
@@ -23,7 +28,7 @@ export async function updateUserTheme(_prevState: any, formData: FormData) {
   }
   // save theme in session
   session.theme = theme;
-  session.save();
+  await session.save();
   revalidatePath("/", "layout");
 }
 
@@ -39,4 +44,60 @@ export async function updateUserPassword(
     console.log(error);
     throw error;
   }
+}
+
+export async function updateUserTimeInterval(
+  _prevState: any,
+  formData: FormData
+) {
+  const session = await getSession();
+  const username = session?.username as string;
+  const interval = formData.get("interval-db") as string;
+
+  if (session.isLoggedIn) {
+    const query = `UPDATE users SET interval = ? WHERE username = ?`;
+
+    console.log(interval, username);
+    try {
+      console.log("Executing time intervval update");
+      await executeQuery(query, [interval, username]);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+  session.interval = interval;
+  await session.save();
+  revalidatePath("/", "layout");
+}
+
+export async function syncSession() {
+  const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+
+  // Sync session data with the database
+  if (session.isLoggedIn) {
+    const query = `SELECT * FROM users WHERE id = ? LIMIT 1`;
+    const id = session?.id?.toString() as string;
+    const user = (await queryOne(query, [id])) as user;
+
+    if (user) {
+      Object.assign(session, user);
+      await session.save();
+    }
+  }
+  console.log("Synced: ");
+  console.log(session);
+}
+
+export async function updateTimeIntervalSession(timeInterval: string) {
+  const session = await getSession();
+  if (!session.isLoggedIn) {
+    return {
+      error: "No session found",
+    };
+  }
+
+  session.interval = timeInterval;
+  session.save();
+  revalidatePath("/", "layout");
 }

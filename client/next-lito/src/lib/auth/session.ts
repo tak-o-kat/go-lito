@@ -3,9 +3,10 @@ import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 
 export interface SessionData {
-  userId?: number;
+  id?: number;
   username?: string;
   theme?: string;
+  interval?: string;
   isLoggedIn: boolean;
 }
 

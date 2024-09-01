@@ -35,7 +35,7 @@ export default function ThemeSelect({ currentTheme }: propTypes) {
     <form action={formAction}>
       <Card x-chunk="dashboard-04-chunk-1">
         <CardHeader>
-          <CardTitle>Theme Selector</CardTitle>
+          <CardTitle>Default Theme</CardTitle>
           <CardDescription>
             Used to change the theme of your app.
           </CardDescription>
