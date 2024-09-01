@@ -5,6 +5,7 @@ import { BarCharty } from "@/components/home/BarCharty";
 import { BarChartCard } from "@/components/charts/bar-chart-1";
 import TimeIntervalSelect from "@/components/home/time-interval-select";
 import DashboardHomeTotals from "@/components/home/totals";
+import { pause } from "@/utils/helpers";
 
 export default async function Home() {
   const months = [
@@ -36,8 +37,7 @@ export default async function Home() {
           <TimeIntervalSelect timeInterval={session?.interval as string} />
         </div>
       </div>
-      <DashboardHomeTotals />
-
+      <DashboardHomeTotals session={session} />
       <div className="flex flex-col md:flex-row gap-4">
         <div className="w-full md:w-1/2">
           <BarChartCard

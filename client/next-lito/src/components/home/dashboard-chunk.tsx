@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/popover";
 import { CircleHelp } from "lucide-react";
 
-type ChunkTypes = {
+type ChunkType = {
   title: string;
   count: number;
   percentage: number;
@@ -18,7 +18,7 @@ type ChunkTypes = {
   description: string;
 };
 
-export default function DashboardChunk(props: ChunkTypes) {
+export default function DashboardChunk(props: ChunkType) {
   return (
     <Card className="w-full" x-chunk="dashboard-01-chunk-0">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

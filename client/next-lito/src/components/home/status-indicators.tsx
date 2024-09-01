@@ -15,13 +15,13 @@ export default async function StatusIndicators() {
 
   if (isRunning === false) {
     status = "Down";
-    nodeStatusColor = "text-red-500";
+    nodeStatusColor = "text-rose-500";
   } else if (indicators?.Sync! !== "0.0s") {
     status = "Syncing";
-    nodeStatusColor = "text-yellow-500";
+    nodeStatusColor = "text-indigo-400 animate-pulse";
   } else if (indicators?.Sync! === "0.0s") {
     status = "Up";
-    nodeStatusColor = "text-green-500";
+    nodeStatusColor = "text-teal-400";
   }
 
   return (
@@ -33,7 +33,9 @@ export default async function StatusIndicators() {
         </Card>
         <Card className="p-2 text-xs md:text-sm">
           Last block:{" "}
-          <span className={`font-semibold text-muted-foreground`}>
+          <span
+            className={`${nodeStatusColor} font-semibold text-muted-foreground`}
+          >
             {indicators?.Last}
           </span>
         </Card>
@@ -41,13 +43,17 @@ export default async function StatusIndicators() {
       <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
         <Card className="p-2 text-xs md:text-sm">
           Network:{" "}
-          <span className={`font-semibold text-muted-foreground`}>
+          <span
+            className={`${nodeStatusColor} font-semibold text-muted-foreground`}
+          >
             {indicators?.Genesis}
           </span>
         </Card>
         <Card className="p-2 text-xs md:text-sm">
           Version:{" "}
-          <span className={`font-semibold text-muted-foreground`}>
+          <span
+            className={`${nodeStatusColor} font-semibold text-muted-foreground`}
+          >
             {indicators?.Version}
           </span>
         </Card>

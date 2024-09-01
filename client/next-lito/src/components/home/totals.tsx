@@ -9,6 +9,8 @@ import {
   ProposedDescription,
   SoftDescription,
 } from "@/lib/const";
+import { IronSession } from "iron-session";
+import { SessionData } from "@/lib/auth/session";
 
 const data1 = {
   title: "On Chain",
@@ -43,7 +45,11 @@ const data4 = {
   description: CertDescription,
 };
 
-export default async function DashboardHomeTotals() {
+export default async function DashboardHomeTotals({
+  session,
+}: {
+  session: IronSession<SessionData>;
+}) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
       <DashboardChunk {...data1} />
