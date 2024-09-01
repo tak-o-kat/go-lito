@@ -25,7 +25,7 @@ export default async function StatusIndicators() {
   }
 
   return (
-    <div className="flex items-center justify-center sm:justify-start gap-2 pt-4 sm:py-4">
+    <div className="flex items-center justify-center sm:justify-start gap-2">
       <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
         <Card className="p-2 text-xs md:text-sm">
           Node Status:{" "}
