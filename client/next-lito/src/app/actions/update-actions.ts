@@ -56,10 +56,7 @@ export async function updateUserTimeInterval(
 
   if (session.isLoggedIn) {
     const query = `UPDATE users SET interval = ? WHERE username = ?`;
-
-    console.log(interval, username);
     try {
-      console.log("Executing time intervval update");
       await executeQuery(query, [interval, username]);
     } catch (error) {
       console.log(error);
@@ -85,8 +82,6 @@ export async function syncSession() {
       await session.save();
     }
   }
-  console.log("Synced: ");
-  console.log(session);
 }
 
 export async function updateTimeIntervalSession(timeInterval: string) {

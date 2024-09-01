@@ -3,7 +3,6 @@ import { getSession } from "@/lib/auth/session";
 import DashboardChunk from "@/components/home/chunks";
 import StatusIndicators from "@/components/home/status-indicators";
 
-import { Select, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   CertDescription,
   OnChainDescription,
@@ -12,8 +11,7 @@ import {
 } from "@/lib/const";
 import { BarCharty } from "@/components/home/BarCharty";
 import { BarChartCard } from "@/components/charts/bar-chart-1";
-import TimeIntervalSelect from "@/components/common/time-interval-select";
-import { getUserTimeInterval } from "@/lib/db/get-user-data";
+import TimeIntervalSelect from "@/components/home/time-interval-select";
 
 export default async function Home() {
   const data1 = {
@@ -48,16 +46,6 @@ export default async function Home() {
     icon: ShieldCheck,
     description: CertDescription,
   };
-
-  const data = [
-    { day: "Sunday", onChain: 4 },
-    { day: "Monday", onChain: 3 },
-    { day: "Tuesday", onChain: 5 },
-    { day: "Wednesday", onChain: 3 },
-    { day: "Thursday", onChain: 5 },
-    { day: "Friday", onChain: 3 },
-    { day: "Saturday", onChain: 2 },
-  ];
 
   const months = [
     { month: "February", onChain: 44 },

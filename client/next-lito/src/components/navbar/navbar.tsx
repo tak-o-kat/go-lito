@@ -23,7 +23,7 @@ import {
 import { logout } from "@/app/actions/auth-actions";
 import ThemeDropdown from "./theme-dropdown";
 import { ThemeSwitch } from "./theme-switch";
-import { LitoLogo } from "./lito-logo";
+import { LitoLogo } from "@/components/common/lito-logo";
 
 export default function NavBar() {
   const pathname = usePathname();

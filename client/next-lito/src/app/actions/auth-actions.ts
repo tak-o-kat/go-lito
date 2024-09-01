@@ -57,9 +57,6 @@ export async function signup(
 
     await session.save();
   }
-
-  console.log(session);
-
   redirect(getRedirectToUrl());
 }
 
@@ -100,8 +97,6 @@ export async function login(_prevState: authFormState, formData: FormData) {
       error: "username not found",
     };
   }
-
-  console.log(session);
 
   const redirectTo = getRedirectToUrl();
   redirect(redirectTo);

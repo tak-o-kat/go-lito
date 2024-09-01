@@ -1,4 +1,4 @@
-import NavBar from "@/components/common/navbar";
+import NavBar from "@/components/navbar/navbar";
 
 export default async function LoginLayout({
   children,

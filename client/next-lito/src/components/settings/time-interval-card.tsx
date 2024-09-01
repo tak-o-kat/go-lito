@@ -39,7 +39,6 @@ export default function TimeIntervalCard({
 
   const handleTimeIntervalDBChange = async (timeChange: string) => {
     setSelectValue(timeChange);
-    // await updateUserTimeInterval(timeChange);
   };
 
   return (

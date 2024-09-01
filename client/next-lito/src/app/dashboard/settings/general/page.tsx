@@ -1,5 +1,4 @@
 import ThemeSelect from "@/components/settings/theme-select";
-import TimeIntervalSelect from "@/components/common/time-interval-select";
 import UpdatePasswordForm from "@/components/settings/updatePasswordForm";
 import { getSession } from "@/lib/auth/session";
 import TimeIntervalCard from "@/components/settings/time-interval-card";

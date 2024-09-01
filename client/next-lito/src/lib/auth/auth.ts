@@ -15,7 +15,7 @@ export async function storeUser(username: string, password: string) {
           username TEXT UNIQUE NOT NULL, 
           password TEXT NOT NULL,
           theme TEXT NOT NULL,
-          interval TEXT NOT NULL,
+          interval TEXT NOT NULL
         )`
     );
   } catch (error) {
