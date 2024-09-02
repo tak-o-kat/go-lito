@@ -12,6 +12,7 @@ async function getDb() {
   return db;
 }
 
+// used for INSSERT, UPDATE, DELETE
 export async function executeQuery(query: string, params: string[] = []) {
   const db = await getDb();
   const statement = db.prepare(query);
@@ -22,6 +23,12 @@ export async function queryOne(query: string, params: string[] = []) {
   const db = await getDb();
   const statement = db.prepare(query);
   return statement.get(params);
+}
+
+export async function queryMany(query: string, params: string[] = []) {
+  const db = await getDb();
+  const statement = db.prepare(query);
+  return statement.all(params);
 }
 
 export async function createTable(query: string) {

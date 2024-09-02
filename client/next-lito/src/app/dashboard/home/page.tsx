@@ -6,6 +6,7 @@ import { BarChartCard } from "@/components/charts/bar-chart-1";
 import TimeIntervalSelect from "@/components/home/time-interval-select";
 import DashboardHomeTotals from "@/components/home/totals";
 import { pause } from "@/utils/helpers";
+import { checkAlgodIsRunning } from "@/lib/cmd/goal-commands";
 
 export default async function Home() {
   const months = [
@@ -26,6 +27,7 @@ export default async function Home() {
   };
 
   const session = await getSession();
+  const isAlgodRunning = (await checkAlgodIsRunning()) as boolean;
 
   return (
     <main className="mx-auto max-w-6xl px-2 space-y-3 sm:space-y-4 my-3 sm:my-4">
@@ -37,7 +39,7 @@ export default async function Home() {
           <TimeIntervalSelect timeInterval={session?.interval as string} />
         </div>
       </div>
-      <DashboardHomeTotals session={session} />
+      <DashboardHomeTotals session={session} isAlgodRunning={isAlgodRunning} />
       <div className="flex flex-col md:flex-row gap-4">
         <div className="w-full md:w-1/2">
           <BarChartCard

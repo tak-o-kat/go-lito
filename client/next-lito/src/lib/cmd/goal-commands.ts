@@ -33,28 +33,31 @@ function parseGoalNodeStatus(text: string) {
   return groupedLines;
 }
 
-function executeCommand(command: string): Promise<string> {
+function executeCommand(
+  command: string
+): Promise<{ success: boolean; output: string }> {
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
       if (error) {
-        reject(`error: ${error.message}`);
+        reject({ success: false, error: error.message });
         return;
       }
       if (stderr) {
-        reject(`stderr: ${stderr}`);
+        reject({ success: false, error: stderr });
         return;
       }
-      resolve(stdout);
+      resolve({ success: true, output: stdout });
     });
   });
 }
 
 export const checkAlgodIsRunning = async () => {
   try {
-    const algod = await executeCommand("ps aux | grep algod | grep -v grep");
-    return algod.length > 0 ? true : false;
+    const cmdResp = await executeCommand("ps aux | grep algod | grep -v grep");
+    if (cmdResp.success) {
+      return cmdResp.output.includes("algod");
+    }
   } catch (error) {
-    console.log("Check algod error: ", error);
     return false;
   }
 };
@@ -75,9 +78,10 @@ export const getNodeStatus = async () => {
     Genesis: "",
     Version: "",
   };
+
   try {
     const statusResp = await executeCommand("goal node status");
-    const parsed = parseGoalNodeStatus(statusResp);
+    const parsed = parseGoalNodeStatus(statusResp.output);
     Object.assign(parsedStatus, parsed);
   } catch (error) {
     console.log(error);
@@ -87,7 +91,7 @@ export const getNodeStatus = async () => {
     const versionResp = await executeCommand(
       "goal -v | sed -n '2p' | awk '{print $1}'"
     );
-    parsedStatus.Version = versionResp.trim();
+    parsedStatus.Version = versionResp.output.trim();
   } catch (error) {
     console.log(error);
     return error;

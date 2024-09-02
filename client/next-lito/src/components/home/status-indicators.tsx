@@ -9,7 +9,7 @@ import {
 
 export default async function StatusIndicators() {
   const isRunning = await checkAlgodIsRunning();
-  const indicators: any | NodeStatus = await getNodeStatus();
+  const indicators: any | NodeStatus = isRunning && (await getNodeStatus());
   let status: string = "";
   let nodeStatusColor: string = "";
 
@@ -33,28 +33,22 @@ export default async function StatusIndicators() {
         </Card>
         <Card className="p-2 text-xs md:text-sm">
           Last block:{" "}
-          <span
-            className={`${nodeStatusColor} font-semibold text-muted-foreground`}
-          >
-            {indicators?.Last}
+          <span className={`${nodeStatusColor} font-semibold`}>
+            {indicators?.Last || " --"}
           </span>
         </Card>
       </div>
       <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
         <Card className="p-2 text-xs md:text-sm">
-          Network:{" "}
-          <span
-            className={`${nodeStatusColor} font-semibold text-muted-foreground`}
-          >
-            {indicators?.Genesis}
+          Version:{" "}
+          <span className={`${nodeStatusColor} font-semibold`}>
+            {indicators?.Version || " --"}
           </span>
         </Card>
         <Card className="p-2 text-xs md:text-sm">
-          Version:{" "}
-          <span
-            className={`${nodeStatusColor} font-semibold text-muted-foreground`}
-          >
-            {indicators?.Version}
+          Network:{" "}
+          <span className={`${nodeStatusColor} font-semibold`}>
+            {indicators?.Genesis || " --"}
           </span>
         </Card>
       </div>
