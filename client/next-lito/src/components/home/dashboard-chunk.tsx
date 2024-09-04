@@ -62,7 +62,7 @@ export default function DashboardChunk(props: ChunkType) {
               <PopoverTrigger asChild className="cursor-help">
                 <CircleHelp className="ml-1 h-3 w-3 text-muted-foreground" />
               </PopoverTrigger>
-              <PopoverContent className="w-96 bg-primary">
+              <PopoverContent className="w-80 bg-primary">
                 <p>{props.title}</p>
                 <p className="text-xs">{props.description}</p>
               </PopoverContent>
@@ -73,7 +73,7 @@ export default function DashboardChunk(props: ChunkType) {
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{props.count}</div>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-[10px] sm:text-xs text-muted-foreground">
           {parseFloat(percentage) >= 0 ? "+" : "-"}
           {`${Math.abs(parseFloat(percentage))}% ${percentWording}`}
         </p>
