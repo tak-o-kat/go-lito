@@ -63,12 +63,13 @@ export default function TimeIntervalCard({
               <SelectGroup>
                 <SelectLabel>Default Time Interval</SelectLabel>
                 <SelectSeparator />
-                <SelectItem value="24h">Last 24 Hours</SelectItem>
-                <SelectItem value="7d">Last 7 Days</SelectItem>
-                <SelectItem value="1m">Last 1 Month</SelectItem>
+                <SelectItem value="24h">Last 24 hours</SelectItem>
+                <SelectItem value="2d">Last 2 days</SelectItem>
+                <SelectItem value="3d">Last 3 days</SelectItem>
+                <SelectItem value="1w">Last week</SelectItem>
+                <SelectItem value="2w">Last 2 Weeks</SelectItem>
+                <SelectItem value="1m">Last Month</SelectItem>
                 <SelectItem value="3m">Last 3 Months</SelectItem>
-                <SelectItem value="6m">Last 6 Months</SelectItem>
-                <SelectItem value="1y">Last Year</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>

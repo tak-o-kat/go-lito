@@ -54,7 +54,6 @@ export async function signup(
   if (user) {
     Object.assign(session, user);
     session.isLoggedIn = true;
-
     await session.save();
   }
   redirect(getRedirectToUrl());

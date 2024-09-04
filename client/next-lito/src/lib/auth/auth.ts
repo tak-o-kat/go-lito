@@ -1,3 +1,5 @@
+"use server";
+
 import {
   createTable,
   doesTableExist,
@@ -23,7 +25,7 @@ export async function storeUser(username: string, password: string) {
   }
 
   // Hash password and store in DB
-  const query = `INSERT INTO users (username, password, theme, interval) VALUES (?, ?, 'theme-default', '7d')`;
+  const query = `INSERT INTO users (username, password, theme, interval) VALUES (?, ?, 'theme-default', '1w')`;
   const hashedPassword = await hashPassword(password);
   try {
     await executeQuery(query, [username, hashedPassword]);
@@ -34,6 +36,7 @@ export async function storeUser(username: string, password: string) {
 }
 
 export async function doesAtLeastOneUserExist() {
+  console.log("Checking if at least one user exists");
   // check if users table exists
   const tableExists = await doesTableExist("users");
   if (!tableExists) {

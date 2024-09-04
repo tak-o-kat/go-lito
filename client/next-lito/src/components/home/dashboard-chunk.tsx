@@ -6,6 +6,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { CircleHelp } from "lucide-react";
+import { defaultMaxListeners } from "events";
 
 type ChunkType = {
   title: string;
@@ -19,6 +20,38 @@ type ChunkType = {
 };
 
 export default function DashboardChunk(props: ChunkType) {
+  const percentage =
+    isNaN(props.percentage) || !isFinite(props.percentage)
+      ? "0"
+      : props.percentage.toFixed(2);
+
+  let percentWording = "";
+  switch (props.timeInterval) {
+    case "24h":
+      percentWording = "from yesterday";
+      break;
+    case "2d":
+      percentWording = "from 2 days ago";
+      break;
+    case "3d":
+      percentWording = "from 3 days ago";
+      break;
+    case "1w":
+      percentWording = "from last week";
+      break;
+    case "2w":
+      percentWording = "from 2 weeks ago";
+      break;
+    case "1m":
+      percentWording = "from last month";
+      break;
+    case "3m":
+      percentWording = "from 3 months ago";
+      break;
+    default:
+      break;
+  }
+
   return (
     <Card className="w-full" x-chunk="dashboard-01-chunk-0">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -41,8 +74,8 @@ export default function DashboardChunk(props: ChunkType) {
       <CardContent>
         <div className="text-2xl font-bold">{props.count}</div>
         <p className="text-xs text-muted-foreground">
-          {props.percentage > 0 ? "+" : "-"}
-          {props.percentage}% from last {props.timeInterval}
+          {parseFloat(percentage) >= 0 ? "+" : "-"}
+          {`${Math.abs(parseFloat(percentage))}% ${percentWording}`}
         </p>
       </CardContent>
     </Card>
