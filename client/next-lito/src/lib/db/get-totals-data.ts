@@ -1,5 +1,3 @@
-"use server";
-
 import {
   generateArrayForSelectCount,
   generatePrevLitoDateTimeFromInterval,
@@ -17,7 +15,6 @@ export const getTotalsAndPercentageFromTimeInterval = async (
   from: string,
   to: string
 ) => {
-  "use server";
   const query = `
     SELECT 
       (SELECT COUNT(*) FROM proposed WHERE typeid=${ON_CHAIN} AND timestamp BETWEEN ? AND ?) AS onChain,
@@ -43,7 +40,6 @@ export const getTotalsAndPercentageFromTimeInterval = async (
     prevTimeRange.from,
     prevTimeRange.to
   );
-
   // execute the query and flatten out the array
   const counts: any = await queryOne(query, ranges.flat());
 

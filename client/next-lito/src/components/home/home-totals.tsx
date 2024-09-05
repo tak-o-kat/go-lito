@@ -7,17 +7,8 @@ import {
   ProposedDescription,
   SoftDescription,
 } from "@/lib/const";
-import { HomeTotals } from "@/lib/types";
-import { on } from "events";
-
-const data1 = {
-  title: "On Chain",
-  count: 47,
-  percentage: 4.3,
-  timeInterval: "7d",
-  icon: Grid2x2CheckIcon,
-  description: OnChainDescription,
-};
+import { HomeTotals, TotalChunkType } from "@/lib/types";
+import { pause } from "@/utils/helpers";
 
 function generateDashboardHomeTotalChunkData(
   data: HomeTotals,
@@ -59,6 +50,21 @@ function generateDashboardHomeTotalChunkData(
   };
 }
 
+async function getOnchainTotals(
+  totals: HomeTotals,
+  interval: string
+): Promise<TotalChunkType> {
+  await pause(2000);
+  return {
+    title: "On Chain",
+    count: totals.onChain.count,
+    percentage: totals.onChain.percentage,
+    timeInterval: interval,
+    icon: Grid2x2CheckIcon,
+    description: OnChainDescription,
+  };
+}
+
 export default async function DashboardHomeTotals({
   totals,
   interval,
@@ -72,6 +78,7 @@ export default async function DashboardHomeTotals({
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
+      {/* <DashboardChunk data={getOnchainTotals(totals, interval)} /> */}
       <DashboardChunk {...totalsObj.onChain} />
       <DashboardChunk {...totalsObj.proposals} />
       <DashboardChunk {...totalsObj.softVotes} />

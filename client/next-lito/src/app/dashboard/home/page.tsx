@@ -3,36 +3,16 @@
 import { getSession } from "@/lib/auth/session";
 import StatusIndicators from "@/components/home/status-indicators";
 
-import { BarCharty } from "@/components/home/BarCharty";
-import { BarChartCard } from "@/components/charts/bar-chart-1";
 import TimeIntervalSelect from "@/components/home/time-interval-select";
-import DashboardHomeTotals from "@/components/home/totals";
+import DashboardHomeTotals from "@/components/home/home-totals";
 import { pause } from "@/utils/helpers";
-import { DateTime } from "luxon";
 import { checkAlgodIsRunning } from "@/lib/cmd/goal-commands";
 import { generateLitoDateTimeFromInterval } from "@/lib/datetime";
-import { time } from "console";
 import { getTotalsAndPercentageFromTimeInterval } from "@/lib/db/get-totals-data";
 import { HomeTotals } from "@/lib/types";
+import HomeCharts from "@/components/home/home-charts";
 
 export default async function Home() {
-  const months = [
-    { month: "February", onChain: 44 },
-    { month: "March", onChain: 23 },
-    { month: "April", onChain: 56 },
-    { month: "May", onChain: 34 },
-    { month: "June", onChain: 39 },
-    { month: "July", onChain: 67 },
-    { month: "August", onChain: 48 },
-  ];
-
-  const chartConfig = {
-    onChain: {
-      label: "On Chain",
-      color: "hsl(var(--chart-1))",
-    },
-  };
-
   const session = await getSession();
   const isAlgodRunning = (await checkAlgodIsRunning()) as boolean;
 
@@ -63,22 +43,10 @@ export default async function Home() {
         interval={session?.interval as string}
         isAlgodRunning={isAlgodRunning}
       />
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="w-full md:w-1/2">
-          <BarChartCard
-            data={months}
-            config={chartConfig}
-            title="On Chain Blocks"
-            description="Sun Aug 22, 2024 - Sun Aug 29, 2024"
-            trendPercentage={12}
-            footerText="Total Votes"
-            xAxisKey="month"
-          />
-        </div>
-        <div className="w-full md:w-1/2">
-          <BarCharty />
-        </div>
-      </div>
+      <HomeCharts
+        interval={session?.interval as string}
+        timeRange={timeRange}
+      />
     </main>
   );
 }

@@ -1,5 +1,3 @@
-"use server";
-
 import {
   createTable,
   doesTableExist,
@@ -36,7 +34,6 @@ export async function storeUser(username: string, password: string) {
 }
 
 export async function doesAtLeastOneUserExist() {
-  console.log("Checking if at least one user exists");
   // check if users table exists
   const tableExists = await doesTableExist("users");
   if (!tableExists) {

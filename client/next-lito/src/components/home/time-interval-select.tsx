@@ -42,12 +42,12 @@ export default function TimeIntervalSelect({
           <SelectLabel>Time Interval</SelectLabel>
           <SelectSeparator />
           <SelectItem value="24h">Last 24 hours</SelectItem>
-          <SelectItem value="2d">Last 2 days</SelectItem>
-          <SelectItem value="3d">Last 3 days</SelectItem>
+          {/* <SelectItem value="2d">Last 2 days</SelectItem>
+          <SelectItem value="3d">Last 3 days</SelectItem> */}
           <SelectItem value="1w">Last week</SelectItem>
-          <SelectItem value="2w">Last 2 Weeks</SelectItem>
+          {/* <SelectItem value="2w">Last 2 Weeks</SelectItem> */}
           <SelectItem value="1m">Last Month</SelectItem>
-          <SelectItem value="3m">Last 3 Months</SelectItem>
+          {/* <SelectItem value="6m">Last 6 Months</SelectItem> */}
         </SelectGroup>
       </SelectContent>
     </Select>

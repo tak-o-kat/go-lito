@@ -53,7 +53,6 @@ export function getFormValues(typeName: string, formData: FormData) {
 }
 
 export async function getSession() {
-  "use server";
   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
 
   // If user visits for the first time session returns an empty object.
