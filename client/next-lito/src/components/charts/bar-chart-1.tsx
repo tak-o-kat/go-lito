@@ -49,7 +49,9 @@ export const BarChartCard: React.FC<BarChartProps> = ({
   footerText,
   xAxisKey,
 }) => {
+  const sliceValue = xAxisKey === "day" ? 3 : 10;
   const dataKeys = Object.keys(data[0]).filter((key) => key !== xAxisKey);
+  console.log(dataKeys);
   const error = console.error;
   console.error = (...args: any) => {
     if (/defaultProps/.test(args[0])) return;
@@ -77,7 +79,7 @@ export const BarChartCard: React.FC<BarChartProps> = ({
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              // tickFormatter={(value) => value.slice(0)}
+              tickFormatter={(value) => value.slice(0, sliceValue)}
             />
             <ChartTooltip
               cursor={false}

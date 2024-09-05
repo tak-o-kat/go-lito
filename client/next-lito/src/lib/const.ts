@@ -1,5 +1,10 @@
 // All constants are exported here
 
+export const SOFT_VOTES = 1;
+export const CERT_VOTES = 2;
+export const PROPOSALS = 3;
+export const ON_CHAIN = 4;
+
 export const SALT_ROUNDS = 10;
 export const ALGORAND_DATA = process.env.ALGORAND_DATA;
 export const DB_PATH = `${ALGORAND_DATA}/lito/golito.db`;

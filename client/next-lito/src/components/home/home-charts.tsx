@@ -50,10 +50,16 @@ async function getOnchainChartData(interval: string, from: string, to: string) {
   switch (interval) {
     case "24h":
       console.log("24h");
-      dateRanges = getDayChartDateRanges(new Date());
+      const yesterday = DateTime.local().minus({ days: 1 }).toUTC();
+      const today = new Date();
+      dateRanges = getDayChartDateRanges(yesterday.toJSDate());
       chartData = await getChartDataForDay(dateRanges);
       break;
     case "2d":
+      // const yesterday = DateTime.local().minus({ days: 1 }).toUTC();
+      // console.log(yesterday.toJSDate);
+      // dateRanges = getDayChartDateRanges(yesterday.toJSDate());
+
       console.log("2d");
       break;
     case "3d":
@@ -92,27 +98,34 @@ export default async function HomeCharts({
   interval: string;
   timeRange: { from: string; to: string };
 }) {
-  const chartConfig = {
+  const onChainConfig = {
     onChain: {
       label: "On Chain",
       color: "hsl(var(--chart-1))",
     },
   };
 
+  const proposalsConfig = {
+    proposals: {
+      label: "On Chain",
+      color: "hsl(var(--chart-2))",
+    },
+  };
+
   // Get Bar data from interval and datetime range
-  const onChain = await getOnchainChartData(
+  const chartInfo = await getOnchainChartData(
     interval,
     timeRange.from,
     timeRange.to
   );
 
-  console.log(onChain);
+  // console.log(chartInfo.data);
 
   // Create a time range text for the charts
-  const from = DateTime.fromISO(onChain.ranges[0].from)
+  const from = DateTime.fromISO(chartInfo.ranges[0].from)
     .toUTC()
     .toFormat("LLL dd, yyyy hh:mm a");
-  const to = DateTime.fromISO(onChain.ranges[onChain.ranges.length - 1].to)
+  const to = DateTime.fromISO(chartInfo.ranges[chartInfo.ranges.length - 1].to)
     .toUTC()
     .toFormat("LLL dd, yyyy hh:mm a");
   let timeRangeText = `${from} - ${to}`;
@@ -121,8 +134,8 @@ export default async function HomeCharts({
     <div className="flex flex-col md:flex-row gap-4">
       <div className="w-full md:w-1/2">
         <BarChartCard
-          data={onChain.data}
-          config={chartConfig}
+          data={chartInfo.data.onChain}
+          config={onChainConfig}
           title="On Chain Blocks"
           description={timeRangeText}
           trendPercentage={12}
@@ -130,7 +143,17 @@ export default async function HomeCharts({
           xAxisKey={getXAxis(interval)}
         />
       </div>
-      <div className="w-full md:w-1/2"></div>
+      <div className="w-full md:w-1/2">
+        <BarChartCard
+          data={chartInfo.data.proposals}
+          config={proposalsConfig}
+          title="Block Proposals"
+          description={timeRangeText}
+          trendPercentage={12}
+          footerText="Total Votes"
+          xAxisKey={getXAxis(interval)}
+        />
+      </div>
     </div>
   );
 }
