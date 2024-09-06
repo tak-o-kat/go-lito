@@ -50,7 +50,7 @@ async function getOnchainChartData(interval: string, from: string, to: string) {
   switch (interval) {
     case "24h":
       console.log("24h");
-      const yesterday = DateTime.local().minus({ days: 1 }).toUTC();
+      const yesterday = DateTime.local().minus({ days: 18 }).toUTC();
       const today = new Date();
       dateRanges = getDayChartDateRanges(yesterday.toJSDate());
       chartData = await getChartDataForDay(dateRanges);
@@ -75,7 +75,8 @@ async function getOnchainChartData(interval: string, from: string, to: string) {
       break;
     case "1m":
       console.log("1m");
-      dateRanges = getMonthChartDateRanges(new Date());
+      const lastMonth = DateTime.local().minus({ month: 1 }).toUTC();
+      dateRanges = getMonthChartDateRanges(lastMonth.toJSDate()); //getMonthChartDateRanges(new Date());
       chartData = await getChartDataForMonth(dateRanges);
       break;
     case "3m":
@@ -107,8 +108,22 @@ export default async function HomeCharts({
 
   const proposalsConfig = {
     proposals: {
-      label: "On Chain",
+      label: "Proposals",
       color: "hsl(var(--chart-2))",
+    },
+  };
+
+  const softConfig = {
+    softVotes: {
+      label: "Soft Votes",
+      color: "hsl(var(--chart-3))",
+    },
+  };
+
+  const certConfig = {
+    certVotes: {
+      label: "Cert Votes",
+      color: "hsl(var(--chart-4))",
     },
   };
 
@@ -131,29 +146,55 @@ export default async function HomeCharts({
   let timeRangeText = `${from} - ${to}`;
 
   return (
-    <div className="flex flex-col md:flex-row gap-4">
-      <div className="w-full md:w-1/2">
-        <BarChartCard
-          data={chartInfo.data.onChain}
-          config={onChainConfig}
-          title="On Chain Blocks"
-          description={timeRangeText}
-          trendPercentage={12}
-          footerText="Total Votes"
-          xAxisKey={getXAxis(interval)}
-        />
+    <>
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="w-full md:w-1/2">
+          <BarChartCard
+            data={chartInfo.data.onChain}
+            config={onChainConfig}
+            title="On Chain Blocks"
+            description={timeRangeText}
+            trendPercentage={12}
+            footerText="Total Votes"
+            xAxisKey={getXAxis(interval)}
+          />
+        </div>
+        <div className="w-full md:w-1/2">
+          <BarChartCard
+            data={chartInfo.data.proposals}
+            config={proposalsConfig}
+            title="Block Proposals"
+            description={timeRangeText}
+            trendPercentage={12}
+            footerText="Total Votes"
+            xAxisKey={getXAxis(interval)}
+          />
+        </div>
       </div>
-      <div className="w-full md:w-1/2">
-        <BarChartCard
-          data={chartInfo.data.proposals}
-          config={proposalsConfig}
-          title="Block Proposals"
-          description={timeRangeText}
-          trendPercentage={12}
-          footerText="Total Votes"
-          xAxisKey={getXAxis(interval)}
-        />
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="w-full md:w-1/2">
+          <BarChartCard
+            data={chartInfo.data.softVotes}
+            config={softConfig}
+            title="Soft Votes"
+            description={timeRangeText}
+            trendPercentage={12}
+            footerText="Soft Votes"
+            xAxisKey={getXAxis(interval)}
+          />
+        </div>
+        <div className="w-full md:w-1/2">
+          <BarChartCard
+            data={chartInfo.data.certVotes}
+            config={certConfig}
+            title="Certified Votes"
+            description={timeRangeText}
+            trendPercentage={12}
+            footerText="Cert Votes"
+            xAxisKey={getXAxis(interval)}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -51,7 +51,6 @@ export const BarChartCard: React.FC<BarChartProps> = ({
 }) => {
   const sliceValue = xAxisKey === "day" ? 3 : 10;
   const dataKeys = Object.keys(data[0]).filter((key) => key !== xAxisKey);
-  console.log(dataKeys);
   const error = console.error;
   console.error = (...args: any) => {
     if (/defaultProps/.test(args[0])) return;
@@ -90,11 +89,7 @@ export const BarChartCard: React.FC<BarChartProps> = ({
               fill={`var(--color-${dataKeys[0]})`}
               radius={4}
             >
-              <LabelList
-                offset={12}
-                className="fill-foreground"
-                fontSize={12}
-              />
+              <LabelList offset={12} className="fill-current" fontSize={12} />
             </Bar>
           </BarChart>
         </ChartContainer>
