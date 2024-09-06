@@ -9,35 +9,40 @@ import {
 
 // Generate a Lito datetime string from an interval string return UTC time
 export function generateLitoDateTimeFromInterval(interval: string) {
-  const dt = DateTime.fromJSDate(new Date());
-  let from = dt.toUTC().toISO() as string;
-  let to = dt.toUTC().toISO() as string;
+  let dt = DateTime.fromJSDate(new Date()).toUTC().startOf("day");
+  let from = dt.startOf("day").toUTC().toISO();
+  let to = DateTime.fromJSDate(new Date()).toUTC().toISO();
 
   switch (interval) {
-    case "24h":
-      from = dt.minus({ hours: 24 }).toUTC().toISO() as string;
+    case "today":
+      from = dt.toUTC().toISO();
       break;
-    case "2d":
-      from = dt.minus({ days: 2 }).toUTC().toISO() as string;
+    case "yesterday":
+      from = dt.minus({ day: 1 }).toUTC().toISO();
+      to = dt.minus({ milliseconds: 1 }).toUTC().toISO();
       break;
-    case "3d":
-      from = dt.minus({ days: 3 }).toUTC().toISO() as string;
+    case "week":
+      from = DateTime.fromJSDate(new Date()).toUTC().startOf("week").toISO();
       break;
-    case "1w":
-      from = dt.minus({ week: 1 }).toUTC().toISO() as string;
+    case "lastweek":
+      const week = DateTime.fromJSDate(new Date()).toUTC().startOf("week");
+      from = week.minus({ week: 1 }).toUTC().toISO();
+      to = week.minus({ milliseconds: 1 }).toUTC().toISO();
       break;
-    case "2w":
-      from = dt.minus({ weeks: 2 }).toUTC().toISO() as string;
+    case "month":
+      from = DateTime.fromJSDate(new Date()).toUTC().startOf("month").toISO();
       break;
-    case "1m":
-      from = dt.minus({ month: 1 }).toUTC().toISO() as string;
-      break;
-    case "3m":
-      from = dt.minus({ months: 3 }).toUTC().toISO() as string;
+    case "lastmonth":
+      const month = DateTime.fromJSDate(new Date()).toUTC().startOf("month");
+      from = month.minus({ month: 1 }).toUTC().toISO();
+      to = month.minus({ milliseconds: 1 }).toUTC().toISO();
       break;
     default:
       break;
   }
+  from = from as string;
+  to = to as string;
+
   return { from, to };
 }
 
@@ -45,43 +50,23 @@ export function generatePrevLitoDateTimeFromInterval(
   interval: string,
   currentFrom: string
 ) {
-  const dt = DateTime.fromISO(currentFrom).toUTC();
-  let from = dt.toUTC().toISO() as string;
-  let to = dt.toUTC().toISO() as string;
+  let dt, from, to;
 
-  switch (interval) {
-    case "24h":
-      from = dt.minus({ hours: 24 }).toUTC().toISO() as string;
-      to = dt.minus({ milliseconds: 1 }).toUTC().toISO() as string;
-      break;
-    case "2d":
-      from = dt.minus({ days: 2 }).toUTC().toISO() as string;
-      to = dt.minus({ milliseconds: 1 }).toUTC().toISO() as string;
-      break;
-    case "3d":
-      from = dt.minus({ days: 3 }).toUTC().toISO() as string;
-      to = dt.minus({ milliseconds: 1 }).toUTC().toISO() as string;
-      break;
-    case "1w":
-      from = dt.minus({ week: 1 }).toUTC().toISO() as string;
-      to = dt.minus({ milliseconds: 1 }).toUTC().toISO() as string;
-      break;
-    case "2w":
-      from = dt.minus({ weeks: 2 }).toUTC().toISO() as string;
-      to = dt.minus({ milliseconds: 1 }).toUTC().toISO() as string;
-      break;
-    case "1m":
-      from = dt.minus({ months: 1 }).toUTC().toISO() as string;
-      to = dt.minus({ milliseconds: 1 }).toUTC().toISO() as string;
-      break;
-    case "3m":
-      from = dt.minus({ months: 6 }).toUTC().toISO() as string;
-      to = dt.minus({ milliseconds: 1 }).toUTC().toISO() as string;
-      break;
-    default:
-      break;
+  if (interval.includes("day")) {
+    dt = DateTime.fromISO(currentFrom).toUTC().startOf("day");
+    from = dt.minus({ day: 1 }).toUTC().toISO() as string;
+    to = dt.minus({ milliseconds: 1 }).toUTC().toISO() as string;
+  } else if (interval.includes("w")) {
+    dt = DateTime.fromISO(currentFrom).toUTC();
+    from = dt.minus({ week: 1 }).toUTC().toISO() as string;
+    to = dt.minus({ milliseconds: 1 }).toUTC().toISO() as string;
+  } else if (interval.includes("m")) {
+    dt = DateTime.fromISO(currentFrom).toUTC();
+    from = dt.minus({ month: 1 }).toUTC().toISO() as string;
+    to = dt.minus({ milliseconds: 1 }).toUTC().toISO() as string;
   }
-
+  from = from as string;
+  to = to as string;
   return { from, to };
 }
 
@@ -150,7 +135,7 @@ export function getDayChartDateRanges(date: Date): DayChartDateRange[] {
 function divideWeekIntoDays(startDate: string) {
   // Ensure the start date is the beginning of a week (Monday)
   const dt = DateTime.fromISO(startDate).toUTC();
-  const weekStart = dt.minus({ days: 6 }).startOf("day");
+  const weekStart = dt.startOf("week");
 
   // Create an array to store the 7 day intervals
   const weekDays = [];

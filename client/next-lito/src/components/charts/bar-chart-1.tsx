@@ -12,7 +12,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
@@ -89,7 +88,11 @@ export const BarChartCard: React.FC<BarChartProps> = ({
               fill={`var(--color-${dataKeys[0]})`}
               radius={4}
             >
-              <LabelList offset={12} className="fill-current" fontSize={12} />
+              <LabelList
+                offset={12}
+                className="fill-current text-white"
+                fontSize={12}
+              />
             </Bar>
           </BarChart>
         </ChartContainer>

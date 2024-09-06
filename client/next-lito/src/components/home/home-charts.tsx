@@ -19,25 +19,22 @@ interface HomeChartsProps {
 function getXAxis(interval: string) {
   let xAxis: string;
   switch (interval) {
-    case "24h":
+    case "today":
       xAxis = "hours";
       break;
-    case "2d":
+    case "yesterday":
       xAxis = "hours";
       break;
-    case "3d":
-      xAxis = "hours";
-      break;
-    case "1w":
+    case "week":
       xAxis = "day";
       break;
-    case "2w":
-      xAxis = "days";
+    case "lastweek":
+      xAxis = "day";
       break;
-    case "1m":
+    case "month":
       xAxis = "week";
       break;
-    case "3m":
+    case "lastmonth":
       xAxis = "week";
       break;
   }
@@ -48,39 +45,33 @@ async function getOnchainChartData(interval: string, from: string, to: string) {
   let dateRanges: any;
   let chartData: any;
   switch (interval) {
-    case "24h":
-      console.log("24h");
-      const yesterday = DateTime.local().minus({ days: 18 }).toUTC();
-      const today = new Date();
+    case "today":
+      dateRanges = getDayChartDateRanges(new Date());
+      chartData = await getChartDataForDay(dateRanges);
+      break;
+    case "yesterday":
+      const yesterday = DateTime.local().minus({ days: 1 }).toUTC();
       dateRanges = getDayChartDateRanges(yesterday.toJSDate());
       chartData = await getChartDataForDay(dateRanges);
       break;
-    case "2d":
-      // const yesterday = DateTime.local().minus({ days: 1 }).toUTC();
-      // console.log(yesterday.toJSDate);
-      // dateRanges = getDayChartDateRanges(yesterday.toJSDate());
-
-      console.log("2d");
-      break;
-    case "3d":
-      console.log("3d");
-      break;
-    case "1w":
-      console.log("1w");
+    case "week":
       dateRanges = getWeekChartDateRanges(new Date());
       chartData = await getChartDataForWeek(dateRanges);
       break;
-    case "2w":
-      console.log("2w");
+    case "lastweek":
+      const week = DateTime.fromJSDate(new Date()).toUTC().startOf("week");
+      const lastWeek = week.minus({ week: 1 }).toUTC().toJSDate();
+      dateRanges = getWeekChartDateRanges(lastWeek);
+      chartData = await getChartDataForWeek(dateRanges);
       break;
-    case "1m":
-      console.log("1m");
-      const lastMonth = DateTime.local().minus({ month: 1 }).toUTC();
-      dateRanges = getMonthChartDateRanges(lastMonth.toJSDate()); //getMonthChartDateRanges(new Date());
+    case "month":
+      dateRanges = getMonthChartDateRanges(new Date());
       chartData = await getChartDataForMonth(dateRanges);
       break;
-    case "3m":
-      console.log("3m");
+    case "lastmonth":
+      const lastMonth = DateTime.local().minus({ month: 1 }).toUTC();
+      dateRanges = getMonthChartDateRanges(lastMonth.toJSDate());
+      chartData = await getChartDataForMonth(dateRanges);
       break;
     default:
       break;
@@ -134,7 +125,7 @@ export default async function HomeCharts({
     timeRange.to
   );
 
-  // console.log(chartInfo.data);
+  // console.log(chartInfo);
 
   // Create a time range text for the charts
   const from = DateTime.fromISO(chartInfo.ranges[0].from)

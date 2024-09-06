@@ -17,26 +17,23 @@ function InternalTotalsData(props: { data: Promise<TotalChunkType> }) {
 
   let percentWording = "";
   switch (totals.timeInterval) {
-    case "24h":
+    case "today":
       percentWording = "from the previous day";
       break;
-    case "2d":
-      percentWording = "from the previous 2 days";
+    case "yesterday":
+      percentWording = "from the previous day";
       break;
-    case "3d":
-      percentWording = "from the previous 3 days";
-      break;
-    case "1w":
+    case "week":
       percentWording = "from the previous week";
       break;
-    case "2w":
-      percentWording = "from the previous 2 weeks";
+    case "lastweek":
+      percentWording = "from the previous week";
       break;
-    case "1m":
+    case "month":
       percentWording = "from the previous month";
       break;
-    case "3m":
-      percentWording = "from the previous 3 months";
+    case "lastmonth":
+      percentWording = "from the previous month";
       break;
     default:
       break;
@@ -90,26 +87,23 @@ export default function DashboardChunk(props: TotalChunkType) {
 
   let percentWording = "";
   switch (props.timeInterval) {
-    case "24h":
+    case "today":
       percentWording = "from the previous day";
       break;
-    case "2d":
-      percentWording = "from the previous 2 days";
+    case "yesterday":
+      percentWording = "from the previous day";
       break;
-    case "3d":
-      percentWording = "from the previous 3 days";
-      break;
-    case "1w":
+    case "week":
       percentWording = "from the previous week";
       break;
-    case "2w":
-      percentWording = "from the previous 2 weeks";
+    case "lastweek":
+      percentWording = "from the previous week";
       break;
-    case "1m":
+    case "month":
       percentWording = "from the previous month";
       break;
-    case "3m":
-      percentWording = "from the previous 3 months";
+    case "month":
+      percentWording = "from the previous month";
       break;
     default:
       break;

@@ -5,7 +5,6 @@ import StatusIndicators from "@/components/home/status-indicators";
 
 import TimeIntervalSelect from "@/components/home/time-interval-select";
 import DashboardHomeTotals from "@/components/home/home-totals";
-import { pause } from "@/utils/helpers";
 import { checkAlgodIsRunning } from "@/lib/cmd/goal-commands";
 import { generateLitoDateTimeFromInterval } from "@/lib/datetime";
 import { getTotalsAndPercentageFromTimeInterval } from "@/lib/db/get-totals-data";
@@ -27,7 +26,6 @@ export default async function Home() {
     timeRange.from,
     timeRange.to
   );
-
   return (
     <main className="mx-auto max-w-6xl px-2 space-y-3 sm:space-y-4 my-3 sm:my-4">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:gap-2">

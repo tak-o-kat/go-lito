@@ -23,7 +23,7 @@ export async function storeUser(username: string, password: string) {
   }
 
   // Hash password and store in DB
-  const query = `INSERT INTO users (username, password, theme, interval) VALUES (?, ?, 'theme-default', '24h')`;
+  const query = `INSERT INTO users (username, password, theme, interval) VALUES (?, ?, 'theme-default', 'today')`;
   const hashedPassword = await hashPassword(password);
   try {
     await executeQuery(query, [username, hashedPassword]);
