@@ -53,6 +53,9 @@ export default function ThemeSelect({ currentTheme }: propTypes) {
                 <SelectItem value="theme-green">Green</SelectItem>
                 <SelectItem value="theme-rose">Rose</SelectItem>
                 <SelectItem value="theme-teal">Teal</SelectItem>
+                <SelectItem value="algorand-teal">Algorand Teal</SelectItem>
+                <SelectItem value="algorand-blue">Algorand Blue</SelectItem>
+                <SelectItem value="algorand-gray">Algorand Gray</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>

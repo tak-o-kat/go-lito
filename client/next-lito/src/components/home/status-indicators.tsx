@@ -30,7 +30,7 @@ export default async function StatusIndicators() {
     <div className="flex flex-row items-center gap-2 w-full pt-1">
       <div className="flex flex-row justify-around md:justify-between gap-2 w-full text-xs">
         <div className="flex gap-4">
-          <div className="font-medium flex flex-col sm:flex-row gap-1">
+          <div className="font-medium flex flex-col sm:flex-row gap-1 md:gap-2">
             <div className="flex justify-center">
               <div className={`${serverColor} rounded-full w-4 h-4`} />
             </div>
@@ -45,7 +45,7 @@ export default async function StatusIndicators() {
 
         <div className="flex items-center gap-4">
           <div className="font-medium flex flex-col sm:flex-row gap-1">
-            <div className="flex justify-center">
+            <div className="flex justify-center font-extralight">
               <GalleryHorizontalEnd className="h-4 w-4" />
             </div>
             <span className="hidden md:block">{`Version: `}</span>
@@ -57,7 +57,7 @@ export default async function StatusIndicators() {
 
         <div className="flex gap-4 ">
           <div className="font-medium flex flex-col sm:flex-row gap-1">
-            <div className="flex justify-center">
+            <div className="flex justify-center font-extralight">
               <Network className="h-4 w-4" />
             </div>
 
@@ -70,7 +70,7 @@ export default async function StatusIndicators() {
 
         <div className="flex items-center gap-4">
           <div className="font-medium flex flex-col sm:flex-row gap-1">
-            <div className="flex justify-center">
+            <div className="flex justify-center font-extralight">
               <Cuboid className="h-4 w-4" />
             </div>
             <span className="hidden md:block">{`Last Block: `}</span>
