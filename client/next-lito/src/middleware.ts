@@ -10,7 +10,7 @@ export default async function middleware(req: NextRequest) {
 
     // Construct the login URL with a redirect parameter
     url.pathname = "/login";
-    url.searchParams.set("redirectTo", currentPath);
+    // url.searchParams.set("redirectTo", currentPath);
 
     return NextResponse.redirect(url);
   }
@@ -19,5 +19,5 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|api|favicon.ico|public|signup|login|renew).*)"],
+  matcher: ["/((?!_next|favicon.ico|public|signup|login|renew).*)"],
 };
