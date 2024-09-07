@@ -139,7 +139,7 @@ export default async function Home() {
           <StatusIndicators />
         </div>
       </div>
-      <div className="flex flex-row justify-end md:w-auto pt-3 sm:pt-0">
+      <div className="flex flex-row justify-end md:w-auto">
         <TimeIntervalSelect timeInterval={session?.interval as string} />
       </div>
       <DashboardHomeTotals

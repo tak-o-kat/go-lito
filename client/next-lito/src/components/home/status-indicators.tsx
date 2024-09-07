@@ -27,12 +27,12 @@ export default async function StatusIndicators() {
   }
 
   return (
-    <div className="flex items-center justify-center sm:justify-around gap-2 w-full pt-1">
-      <div className="flex flex-row justify-center gap-2 w-full text-xs">
-        <div className="flex justify-center md:justify-start items-center gap-4 w-full">
+    <div className="flex flex-row items-center gap-2 w-full pt-1">
+      <div className="flex flex-row justify-around md:justify-between gap-2 w-full text-xs">
+        <div className="flex gap-4">
           <div className="font-medium flex flex-col sm:flex-row gap-1">
             <div className="flex justify-center">
-              <div className={`${serverColor} rounded-full w-3 h-3`} />
+              <div className={`${serverColor} rounded-full w-4 h-4`} />
             </div>
             <div className="font-medium flex flex-col sm:flex-row gap-1">
               <span className="hidden md:block">{`Node Status: `}</span>
@@ -43,7 +43,7 @@ export default async function StatusIndicators() {
           </div>
         </div>
 
-        <div className="flex justify-center md:justify-start items-center gap-4 w-full">
+        <div className="flex items-center gap-4">
           <div className="font-medium flex flex-col sm:flex-row gap-1">
             <div className="flex justify-center">
               <GalleryHorizontalEnd className="h-4 w-4" />
@@ -55,7 +55,7 @@ export default async function StatusIndicators() {
           </div>
         </div>
 
-        <div className="flex justify-center md:justify-end items-center gap-4 w-full">
+        <div className="flex gap-4 ">
           <div className="font-medium flex flex-col sm:flex-row gap-1">
             <div className="flex justify-center">
               <Network className="h-4 w-4" />
@@ -68,7 +68,7 @@ export default async function StatusIndicators() {
           </div>
         </div>
 
-        <div className="flex justify-center md:justify-end items-center gap-4 w-full">
+        <div className="flex items-center gap-4">
           <div className="font-medium flex flex-col sm:flex-row gap-1">
             <div className="flex justify-center">
               <Cuboid className="h-4 w-4" />
