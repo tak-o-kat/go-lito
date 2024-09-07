@@ -5,7 +5,6 @@ import { useEffect } from "react";
 const Favicon = () => {
   useEffect(() => {
     function updateFavicon() {
-      console.log("document.hidden " + document.hidden);
       const favicon = document.querySelector(
         'link[rel=icon][sizes="any"]'
       ) as HTMLLinkElement;
