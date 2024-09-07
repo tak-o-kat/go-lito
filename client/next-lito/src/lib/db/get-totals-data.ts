@@ -1,13 +1,9 @@
+import { ON_CHAIN, PROPOSALS, SOFT_VOTES, CERT_VOTES } from "../const";
 import {
   generateArrayForSelectCount,
   generatePrevLitoDateTimeFromInterval,
 } from "../datetime";
 import { queryOne } from "./db";
-
-const SOFT_VOTES = 1;
-const CERT_VOTES = 2;
-const PROPOSALS = 3;
-const ON_CHAIN = 4;
 
 // Server request to get db data
 export const getTotalsAndPercentageFromTimeInterval = async (

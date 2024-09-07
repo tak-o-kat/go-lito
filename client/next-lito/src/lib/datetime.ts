@@ -46,6 +46,8 @@ export function generateLitoDateTimeFromInterval(interval: string) {
   return { from, to };
 }
 
+// This will generate the previous datetime from the current datetime
+// e.g. if the current datetime is 2021-09-01T00:00:00.000Z then the previous datetime will be 2021-08-31T00:00:00.000Z
 export function generatePrevLitoDateTimeFromInterval(
   interval: string,
   currentFrom: string
@@ -56,11 +58,11 @@ export function generatePrevLitoDateTimeFromInterval(
     dt = DateTime.fromISO(currentFrom).toUTC().startOf("day");
     from = dt.minus({ day: 1 }).toUTC().toISO() as string;
     to = dt.minus({ milliseconds: 1 }).toUTC().toISO() as string;
-  } else if (interval.includes("w")) {
+  } else if (interval.includes("week")) {
     dt = DateTime.fromISO(currentFrom).toUTC();
     from = dt.minus({ week: 1 }).toUTC().toISO() as string;
     to = dt.minus({ milliseconds: 1 }).toUTC().toISO() as string;
-  } else if (interval.includes("m")) {
+  } else if (interval.includes("month")) {
     dt = DateTime.fromISO(currentFrom).toUTC();
     from = dt.minus({ month: 1 }).toUTC().toISO() as string;
     to = dt.minus({ milliseconds: 1 }).toUTC().toISO() as string;

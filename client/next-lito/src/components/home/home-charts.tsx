@@ -11,75 +11,42 @@ import {
   getMonthChartDateRanges,
   getWeekChartDateRanges,
 } from "@/lib/datetime";
+import {
+  DayChartDateRange,
+  MonthChartDateRange,
+  WeekChartDateRange,
+} from "@/lib/types";
 
 interface HomeChartsProps {
   // Add any props you need for your HomeCharts component
 }
 
-function getXAxis(interval: string) {
-  let xAxis: string;
-  switch (interval) {
-    case "today":
-      xAxis = "hours";
-      break;
-    case "yesterday":
-      xAxis = "hours";
-      break;
-    case "week":
-      xAxis = "day";
-      break;
-    case "lastweek":
-      xAxis = "day";
-      break;
-    case "month":
-      xAxis = "week";
-      break;
-    case "lastmonth":
-      xAxis = "week";
-      break;
-  }
-  return xAxis!;
-}
-
 async function getOnchainChartData(interval: string, from: string, to: string) {
-  let dateRanges: any;
+  let dateRanges:
+    | DayChartDateRange[]
+    | WeekChartDateRange[]
+    | MonthChartDateRange[];
   let chartData: any;
-  switch (interval) {
-    case "today":
-      dateRanges = getDayChartDateRanges(new Date());
-      chartData = await getChartDataForDay(dateRanges);
-      break;
-    case "yesterday":
-      const yesterday = DateTime.local().minus({ days: 1 }).toUTC();
-      dateRanges = getDayChartDateRanges(yesterday.toJSDate());
-      chartData = await getChartDataForDay(dateRanges);
-      break;
-    case "week":
-      dateRanges = getWeekChartDateRanges(new Date());
-      chartData = await getChartDataForWeek(dateRanges);
-      break;
-    case "lastweek":
-      const week = DateTime.fromJSDate(new Date()).toUTC().startOf("week");
-      const lastWeek = week.minus({ week: 1 }).toUTC().toJSDate();
-      dateRanges = getWeekChartDateRanges(lastWeek);
-      chartData = await getChartDataForWeek(dateRanges);
-      break;
-    case "month":
-      dateRanges = getMonthChartDateRanges(new Date());
-      chartData = await getChartDataForMonth(dateRanges);
-      break;
-    case "lastmonth":
-      const lastMonth = DateTime.local().minus({ month: 1 }).toUTC();
-      dateRanges = getMonthChartDateRanges(lastMonth.toJSDate());
-      chartData = await getChartDataForMonth(dateRanges);
-      break;
-    default:
-      break;
+  let xAxis: string;
+
+  if (interval.includes("day")) {
+    dateRanges = getDayChartDateRanges(new Date(from));
+    chartData = await getChartDataForDay(dateRanges);
+    xAxis = "hours";
+  } else if (interval.includes("week")) {
+    dateRanges = getWeekChartDateRanges(new Date(from));
+    chartData = await getChartDataForWeek(dateRanges);
+    xAxis = "day";
+  } else if (interval.includes("month")) {
+    dateRanges = getMonthChartDateRanges(new Date(from));
+    chartData = await getChartDataForMonth(dateRanges);
+    xAxis = "week";
   }
 
   return {
     ranges: dateRanges!,
     data: chartData,
+    xAxis: xAxis!,
   };
 }
 
@@ -146,8 +113,8 @@ export default async function HomeCharts({
             title="On Chain Blocks"
             description={timeRangeText}
             trendPercentage={12}
-            footerText="Total Votes"
-            xAxisKey={getXAxis(interval)}
+            footerText="Blocks On Chain"
+            xAxisKey={chartInfo.xAxis}
           />
         </div>
         <div className="w-full md:w-1/2">
@@ -157,8 +124,8 @@ export default async function HomeCharts({
             title="Block Proposals"
             description={timeRangeText}
             trendPercentage={12}
-            footerText="Total Votes"
-            xAxisKey={getXAxis(interval)}
+            footerText="Blocks Proposals"
+            xAxisKey={chartInfo.xAxis}
           />
         </div>
       </div>
@@ -171,7 +138,7 @@ export default async function HomeCharts({
             description={timeRangeText}
             trendPercentage={12}
             footerText="Soft Votes"
-            xAxisKey={getXAxis(interval)}
+            xAxisKey={chartInfo.xAxis}
           />
         </div>
         <div className="w-full md:w-1/2">
@@ -182,7 +149,7 @@ export default async function HomeCharts({
             description={timeRangeText}
             trendPercentage={12}
             footerText="Cert Votes"
-            xAxisKey={getXAxis(interval)}
+            xAxisKey={chartInfo.xAxis}
           />
         </div>
       </div>
