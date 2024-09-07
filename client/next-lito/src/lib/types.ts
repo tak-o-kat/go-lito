@@ -127,3 +127,20 @@ export type MonthChartDBType = {
   week15: number;
   week16: number;
 };
+
+export type CurrentDataType = {
+  dateOverlaps: boolean; // bool to determine if the current day overlaps with the previous days data
+  interval: string;
+  todaysTotals: {
+    onChain: number;
+    proposals: number;
+    softVotes: number;
+    certVotes: number;
+  };
+  yesterdayTotals: {
+    onChain: number;
+    proposals: number;
+    softVotes: number;
+    certVotes: number;
+  };
+};

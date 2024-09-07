@@ -12,7 +12,6 @@ export const metadata: Metadata = {
 };
 
 async function getTheme() {
-  "use server";
   const session = await getSession();
   if (!session) return "theme-default";
   return session?.theme || "theme-default";

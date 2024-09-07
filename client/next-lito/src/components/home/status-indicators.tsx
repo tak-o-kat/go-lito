@@ -1,5 +1,3 @@
-"use server";
-
 import { Card } from "@/components/ui/card";
 import {
   checkAlgodIsRunning,

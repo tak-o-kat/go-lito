@@ -1,6 +1,7 @@
 import { CERT_VOTES, ON_CHAIN, PROPOSALS, SOFT_VOTES } from "../const";
 import { convertToTime } from "../datetime";
 import {
+  CurrentDataType,
   DayChartDBType,
   DayChartDateRange,
   MonthChartDBType,
@@ -10,7 +11,85 @@ import {
 } from "../types";
 import { queryOne } from "./db";
 
-export const getChartDataForDay = async (rangeObj: DayChartDateRange[]) => {
+function addCurrentDataToDayChartData(
+  currData: any,
+  dbData: DayChartDBType,
+  rangeObj: DayChartDateRange[]
+) {
+  // Loop through the proposed data searching for onchain and proposals in date ranges
+  for (const proposed of currData.Proposed) {
+    if (proposed.time >= rangeObj[0].from && proposed.time <= rangeObj[0].to) {
+      if (proposed.IsOnChain === true) {
+        dbData.hours1++;
+      } else {
+        dbData.hours5++;
+      }
+    } else if (
+      proposed.time >= rangeObj[1].from &&
+      proposed.time <= rangeObj[1].to
+    ) {
+      if (proposed.IsOnChain === true) {
+        dbData.hours2++;
+      } else {
+        dbData.hours6++;
+      }
+    } else if (
+      proposed.time >= rangeObj[2].from &&
+      proposed.time <= rangeObj[2].to
+    ) {
+      if (proposed.IsOnChain === true) {
+        dbData.hours3++;
+      } else {
+        dbData.hours7++;
+      }
+    } else if (
+      proposed.time >= rangeObj[3].from &&
+      proposed.time <= rangeObj[3].to
+    ) {
+      if (proposed.IsOnChain === true) {
+        dbData.hours4++;
+      } else {
+        dbData.hours8++;
+      }
+    }
+  }
+
+  // Loop through the votes data searching for soft and cert votes in date ranges
+  for (const vote of currData.Votes) {
+    if (vote.time >= rangeObj[0].from && vote.time <= rangeObj[0].to) {
+      if (vote.ObjectStep === SOFT_VOTES) {
+        dbData.hours9++;
+      } else if (vote.ObjectStep === CERT_VOTES) {
+        dbData.hours13++;
+      }
+    } else if (vote.time >= rangeObj[1].from && vote.time <= rangeObj[1].to) {
+      if (vote.ObjectStep === SOFT_VOTES) {
+        dbData.hours10++;
+      } else if (vote.ObjectStep === CERT_VOTES) {
+        dbData.hours14++;
+      }
+    } else if (vote.time >= rangeObj[2].from && vote.time <= rangeObj[2].to) {
+      if (vote.ObjectStep === SOFT_VOTES) {
+        dbData.hours11++;
+      } else if (vote.ObjectStep === CERT_VOTES) {
+        dbData.hours15++;
+      }
+    } else if (vote.time >= rangeObj[3].from && vote.time <= rangeObj[3].to) {
+      if (vote.ObjectStep === SOFT_VOTES) {
+        dbData.hours12++;
+      } else if (vote.ObjectStep === CERT_VOTES) {
+        dbData.hours16++;
+      }
+    }
+  }
+
+  return dbData;
+}
+
+export const getChartDataForDay = async (
+  rangeObj: DayChartDateRange[],
+  currentData: any
+) => {
   const query = `
     SELECT 
     (SELECT COUNT(*) FROM proposed WHERE typeid=${ON_CHAIN} AND timestamp BETWEEN ? AND ?) AS hours1,
@@ -38,7 +117,13 @@ export const getChartDataForDay = async (rangeObj: DayChartDateRange[]) => {
     ...rangeDates,
     ...rangeDates,
   ];
-  const dbData = (await queryOne(query, extendedRangeDates)) as DayChartDBType;
+  let dbData = (await queryOne(query, extendedRangeDates)) as DayChartDBType;
+  if (
+    currentData.interval === "today" ||
+    currentData.interval === "yesterday"
+  ) {
+    dbData = addCurrentDataToDayChartData(currentData, dbData, rangeObj);
+  }
 
   return {
     onChain: [
@@ -116,7 +201,129 @@ export const getChartDataForDay = async (rangeObj: DayChartDateRange[]) => {
   };
 };
 
-export const getChartDataForWeek = async (rangeObj: WeekChartDateRange[]) => {
+function addCurrentDataToWeekChartData(
+  currData: any,
+  dbData: WeekChartDBType,
+  rangeObj: WeekChartDateRange[]
+) {
+  // Loop through the proposed data searching for onchain and proposals in date ranges
+  for (const proposed of currData.Proposed) {
+    if (proposed.time >= rangeObj[0].from && proposed.time <= rangeObj[0].to) {
+      if (proposed.IsOnChain === true) {
+        dbData.day1++;
+      } else {
+        dbData.day8++;
+      }
+    } else if (
+      proposed.time >= rangeObj[1].from &&
+      proposed.time <= rangeObj[1].to
+    ) {
+      if (proposed.IsOnChain === true) {
+        dbData.day2++;
+      } else {
+        dbData.day9++;
+      }
+    } else if (
+      proposed.time >= rangeObj[2].from &&
+      proposed.time <= rangeObj[2].to
+    ) {
+      if (proposed.IsOnChain === true) {
+        dbData.day3++;
+      } else {
+        dbData.day10++;
+      }
+    } else if (
+      proposed.time >= rangeObj[3].from &&
+      proposed.time <= rangeObj[3].to
+    ) {
+      if (proposed.IsOnChain === true) {
+        dbData.day4++;
+      } else {
+        dbData.day11++;
+      }
+    } else if (
+      proposed.time >= rangeObj[4].from &&
+      proposed.time <= rangeObj[4].to
+    ) {
+      if (proposed.IsOnChain === true) {
+        dbData.day5++;
+      } else {
+        dbData.day12++;
+      }
+    } else if (
+      proposed.time >= rangeObj[5].from &&
+      proposed.time <= rangeObj[5].to
+    ) {
+      if (proposed.IsOnChain === true) {
+        dbData.day6++;
+      } else {
+        dbData.day13++;
+      }
+    } else if (
+      proposed.time >= rangeObj[6].from &&
+      proposed.time <= rangeObj[6].to
+    ) {
+      if (proposed.IsOnChain === true) {
+        dbData.day7++;
+      } else {
+        dbData.day14++;
+      }
+    }
+  }
+
+  // Loop through the votes data searching for soft and cert votes in date ranges
+  for (const vote of currData.Votes) {
+    if (vote.time >= rangeObj[0].from && vote.time <= rangeObj[0].to) {
+      if (vote.ObjectStep === SOFT_VOTES) {
+        dbData.day15++;
+      } else if (vote.ObjectStep === CERT_VOTES) {
+        dbData.day22++;
+      }
+    } else if (vote.time >= rangeObj[1].from && vote.time <= rangeObj[1].to) {
+      if (vote.ObjectStep === SOFT_VOTES) {
+        dbData.day16++;
+      } else if (vote.ObjectStep === CERT_VOTES) {
+        dbData.day23++;
+      }
+    } else if (vote.time >= rangeObj[2].from && vote.time <= rangeObj[2].to) {
+      if (vote.ObjectStep === SOFT_VOTES) {
+        dbData.day17++;
+      } else if (vote.ObjectStep === CERT_VOTES) {
+        dbData.day24++;
+      }
+    } else if (vote.time >= rangeObj[3].from && vote.time <= rangeObj[3].to) {
+      if (vote.ObjectStep === SOFT_VOTES) {
+        dbData.day18++;
+      } else if (vote.ObjectStep === CERT_VOTES) {
+        dbData.day25++;
+      }
+    } else if (vote.time >= rangeObj[4].from && vote.time <= rangeObj[4].to) {
+      if (vote.ObjectStep === SOFT_VOTES) {
+        dbData.day19++;
+      } else if (vote.ObjectStep === CERT_VOTES) {
+        dbData.day26++;
+      }
+    } else if (vote.time >= rangeObj[5].from && vote.time <= rangeObj[5].to) {
+      if (vote.ObjectStep === SOFT_VOTES) {
+        dbData.day20++;
+      } else if (vote.ObjectStep === CERT_VOTES) {
+        dbData.day27++;
+      }
+    } else if (vote.time >= rangeObj[6].from && vote.time <= rangeObj[6].to) {
+      if (vote.ObjectStep === SOFT_VOTES) {
+        dbData.day21++;
+      } else if (vote.ObjectStep === CERT_VOTES) {
+        dbData.day28++;
+      }
+    }
+  }
+  return dbData;
+}
+
+export const getChartDataForWeek = async (
+  rangeObj: WeekChartDateRange[],
+  currentData: any
+) => {
   const query = `
   SELECT 
     (SELECT COUNT(*) FROM proposed WHERE typeid=${ON_CHAIN} AND timestamp BETWEEN ? AND ?) AS day1,
@@ -156,7 +363,10 @@ export const getChartDataForWeek = async (rangeObj: WeekChartDateRange[]) => {
     ...rangeDates,
     ...rangeDates,
   ];
-  const dbData = (await queryOne(query, extendedRangeDates)) as WeekChartDBType;
+  let dbData = (await queryOne(query, extendedRangeDates)) as WeekChartDBType;
+  if (currentData.interval === "week") {
+    dbData = addCurrentDataToWeekChartData(currentData, dbData, rangeObj);
+  }
 
   return {
     onChain: [
@@ -282,7 +492,84 @@ export const getChartDataForWeek = async (rangeObj: WeekChartDateRange[]) => {
   };
 };
 
-export const getChartDataForMonth = async (rangeObj: MonthChartDateRange[]) => {
+function addCurrentDataToMonthChartData(
+  currData: any,
+  dbData: MonthChartDBType,
+  rangeObj: MonthChartDateRange[]
+) {
+  // Loop through the proposed data searching for onchain and proposals in date ranges
+  for (const proposed of currData.Proposed) {
+    if (proposed.time >= rangeObj[0].from && proposed.time <= rangeObj[0].to) {
+      if (proposed.IsOnChain === true) {
+        dbData.week1++;
+      } else {
+        dbData.week5++;
+      }
+    } else if (
+      proposed.time >= rangeObj[1].from &&
+      proposed.time <= rangeObj[1].to
+    ) {
+      if (proposed.IsOnChain === true) {
+        dbData.week2++;
+      } else {
+        dbData.week6++;
+      }
+    } else if (
+      proposed.time >= rangeObj[2].from &&
+      proposed.time <= rangeObj[2].to
+    ) {
+      if (proposed.IsOnChain === true) {
+        dbData.week3++;
+      } else {
+        dbData.week7++;
+      }
+    } else if (
+      proposed.time >= rangeObj[3].from &&
+      proposed.time <= rangeObj[3].to
+    ) {
+      if (proposed.IsOnChain === true) {
+        dbData.week4++;
+      } else {
+        dbData.week8++;
+      }
+    }
+  }
+
+  // Loop through the votes data searching for soft and cert votes in date ranges
+  for (const vote of currData.Votes) {
+    if (vote.time >= rangeObj[0].from && vote.time <= rangeObj[0].to) {
+      if (vote.ObjectStep === SOFT_VOTES) {
+        dbData.week9++;
+      } else if (vote.ObjectStep === CERT_VOTES) {
+        dbData.week13++;
+      }
+    } else if (vote.time >= rangeObj[1].from && vote.time <= rangeObj[1].to) {
+      if (vote.ObjectStep === SOFT_VOTES) {
+        dbData.week10++;
+      } else if (vote.ObjectStep === CERT_VOTES) {
+        dbData.week14++;
+      }
+    } else if (vote.time >= rangeObj[2].from && vote.time <= rangeObj[2].to) {
+      if (vote.ObjectStep === SOFT_VOTES) {
+        dbData.week11++;
+      } else if (vote.ObjectStep === CERT_VOTES) {
+        dbData.week15++;
+      }
+    } else if (vote.time >= rangeObj[3].from && vote.time <= rangeObj[3].to) {
+      if (vote.ObjectStep === SOFT_VOTES) {
+        dbData.week12++;
+      } else if (vote.ObjectStep === CERT_VOTES) {
+        dbData.week16++;
+      }
+    }
+  }
+  return dbData;
+}
+
+export const getChartDataForMonth = async (
+  rangeObj: MonthChartDateRange[],
+  currentData: any
+) => {
   const query = `
     SELECT 
     (SELECT COUNT(*) FROM proposed WHERE typeid=${ON_CHAIN} AND timestamp BETWEEN ? AND ?) AS week1,
@@ -309,10 +596,11 @@ export const getChartDataForMonth = async (rangeObj: MonthChartDateRange[]) => {
     ...rangeDates,
     ...rangeDates,
   ];
-  const dbData = (await queryOne(
-    query,
-    extendedRangeDates
-  )) as MonthChartDBType;
+  let dbData = (await queryOne(query, extendedRangeDates)) as MonthChartDBType;
+
+  if (currentData.interval === "month") {
+    dbData = addCurrentDataToMonthChartData(currentData, dbData, rangeObj);
+  }
 
   return {
     onChain: [

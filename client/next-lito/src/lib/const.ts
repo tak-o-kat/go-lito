@@ -1,5 +1,7 @@
 // All constants are exported here
 
+export const GOLITO_API = `${process.env.LITO_API_SERVER}:${process.env.LITO_PORT}`;
+
 export const SOFT_VOTES = 1;
 export const CERT_VOTES = 2;
 export const PROPOSALS = 3;

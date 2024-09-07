@@ -12,6 +12,7 @@ import {
   getWeekChartDateRanges,
 } from "@/lib/datetime";
 import {
+  CurrentDataType,
   DayChartDateRange,
   MonthChartDateRange,
   WeekChartDateRange,
@@ -21,7 +22,11 @@ interface HomeChartsProps {
   // Add any props you need for your HomeCharts component
 }
 
-async function getOnchainChartData(interval: string, from: string, to: string) {
+async function getOnchainChartData(
+  interval: string,
+  from: string,
+  currentData: any
+) {
   let dateRanges:
     | DayChartDateRange[]
     | WeekChartDateRange[]
@@ -31,15 +36,15 @@ async function getOnchainChartData(interval: string, from: string, to: string) {
 
   if (interval.includes("day")) {
     dateRanges = getDayChartDateRanges(new Date(from));
-    chartData = await getChartDataForDay(dateRanges);
+    chartData = await getChartDataForDay(dateRanges, currentData);
     xAxis = "hours";
   } else if (interval.includes("week")) {
     dateRanges = getWeekChartDateRanges(new Date(from));
-    chartData = await getChartDataForWeek(dateRanges);
+    chartData = await getChartDataForWeek(dateRanges, currentData);
     xAxis = "day";
   } else if (interval.includes("month")) {
     dateRanges = getMonthChartDateRanges(new Date(from));
-    chartData = await getChartDataForMonth(dateRanges);
+    chartData = await getChartDataForMonth(dateRanges, currentData);
     xAxis = "week";
   }
 
@@ -53,9 +58,11 @@ async function getOnchainChartData(interval: string, from: string, to: string) {
 export default async function HomeCharts({
   interval,
   timeRange,
+  currentData,
 }: {
   interval: string;
   timeRange: { from: string; to: string };
+  currentData: CurrentDataType;
 }) {
   const onChainConfig = {
     onChain: {
@@ -89,7 +96,7 @@ export default async function HomeCharts({
   const chartInfo = await getOnchainChartData(
     interval,
     timeRange.from,
-    timeRange.to
+    currentData
   );
 
   // console.log(chartInfo);

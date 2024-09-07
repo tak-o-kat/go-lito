@@ -235,3 +235,19 @@ export function convertToTime(hour: number) {
   // Format the time as HH:mm
   return time.toFormat("HH:mm");
 }
+
+export function isPreviousDay(
+  date: Date,
+  referenceDate = DateTime.now().toUTC()
+) {
+  // Convert input to DateTime if it's not already
+  const luxonDate = DateTime.isDateTime(date)
+    ? date
+    : DateTime.fromJSDate(date);
+  const luxonReference = DateTime.isDateTime(referenceDate)
+    ? referenceDate
+    : DateTime.fromJSDate(referenceDate);
+
+  // Check if the date is the day before the reference date
+  return luxonDate.hasSame(luxonReference.minus({ days: 1 }), "day");
+}

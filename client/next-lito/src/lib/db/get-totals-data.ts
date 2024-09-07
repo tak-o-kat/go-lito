@@ -3,13 +3,15 @@ import {
   generateArrayForSelectCount,
   generatePrevLitoDateTimeFromInterval,
 } from "../datetime";
+import { CurrentDataType } from "../types";
 import { queryOne } from "./db";
 
 // Server request to get db data
 export const getTotalsAndPercentageFromTimeInterval = async (
   interval: string,
   from: string,
-  to: string
+  to: string,
+  current: CurrentDataType
 ) => {
   const query = `
     SELECT 
@@ -38,6 +40,22 @@ export const getTotalsAndPercentageFromTimeInterval = async (
   );
   // execute the query and flatten out the array
   const counts: any = await queryOne(query, ranges.flat());
+
+  // Add current data to db data if certain conditions are met
+  if (interval === "today" || interval === "week" || interval === "month") {
+    counts.onChain += current.todaysTotals.onChain;
+    counts.proposals += current.todaysTotals?.proposals;
+    counts.softVotes += current.todaysTotals.softVotes;
+    counts.certVotes += current.todaysTotals.certVotes;
+  }
+
+  // The edge case where a new day has started and the previous day overlaps with the current day
+  if (interval === "yesterday" && current.dateOverlaps) {
+    counts.onChain += current.yesterdayTotals.onChain;
+    counts.proposals += current.yesterdayTotals.proposals;
+    counts.softVotes += current.yesterdayTotals.softVotes;
+    counts.certVotes += current.yesterdayTotals.certVotes;
+  }
 
   // We now need to calculate the percentage change for each of the counts
   const onChainPercentage =

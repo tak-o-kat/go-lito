@@ -11,10 +11,7 @@ import {
   SelectSeparator,
 } from "@/components/ui/select";
 import { useState } from "react";
-import {
-  updateTimeIntervalSession,
-  updateUserTimeInterval,
-} from "@/app/actions/update-actions";
+import { updateTimeIntervalSession } from "@/app/actions/update-actions";
 
 export default function TimeIntervalSelect({
   timeInterval,
