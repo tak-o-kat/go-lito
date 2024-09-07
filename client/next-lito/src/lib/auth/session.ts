@@ -24,7 +24,7 @@ export interface FormValues {
 }
 
 export const sessionOptions: SessionOptions = {
-  password: process.env.SESSION_KEY!,
+  password: process.env.LITO_SESSION_KEY!,
   cookieName: "lito-session",
   cookieOptions: {
     httpOnly: true,
@@ -58,7 +58,8 @@ export async function getSession() {
   // If user visits for the first time session returns an empty object.
   // Let's add the isLoggedIn property to this object and its value will be the default value which is false
   if (!session.isLoggedIn) {
-    session.isLoggedIn = process.env.LOGIN_REQUIRED === "true" ? false : true;
+    session.isLoggedIn =
+      process.env.LITO_LOGIN_REQUIRED === "true" ? false : true;
   }
 
   return session;
