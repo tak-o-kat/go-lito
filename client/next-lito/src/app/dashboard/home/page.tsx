@@ -15,7 +15,6 @@ import { GOLITO_API, SOFT_VOTES, CERT_VOTES } from "@/lib/const";
 import { DateTime } from "luxon";
 
 async function getCurrentNodeLogData() {
-  console.log("Getting current node log data");
   // Make a call to get the the current data from the node.log file
   const url = `${GOLITO_API}/api/logs/`;
   const response = await fetch(url, {
@@ -30,8 +29,6 @@ async function getCurrentNodeLogData() {
   if (!response.ok) {
     throw new Error("Failed to get log data");
   }
-
-  console.log(response.status);
 
   const data = await response.json();
   return data;
@@ -110,7 +107,6 @@ export default async function Home() {
 
   const currentData = await getCurrentNodeLogData();
   currentData.interval = session?.interval as string;
-  console.log("Done getting fetch data");
 
   // With the current data we need to parse the data and return an object that
   // further function calls can use to add their counts in totals and charts.
@@ -122,7 +118,7 @@ export default async function Home() {
   // console.log("currentDataObj", currentDataObj);
 
   const timeRange = generateLitoDateTimeFromInterval(
-    (session?.interval as string) || "7d"
+    (session?.interval as string) || "today"
   );
 
   // determine the time interval and query the data based on those ranges.

@@ -3,7 +3,7 @@
 import { executeQuery } from "@/lib/db/db";
 import { FormValues, getSession } from "@/lib/auth/session";
 import { hashPassword } from "@/lib/auth/hashing";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { getIronSession } from "iron-session";
 import { cookies } from "next/headers";
 import { queryOne } from "@/lib/db/db";
@@ -94,5 +94,5 @@ export async function updateTimeIntervalSession(timeInterval: string) {
 
   session.interval = timeInterval;
   session.save();
-  revalidatePath("/", "layout");
+  revalidateTag("/");
 }
