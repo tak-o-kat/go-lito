@@ -21,19 +21,21 @@ export default async function StatusIndicators() {
     nodeStatusColor = "text-indigo-400 animate-pulse";
     serverColor = "bg-indogo-400";
   } else if (indicators?.Sync! === "0.0s") {
-    status = "Up";
+    status = "Synced";
     nodeStatusColor = "text-teal-400";
     serverColor = "bg-teal-400";
   }
 
   return (
-    <div className="flex items-center justify-center sm:justify-start gap-2 w-full">
+    <div className="flex items-center justify-center sm:justify-around gap-2 w-full pt-1">
       <div className="flex flex-row justify-center gap-2 w-full text-xs">
         <div className="flex justify-center md:justify-start items-center gap-4 w-full">
           <div className="font-medium flex flex-col sm:flex-row gap-1">
-            <div className={`${serverColor} rounded-full w-3 h-3`} />
+            <div className="flex justify-center">
+              <div className={`${serverColor} rounded-full w-3 h-3`} />
+            </div>
             <div className="font-medium flex flex-col sm:flex-row gap-1">
-              <span className="hidden sm:block">{`Node Status: `}</span>
+              <span className="hidden md:block">{`Node Status: `}</span>
               <span
                 className={` font-semibold text-[10px] sm:text-xs`}
               >{`${status}`}</span>
@@ -46,32 +48,32 @@ export default async function StatusIndicators() {
             <div className="flex justify-center">
               <GalleryHorizontalEnd className="h-4 w-4" />
             </div>
-            <span className="hidden sm:block">{`Version: `}</span>
+            <span className="hidden md:block">{`Version: `}</span>
             <span className={` font-semibold text-[10px] sm:text-xs`}>{`${
               indicators.Version || " --"
             }`}</span>
           </div>
         </div>
 
-        <div className="flex justify-center md:justify-start items-center gap-4 w-full">
+        <div className="flex justify-center md:justify-end items-center gap-4 w-full">
           <div className="font-medium flex flex-col sm:flex-row gap-1">
             <div className="flex justify-center">
               <Network className="h-4 w-4" />
             </div>
 
-            <span className="hidden sm:block">{`Network: `}</span>
+            <span className="hidden md:block">{`Network: `}</span>
             <span className={` font-semibold text-[10px] sm:text-xs`}>{`${
               indicators.Genesis || " --"
             }`}</span>
           </div>
         </div>
 
-        <div className="flex justify-center md:justify-start items-center gap-4 w-full">
+        <div className="flex justify-center md:justify-end items-center gap-4 w-full">
           <div className="font-medium flex flex-col sm:flex-row gap-1">
             <div className="flex justify-center">
               <Cuboid className="h-4 w-4" />
             </div>
-            <span className="hidden sm:block">{`Last Block: `}</span>
+            <span className="hidden md:block">{`Last Block: `}</span>
             <span className={` font-semibold text-[10px] sm:text-xs`}>{`${
               indicators.Last || " --"
             }`}</span>

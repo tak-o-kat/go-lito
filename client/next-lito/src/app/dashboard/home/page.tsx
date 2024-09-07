@@ -134,13 +134,13 @@ export default async function Home() {
 
   return (
     <main className="mx-auto max-w-6xl px-2 space-y-3 sm:space-y-4 my-3 sm:my-4">
-      <div className="flex flex-col sm:flex-row sm:gap-2 w-full justify-between">
+      <div className="flex flex-col sm:flex-row sm:gap-2 w-full">
         <div className="flex w-full flex-row">
           <StatusIndicators />
         </div>
-        <div className="flex flex-row justify-end md:w-auto pt-3 sm:pt-0">
-          <TimeIntervalSelect timeInterval={session?.interval as string} />
-        </div>
+      </div>
+      <div className="flex flex-row justify-end md:w-auto pt-3 sm:pt-0">
+        <TimeIntervalSelect timeInterval={session?.interval as string} />
       </div>
       <DashboardHomeTotals
         totals={totals}
