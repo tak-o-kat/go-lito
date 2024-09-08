@@ -19,5 +19,7 @@ export default async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|favicon.ico|public|signup|login|renew).*)"],
+  matcher: [
+    "/((?!_next|favicon.ico|site.webmanifest|public|signup|login|renew).*)",
+  ],
 };
