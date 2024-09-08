@@ -10,6 +10,8 @@ WantedBy=multi-user.target
 Type=simple
 Restart=always
 RestartSec=5
+User=takokat
+Group=algorand
 ExecStart=/location/to/bin/pnpm start
 WorkingDirectory=/location/to/next-lito
 Environment="LITO_PORT=8081"

@@ -10,6 +10,8 @@ WantedBy=multi-user.target
 Type=simple
 Restart=always
 RestartSec=5
+User=takokat
+Group=algorand
 ExecStart=/location/of/lito daemon -s
 WorkingDirectory=/location/of/lito
 Environment="ALGORAND_DATA=/var/lib/algorand"
