@@ -8,6 +8,7 @@ export function LitoLogo() {
       fill="currentColor"
       viewBox="0 0 300.000000 300.000000"
       preserveAspectRatio="xMidYMid meet"
+      className="h-8 w-8 fill-primary"
     >
       {" "}
       <g
