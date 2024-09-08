@@ -1,0 +1,19 @@
+[Unit]
+Description=Next-Lito is web UI used to see go-lito data
+Requires=lito.service
+After=lito.service
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+ExecStart=/location/to/bin/pnpm start
+WorkingDirectory=/location/to/next-lito
+Environment="LITO_PORT=8081"
+Environment="LITO_API_SERVER=http://localhost"
+Environment="LITO_LOGIN_REQUIRED=true"
+Environment="LITO_SESSION_KEY=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+Environment="ALGORAND_DATA=/var/lib/algorand"
