@@ -8,8 +8,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Lito Next UI",
-  description: "UI for Lito",
+  title: "Lito Dashboard",
+  description: "Web UI for Lito",
 };
 
 async function getTheme() {
