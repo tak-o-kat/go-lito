@@ -59,13 +59,21 @@ export const getTotalsAndPercentageFromTimeInterval = async (
 
   // We now need to calculate the percentage change for each of the counts
   const onChainPercentage =
-    ((counts.onChain - counts.prevOnChain) / counts.prevOnChain) * 100;
+    ((counts.onChain - counts.prevOnChain) /
+      (counts.prevOnChain === 0 ? 1 : counts.prevOnChain)) *
+    100;
   const proposalsPercentage =
-    ((counts.proposals - counts.prevProposals) / counts.prevProposals) * 100;
+    ((counts.proposals - counts.prevProposals) /
+      (counts.prevProposals === 0 ? 1 : counts.prevProposals)) *
+    100;
   const softVotesPercentage =
-    ((counts.softVotes - counts.prevSoftVotes) / counts.prevSoftVotes) * 100;
+    ((counts.softVotes - counts.prevSoftVotes) /
+      (counts.prevSoftVotes === 0 ? 1 : counts.prevSoftVotes)) *
+    100;
   const certVotesPercentage =
-    ((counts.certVotes - counts.prevCertVotes) / counts.prevCertVotes) * 100;
+    ((counts.certVotes - counts.prevCertVotes) /
+      (counts.prevCertVotes === 0 ? 1 : counts.prevCertVotes)) *
+    100;
 
   return {
     onChain: {

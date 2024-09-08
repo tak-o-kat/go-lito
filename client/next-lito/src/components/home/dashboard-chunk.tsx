@@ -102,7 +102,7 @@ export default function DashboardChunk(props: TotalChunkType) {
     case "month":
       percentWording = "from the previous month";
       break;
-    case "month":
+    case "lastmonth":
       percentWording = "from the previous month";
       break;
     default:
