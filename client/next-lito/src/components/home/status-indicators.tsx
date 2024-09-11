@@ -83,3 +83,5 @@ export default async function StatusIndicators() {
     </div>
   );
 }
+
+// char
