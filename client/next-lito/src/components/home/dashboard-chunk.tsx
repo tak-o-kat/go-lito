@@ -122,7 +122,7 @@ export default function DashboardChunk(props: TotalChunkType) {
               <PopoverTrigger asChild className="cursor-help">
                 <CircleHelp className="ml-1 h-3 w-3 text-muted-foreground" />
               </PopoverTrigger>
-              <PopoverContent className="w-80 bg-primary">
+              <PopoverContent className="w-80 bg-background">
                 <p>{props.title}</p>
                 <p className="text-xs">{props.description}</p>
               </PopoverContent>
