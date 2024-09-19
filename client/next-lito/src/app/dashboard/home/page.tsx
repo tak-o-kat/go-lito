@@ -1,4 +1,6 @@
 import { getSession } from "@/lib/auth/session";
+import GridPattern from "@/components/magicui/grid-pattern";
+
 import StatusIndicators from "@/components/home/status-indicators";
 
 import TimeIntervalSelect from "@/components/home/time-interval-select";
@@ -13,6 +15,8 @@ import { CurrentDataType, HomeTotals } from "@/lib/types";
 import HomeCharts from "@/components/home/home-charts";
 import { GOLITO_API, SOFT_VOTES, CERT_VOTES } from "@/lib/const";
 import { DateTime } from "luxon";
+import { Grid } from "lucide-react";
+import GridPatternLinearGradient from "@/components/common/grid-pattern";
 
 async function getCurrentNodeLogData() {
   // Make a call to get the the current data from the node.log file
@@ -134,14 +138,17 @@ export default async function Home() {
 
   return (
     <main className="mx-auto max-w-6xl px-2 space-y-3 sm:space-y-4 my-3 sm:my-4">
-      <div className="flex flex-col sm:flex-row sm:gap-2 w-full">
-        <div className="flex w-full flex-row">
-          <StatusIndicators />
+      <div className="space-y-3 sm:space-y-4 my-3 sm:my-4  overflow-visible">
+        <div className="flex flex-col sm:flex-row sm:gap-2 w-full">
+          <div className="flex w-full flex-row">
+            <StatusIndicators />
+          </div>
+        </div>
+        <div className="flex flex-row justify-end md:w-auto">
+          <TimeIntervalSelect timeInterval={session?.interval as string} />
         </div>
       </div>
-      <div className="flex flex-row justify-end md:w-auto">
-        <TimeIntervalSelect timeInterval={session?.interval as string} />
-      </div>
+
       <DashboardHomeTotals
         totals={totals}
         interval={session?.interval as string}

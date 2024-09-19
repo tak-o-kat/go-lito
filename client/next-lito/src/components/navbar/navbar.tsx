@@ -36,9 +36,12 @@ export default function NavBar() {
               <nav className="hidden flex-col justify-start gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
                 <Link
                   href="/dashboard/home"
-                  className="flex items-center gap-2 text-lg font-semibold md:text-base"
+                  className="flex items-center text-lg font-semibold md:text-base"
                 >
                   <LitoLogo />
+                  <span className="mt-[11px] text-xl font-extrabold text-primary">
+                    ito
+                  </span>
                   <span className="sr-only">Lito UI</span>
                 </Link>
                 <Link
@@ -79,8 +82,11 @@ export default function NavBar() {
                   <SheetDescription></SheetDescription>
                   <SheetTitle></SheetTitle>
                   <nav className="grid gap-6 text-lg font-medium">
-                    <div className="flex items-center gap-2 text-lg font-semibold">
+                    <div className="flex items-center text-lg font-semibold">
                       <LitoLogo />
+                      <span className="mt-[11px] text-xl font-extrabold text-primary">
+                        ito
+                      </span>
                       <span className="sr-only">Lito UI</span>
                     </div>
                     <Link
@@ -108,6 +114,9 @@ export default function NavBar() {
               </Sheet>
               <div className="absolute visible md:invisible left-1/2 transform -translate-x-1/2 flex flex-row items-center">
                 <LitoLogo />
+                <span className="mt-[11px] text-xl font-extrabold text-primary">
+                  ito
+                </span>
               </div>
               <div className="flex flex-1 text-right w-auto items-center gap-4 md:ml-auto md:gap-2 lg:gap-4 justify-end">
                 <div className="invisible md:visible">

@@ -1,5 +1,3 @@
-import { syncSession } from "@/app/actions/update-actions";
-
 export default async function LoginLayout({
   children,
 }: Readonly<{

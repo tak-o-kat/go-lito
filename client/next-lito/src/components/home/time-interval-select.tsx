@@ -31,7 +31,7 @@ export default function TimeIntervalSelect({
       value={state}
       onValueChange={handleTimeIntervalChange}
     >
-      <SelectTrigger className="sm:w-44">
+      <SelectTrigger className="sm:w-48">
         <SelectValue placeholder={"Select an interval"} />
       </SelectTrigger>
       <SelectContent id="interval-session">
