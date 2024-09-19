@@ -70,7 +70,7 @@ Download the latest go-lito binary:
 wget https://github.com/tak-o-kat/go-lito/releases/download/v0.1.5-beta/lito.tar.bz2
 ```
 
-The bzip file willnot need to extracted
+The bzip file will now need to to be extracted
 
 ```
 tar xjvf lito.tar.bz2
@@ -79,7 +79,7 @@ tar xjvf lito.tar.bz2
 This will give you 3 files and 1 of them is hidden
 
 - lito (exectualbe)
-- .env.example (env file manual use only)
+- .env.example
 - lito.service (unit file)
 
 For the manual install first thing is to make a copy of your .env.example to .env
@@ -96,7 +96,7 @@ First take a look at all the options for the lito daemon:
 ./lito deamon -h
 ```
 
-The majority of these options are for development and test, but some like the --server, --port, and --net can be used by node runners
+The majority of these options are for development and testing, but some like the --server, --port, and --net can be used by node runners
 
 The network interface is set to default of 127.0.0.1, meaning if you turn on the server (API) funcitonality it will only serve those requests locally.
 
@@ -108,7 +108,7 @@ Start up lito
 ./lito daemon -s
 ```
 
-This will start lito without the api server. The lito logger should display some output to the stdout. Please make sure there are no errors and the data displayed is correct. You should only see INF, DBG, and WRN (in case DB does not exist) log data. Here is an example, you may get a Warning about creating a new sqlite file, that's normal it's just your first time runnign lito.
+This will start lito with the api server and only serving requests locally. The lito logger should display some output to the stdout. Please make sure there are no errors and the data displayed is correct. You should only see INF, DBG, and WRN (in case DB does not exist) log data. Here is an example, you may get a Warning about creating a new sqlite file, that's normal it's just your first time running lito:
 
 ![Lito Serivce](https://raw.githubusercontent.com/tak-o-kat/go-lito/refs/heads/main/images/lito-daemon.png)
 
@@ -116,7 +116,7 @@ Cancel the manual start
 
 `ctrl + c` (you don't type this, you just hit those keys on your keyboard)
 
-If all is well you may start have systemd start your lito file.
+If all is well you may start having systemd start your lito service.
 
 #### Systemd install using a Unit file
 
@@ -144,11 +144,13 @@ WorkingDirectory=/location/of/lito
 It will look like the following:
 
 ```
+User=takokat
+...
 ExecStart=/home/tako/lito/lito daemon -s
 WorkingDirectory=/home/tako/lito
 ```
 
-Swap `tako` for your username. Save and exit!
+Swap `takokat` for your username. Save and exit!
 
 Next we will copy the lito.service to the systemd folder and reload the systemctl daemon
 
