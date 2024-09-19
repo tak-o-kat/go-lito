@@ -6,17 +6,18 @@ Go-lito is a small project specifically created for those running algod on a Lin
 
 ## Introduction
 
-The app go-lito is more of a collection of apps that assist node (algod) runners collect log data that normally gets cycled and removed. By collecting this data we can use the information to display information that is normally not kept by nodes, archive nodes or indexers. In essense go-lito is a log archiver for your algorand participation node.
+The app go-lito is more of a collection of apps that assist node (algod) runners to collect log data that normally gets cycled and removed. By collecting this data we can use the information to display information that is normally not kept by nodes, archive nodes or indexers. In essense go-lito is a log archiver for your algorand participation node.
 
 ## Tech Stack
 
-Currently go-lito uses the following technologies to store the data and display the data to the a node runner:
+Currently go-lito uses the following technologies to store the data and display the data to the node runner:
 
 - Golang -> Go-lito is compiled on an x86_64 using Ubuntu
 
   - Used to continuously monitor the archive.node.log file
   - Captures all the archive logs when the archive file is rotated
-  - Provides RESTful API's
+  - Parse the node.log file for current data
+  - Provides RESTful API's for all data
 
 - SQLite 3
 
@@ -39,21 +40,23 @@ The following are future endeavours for the project:
 
 - Grafana
 
-  - Allow users to use their own grafana dashboard
+  - Allow users to use their own grafana dashboard by providing the proper API's
 
 - SolidStart - Solid-lito
 
   - An alternative to NextJS. Another web UI
 
 - Docker Containers
-  - for Go-lito and SQLite
-  - for Next-Lito and Solid-lito
+  - Go-lito and SQLite
+  - Next-Lito and Solid-lito
 
 ## Go-lito installation
 
 The following instructions are only for go-lito, which will run on your node and collect your log data.
 
-It's recommended you firt try and run go-lito manually before using systemd or unit files. Here are the manual instructions:
+It's recommended you firt try and run go-lito manually before using unit files.
+
+#### Here are the manual instructions:
 
 Create a new folder called lito, preferably in your home folder, and change directories into it.
 
@@ -105,11 +108,19 @@ Start up lito
 ./lito daemon -s
 ```
 
-This will start lito without the api server. The lito logger should display some output to the stdout. Please make sure there are no errors and the data displayed is correct. You should only see INF, DBG, and WRN (in case DB does not exist) log data. Cancel the manual start
+This will start lito without the api server. The lito logger should display some output to the stdout. Please make sure there are no errors and the data displayed is correct. You should only see INF, DBG, and WRN (in case DB does not exist) log data. Here is an example, you may get a Warning about creating a new sqlite file, that's normal it's just your first time runnign lito.
+
+![Lito Serivce](https://raw.githubusercontent.com/tak-o-kat/go-lito/refs/heads/main/images/lito-daemon.png)
+
+Cancel the manual start
 
 `ctrl + c` (you don't type this, you just hit those keys on your keyboard)
 
-If all is well you may start have systemd start your lito file. First open up the lito.service file that was extracted from the bzip file
+If all is well you may start have systemd start your lito file.
+
+#### Systemd install using a Unit file
+
+First open up the lito.service unit file that was extracted from the bzip file
 
 ```
 vim lito.service
