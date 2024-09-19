@@ -141,6 +141,8 @@ Check to make sure it's running properly:
 
 `systemctl status lito.service`
 
-```
-![Lito Serivce](lito-service.png)
-```
+![Lito Serivce](https://raw.githubusercontent.com/tak-o-kat/go-lito/refs/heads/main/images/lito-service.png)
+
+If you do not see the above something went wrong and you will need to troubleshoot
+
+Congrats Lito is now ready to go, it will automatically start on it's own even if you reboot!
