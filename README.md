@@ -1,4 +1,4 @@
-# Go-lito (Go Lee Toe)
+# Go-Lito (Go Lee Toe)
 
 Go-lito is a small project specifically created for those running algod on a Linux system that uses Systemd. It is used to assist in collecting extra data from the local node that does not get propagated to algod or indexers and thus never gets collected.
 
@@ -28,7 +28,7 @@ Here is a quick summary of what go-lito daemon and server do:
 
 Currently go-lito uses the following technologies to store the data and display the data to the node runner:
 
-- Golang -> Go-lito is compiled on an x86_64 using Ubuntu
+- Golang -> Go-lito is compiled on an x86_64 using Ubuntu and Go 1.22
 
   - Used to continuously monitor the archive.node.log file
   - Captures all the archive logs when the archive file is rotated
@@ -47,6 +47,7 @@ Currently go-lito uses the following technologies to store the data and display 
 
 - Tailscale (optional)
   - Used to view Lito securely through a local VPN
+  - Tailscale is highly recommended for VPS cloud node runners
 
 The following are future endeavours for the project:
 
@@ -58,19 +59,19 @@ The following are future endeavours for the project:
 
   - Allow users to use their own grafana dashboard by providing the proper API's
 
-- SolidStart - Solid-lito
+- SolidStart - Solid-Lito
 
   - An alternative to NextJS. Another web UI
 
 - Docker Containers
   - Go-lito and SQLite
-  - Next-Lito and Solid-lito
+  - Next-Lito and Solid-Lito
 
-## Go-lito installation
+## Go-Lito installation
 
 The following instructions are only for go-lito, which will run on your node and collect your log data.
 
-It's recommended you firt try and run go-lito manually before using unit files.
+It's recommended you first try and run go-lito manually before using unit files.
 
 #### Here are the manual instructions:
 
@@ -194,6 +195,10 @@ systemctl status lito.service
 
 ![Lito Serivce](https://raw.githubusercontent.com/tak-o-kat/go-lito/refs/heads/main/images/lito-service.png)
 
-If you do not see the above something went wrong and you will need to troubleshoot
+If you do not see the above something went wrong and you will need to troubleshoot.
 
 Congrats Lito is now ready to go, it will automatically start on it's own even if you reboot!
+
+## Next-Lito installation
+
+#### Coming soon!
