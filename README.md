@@ -8,6 +8,22 @@ Go-lito is a small project specifically created for those running algod on a Lin
 
 The app go-lito is more of a collection of apps that assist node (algod) runners to collect log data that normally gets cycled and removed. By collecting this data we can use the information to display information that is normally not kept by nodes, archive nodes or indexers. In essense go-lito is a log archiver for your algorand participation node.
 
+Here is a quick summary of what go-lito daemon and server do:
+
+**Daemon**
+
+1. Does prerequisites check on your node and env variables
+2. Creates a sqlite file in the algorand data folder using a new folder named lito
+3. Begins watching the archive.node.log file for any changes
+4. When a change is detected it will parse the archive.node.log file and extract the data to save
+5. Inserts the extracted data and inserts it into the sqlite database
+6. Go back to step 3 and continue looking for changes to archive.node.log
+
+**Server**
+
+1. Setups an API server with a database connnection
+2. Serves RESTful API requests. A full list coming soon.
+
 ## Tech Stack
 
 Currently go-lito uses the following technologies to store the data and display the data to the node runner:
