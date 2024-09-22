@@ -17,7 +17,6 @@ export default async function StatusIndicators() {
     nodeStatusColor = "text-rose-500";
     serverColor = "bg-rose-500";
   } else if (indicators?.Sync! !== "0.0s") {
-    console.log("Syncing");
     status = "Syncing";
     nodeStatusColor = "text-blue-400 animate-pulse";
     serverColor = "bg-indigo-400 animate-pulse";
