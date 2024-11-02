@@ -1,6 +1,4 @@
 import { getSession } from "@/lib/auth/session";
-import GridPattern from "@/components/magicui/grid-pattern";
-
 import StatusIndicators from "@/components/home/status-indicators";
 
 import TimeIntervalSelect from "@/components/home/time-interval-select";
@@ -15,8 +13,6 @@ import { CurrentDataType, HomeTotals } from "@/lib/types";
 import HomeCharts from "@/components/home/home-charts";
 import { GOLITO_API, SOFT_VOTES, CERT_VOTES } from "@/lib/const";
 import { DateTime } from "luxon";
-import { Grid } from "lucide-react";
-import GridPatternLinearGradient from "@/components/common/grid-pattern";
 
 async function getCurrentNodeLogData() {
   // Make a call to get the the current data from the node.log file
@@ -153,7 +149,6 @@ export default async function Home() {
       <DashboardHomeTotals
         totals={totals}
         interval={session?.interval as string}
-        isAlgodRunning={isAlgodRunning}
       />
       <HomeCharts
         interval={session?.interval as string}

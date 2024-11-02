@@ -36,6 +36,7 @@ export type TotalChunkType = {
     className?: string;
   }>;
   description: string;
+  winRate?: number;
 };
 
 // Day Chart Data

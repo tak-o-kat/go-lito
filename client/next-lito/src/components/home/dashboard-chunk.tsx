@@ -132,7 +132,30 @@ export default function DashboardChunk(props: TotalChunkType) {
         <props.icon className="h-6 w-6 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{props.count}</div>
+        <div className="flex flex-row items-center justify-between">
+          <div className="text-2xl font-bold">{props.count}</div>
+          {props?.winRate !== undefined && props.winRate >= 0 ? (
+            <div className="flex flex-col text-xs">
+              <span className="flex justify-end">
+                {props?.winRate?.toFixed(1) || 0}%
+                <span>
+                  <Popover>
+                    <PopoverTrigger asChild className="cursor-help">
+                      <CircleHelp className="ml-1 size-3 text-muted-foreground" />
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80">
+                      <p>Win Rate</p>
+                      <p className="text-xs">
+                        This is the percentange of VRF wins your node has won
+                        compared to the total blocks proposed
+                      </p>
+                    </PopoverContent>
+                  </Popover>
+                </span>
+              </span>
+            </div>
+          ) : null}
+        </div>
         <p className="text-[10px] sm:text-xs text-muted-foreground">
           {parseFloat(percentage) >= 0 ? "+" : "-"}
           {`${Math.abs(parseFloat(percentage))}% ${percentWording}`}

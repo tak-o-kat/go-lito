@@ -68,18 +68,17 @@ async function getOnchainTotals(
 export default async function DashboardHomeTotals({
   totals,
   interval,
-  isAlgodRunning,
 }: {
   totals: HomeTotals;
   interval: string;
-  isAlgodRunning: boolean;
 }) {
   const totalsObj = generateDashboardHomeTotalChunkData(totals, interval);
+  const winRate = totalsObj.onChain.count / totalsObj.proposals.count;
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
       {/* <DashboardChunk data={getOnchainTotals(totals, interval)} /> */}
-      <DashboardChunk {...totalsObj.onChain} />
+      <DashboardChunk {...totalsObj.onChain} winRate={winRate} />
       <DashboardChunk {...totalsObj.proposals} />
       <DashboardChunk {...totalsObj.softVotes} />
       <DashboardChunk {...totalsObj.certVotes} />
