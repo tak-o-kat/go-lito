@@ -62,7 +62,8 @@ function generateCurrentDataObject(currentData: any, interval: string) {
   const currentDay = DateTime.now().toUTC().startOf("day");
 
   // Get the first date from the current data and check if it is the previous day
-  const firstDate = currentData.Votes[0].time;
+  const firstDate = currentData?.Votes[0]?.time || currentDay.toISO();
+
   currentDataObj.dateOverlaps = isPreviousDay(firstDate) ? true : false;
 
   const currentDayISO = currentDay.toISO();

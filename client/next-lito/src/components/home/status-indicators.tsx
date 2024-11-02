@@ -42,7 +42,6 @@ export default async function StatusIndicators() {
             </div>
           </div>
         </div>
-
         <div className="flex items-center gap-4">
           <div className="font-medium flex flex-col sm:flex-row gap-1">
             <div className="flex justify-center font-extralight">

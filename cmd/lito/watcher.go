@@ -82,6 +82,16 @@ func (la *LitoApp) watcherLoop(w *fsnotify.Watcher, file string, watchType strin
 				// After file trigger is set log the event
 				la.Logger.Info().Msgf("%s %q", e.Op.String(), e.Name)
 
+				// Update the node account in case it's changed
+				account, err := GetAccountAddress()
+				if err != nil {
+					la.Logger.Error().Msgf("Failed to get account address: %s", err)
+					return
+				}
+				la.AlgodInfo.PartAccount = account
+
+				la.Logger.Debug().Msgf("Part Account: %s", la.AlgodInfo.PartAccount)
+
 				// Begin parsing the archive log file and get the saved data
 				nodeData := parser.Parser(la.Logger,
 					la.AlgodInfo.ArchiveFile,

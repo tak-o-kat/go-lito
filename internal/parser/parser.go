@@ -47,9 +47,9 @@ type LogData struct {
 }
 
 type SortedData struct {
-	Totals   *Totals
-	Proposed *[]Blocks
-	Votes    *[]Votes
+	Totals   *Totals   `json:"Totals"`
+	Proposed *[]Blocks `json:"Proposed"`
+	Votes    *[]Votes  `json:"Votes"`
 }
 
 func Parser(l *zerolog.Logger, logFile string, account string) *SortedData {
@@ -66,7 +66,7 @@ func Parser(l *zerolog.Logger, logFile string, account string) *SortedData {
 		totals:        new(Totals),
 		Blocks:        &blockMap,
 		orderedRounds: new([]uint64),
-		votes:         new([]Votes),
+		votes:         &[]Votes{},
 		round:         0,
 		isProposed:    false,
 		startTime:     time.Now(),
