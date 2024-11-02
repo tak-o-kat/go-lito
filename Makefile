@@ -4,7 +4,8 @@ BINARY_NAME=lito
 # Compile flags
 GCFLAGS=-gcflags="all=-trimpath=$(CURDIR)" -asmflags="all=-trimpath=$(CURDIR)"
 
-VERSION?=v0.1.4
+VERSION?=v0.1.6
+LDFLAGS:=-ldflags "-X main.Version=${VERSION}"
 
 # Build the application
 all: build
@@ -13,7 +14,7 @@ build:
 	@echo "Building..."
 	
 	
-	@go build $(GCFLAGS) -o $(BINARY_NAME)
+	@go build ${LDFLAGS} $(GCFLAGS) -o $(BINARY_NAME)
 
 # Run the application
 run:
