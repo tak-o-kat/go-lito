@@ -73,7 +73,8 @@ export default async function DashboardHomeTotals({
   interval: string;
 }) {
   const totalsObj = generateDashboardHomeTotalChunkData(totals, interval);
-  const winRate = totalsObj.onChain.count / totalsObj.proposals.count;
+  const winRate =
+    (totalsObj.onChain.count / totalsObj.proposals.count) * 100 || 0;
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
