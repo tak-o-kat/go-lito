@@ -99,8 +99,6 @@ export default async function HomeCharts({
     currentData
   );
 
-  // console.log(chartInfo);
-
   // Create a time range text for the charts
   const from = DateTime.fromISO(chartInfo.ranges[0].from)
     .toUTC()

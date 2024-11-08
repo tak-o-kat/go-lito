@@ -371,121 +371,121 @@ export const getChartDataForWeek = async (
   return {
     onChain: [
       {
-        day: rangeObj[0].day,
+        day: `${rangeObj[0].day}, ${rangeObj[0].from.split("T")[0]}`,
         onChain: dbData.day1,
       },
       {
-        day: rangeObj[1].day,
+        day: `${rangeObj[1].day}, ${rangeObj[1].from.split("T")[0]}`,
         onChain: dbData.day2,
       },
       {
-        day: rangeObj[2].day,
+        day: `${rangeObj[2].day}, ${rangeObj[2].from.split("T")[0]}`,
         onChain: dbData.day3,
       },
       {
-        day: rangeObj[3].day,
+        day: `${rangeObj[3].day}, ${rangeObj[3].from.split("T")[0]}`,
         onChain: dbData.day4,
       },
       {
-        day: rangeObj[4].day,
+        day: `${rangeObj[4].day}, ${rangeObj[4].from.split("T")[0]}`,
         onChain: dbData.day5,
       },
       {
-        day: rangeObj[5].day,
+        day: `${rangeObj[5].day}, ${rangeObj[5].from.split("T")[0]}`,
         onChain: dbData.day6,
       },
       {
-        day: rangeObj[6].day,
+        day: `${rangeObj[6].day}, ${rangeObj[6].from.split("T")[0]}`,
         onChain: dbData.day7,
       },
     ],
     proposals: [
       {
-        day: rangeObj[0].day,
+        day: `${rangeObj[0].day}, ${rangeObj[0].from.split("T")[0]}`,
         proposals: dbData.day8,
       },
       {
-        day: rangeObj[1].day,
+        day: `${rangeObj[1].day}, ${rangeObj[1].from.split("T")[0]}`,
         proposals: dbData.day9,
       },
       {
-        day: rangeObj[2].day,
+        day: `${rangeObj[2].day}, ${rangeObj[2].from.split("T")[0]}`,
         proposals: dbData.day10,
       },
       {
-        day: rangeObj[3].day,
+        day: `${rangeObj[3].day}, ${rangeObj[3].from.split("T")[0]}`,
         proposals: dbData.day11,
       },
       {
-        day: rangeObj[4].day,
+        day: `${rangeObj[4].day}, ${rangeObj[4].from.split("T")[0]}`,
         proposals: dbData.day12,
       },
       {
-        day: rangeObj[5].day,
+        day: `${rangeObj[5].day}, ${rangeObj[5].from.split("T")[0]}`,
         proposals: dbData.day13,
       },
       {
-        day: rangeObj[6].day,
+        day: `${rangeObj[6].day}, ${rangeObj[6].from.split("T")[0]}`,
         proposals: dbData.day14,
       },
     ],
     softVotes: [
       {
-        day: rangeObj[0].day,
+        day: `${rangeObj[0].day}, ${rangeObj[0].from.split("T")[0]}`,
         softVotes: dbData.day15,
       },
       {
-        day: rangeObj[1].day,
+        day: `${rangeObj[1].day}, ${rangeObj[1].from.split("T")[0]}`,
         softVotes: dbData.day16,
       },
       {
-        day: rangeObj[2].day,
+        day: `${rangeObj[2].day}, ${rangeObj[2].from.split("T")[0]}`,
         softVotes: dbData.day17,
       },
       {
-        day: rangeObj[3].day,
+        day: `${rangeObj[3].day}, ${rangeObj[3].from.split("T")[0]}`,
         softVotes: dbData.day18,
       },
       {
-        day: rangeObj[4].day,
+        day: `${rangeObj[4].day}, ${rangeObj[4].from.split("T")[0]}`,
         softVotes: dbData.day19,
       },
       {
-        day: rangeObj[5].day,
+        day: `${rangeObj[5].day}, ${rangeObj[5].from.split("T")[0]}`,
         softVotes: dbData.day20,
       },
       {
-        day: rangeObj[6].day,
+        day: `${rangeObj[6].day}, ${rangeObj[6].from.split("T")[0]}`,
         softVotes: dbData.day21,
       },
     ],
     certVotes: [
       {
-        day: rangeObj[0].day,
+        day: `${rangeObj[0].day}, ${rangeObj[0].from.split("T")[0]}`,
         certVotes: dbData.day22,
       },
       {
-        day: rangeObj[1].day,
+        day: `${rangeObj[1].day}, ${rangeObj[1].from.split("T")[0]}`,
         certVotes: dbData.day23,
       },
       {
-        day: rangeObj[2].day,
+        day: `${rangeObj[2].day}, ${rangeObj[2].from.split("T")[0]}`,
         certVotes: dbData.day24,
       },
       {
-        day: rangeObj[3].day,
+        day: `${rangeObj[3].day}, ${rangeObj[3].from.split("T")[0]}`,
         certVotes: dbData.day25,
       },
       {
-        day: rangeObj[4].day,
+        day: `${rangeObj[4].day}, ${rangeObj[4].from.split("T")[0]}`,
         certVotes: dbData.day26,
       },
       {
-        day: rangeObj[5].day,
+        day: `${rangeObj[5].day}, ${rangeObj[5].from.split("T")[0]}`,
         certVotes: dbData.day27,
       },
       {
-        day: rangeObj[6].day,
+        day: `${rangeObj[6].day}, ${rangeObj[6].from.split("T")[0]}`,
         certVotes: dbData.day28,
       },
     ],

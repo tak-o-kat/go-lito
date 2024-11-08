@@ -1,6 +1,5 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts";
 
 import {
@@ -81,7 +80,9 @@ export const BarChartCard: React.FC<BarChartProps> = ({
             />
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={
+                <ChartTooltipContent labelFormatter={(value) => value} />
+              }
             />
             <Bar
               dataKey={dataKeys[0]}
