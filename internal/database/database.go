@@ -102,10 +102,25 @@ func New(l *zerolog.Logger, dbPath string, dbFile string) Service {
 	}
 
 	l.Debug().Msg("Opening database: " + dburl)
+
+	// Create the file with specific permissions
+	file, err := os.OpenFile(dburl, os.O_CREATE|os.O_RDWR, 0666)
+	if err != nil {
+		logger.Fatal().Msg(fmt.Sprintf("%s", err))
+	}
+	defer file.Close()
+
+	// Open the database file
 	db, err := sql.Open("sqlite3", dburl)
 	if err != nil {
 		// This will not be a connection error, but a DSN parse error or
 		// another initialization error.
+		logger.Fatal().Msg(fmt.Sprintf("%s", err))
+	}
+
+	// Set permissions after creation
+	err = os.Chmod(dburl, 0666)
+	if err != nil {
 		logger.Fatal().Msg(fmt.Sprintf("%s", err))
 	}
 
