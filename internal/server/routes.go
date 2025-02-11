@@ -22,6 +22,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	s.logger.Info().Msg("Registering routes")
 	r := httprouter.New()
 
+	r.HandlerFunc(http.MethodGet, "/version", s.versionHandler)
 	r.HandlerFunc(http.MethodGet, "/health", s.healthHandler)
 	r.HandlerFunc(http.MethodGet, "/test", s.TestHandler)
 
@@ -75,10 +76,12 @@ func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(jsonResp)
 }
 
-// type allowedTypes interface {
-// 	*database.VotesJson | *database.ProposalsJson
-// }
+func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
+	jsonResp, err := json.Marshal(s.version)
 
-// type transformFn[T allowedTypes] func(T) T
+	if err != nil {
+		log.Fatalf("error handling JSON marshal. Err: %v", err)
+	}
 
-// func callDatabase() {
+	_, _ = w.Write(jsonResp)
+}

@@ -23,9 +23,10 @@ type Server struct {
 	db           database.Service
 	account      string
 	logFile      string
+	version      string
 }
 
-func NewServer(l *zerolog.Logger, cfg *lito.Config) *http.Server {
+func NewServer(l *zerolog.Logger, cfg *lito.Config, ver string) *http.Server {
 	netInterface := os.Getenv("NET_INTERFACE")
 	if cfg.NetInterface != "" {
 		netInterface = cfg.NetInterface
@@ -67,6 +68,7 @@ func NewServer(l *zerolog.Logger, cfg *lito.Config) *http.Server {
 		db:           database.New(l, cfg.LitoPath, cfg.Database),
 		account:      account,
 		logFile:      pathFile,
+		version:      ver,
 	}
 
 	// Declare Server config
@@ -80,6 +82,7 @@ func NewServer(l *zerolog.Logger, cfg *lito.Config) *http.Server {
 
 	l.Info().Msg(fmt.Sprintf("Starting server on interface %s", NewServer.netInterface))
 	l.Info().Msg(fmt.Sprintf("Starting server on port %d", NewServer.port))
+	l.Info().Msg(fmt.Sprintf("Go-lito version: %s", NewServer.version))
 
 	return server
 }

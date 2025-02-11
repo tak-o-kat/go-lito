@@ -59,8 +59,7 @@ func serverCli(cmd *cobra.Command, args []string) {
 
 	logger := misc.NewLogger(cfg.LitoPath, output)
 	misc.LoadEnvSettings(logger)
-
-	server := server.NewServer(logger, cfg)
+	server := server.NewServer(logger, cfg, Version.Version)
 
 	err := server.ListenAndServe()
 	if err != nil {
