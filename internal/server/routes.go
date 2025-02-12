@@ -77,7 +77,10 @@ func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
-	jsonResp, err := json.Marshal(s.version)
+	ver := map[string]string{
+		"version": s.version,
+	}
+	jsonResp, err := json.Marshal(ver)
 
 	if err != nil {
 		log.Fatalf("error handling JSON marshal. Err: %v", err)
