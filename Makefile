@@ -4,7 +4,7 @@ BINARY_NAME=lito
 # Compile flags
 GCFLAGS=-gcflags="all=-trimpath=$(CURDIR)" -asmflags="all=-trimpath=$(CURDIR)"
 
-VERSION?=v0.1.6
+VERSION?=0.1.7
 LDFLAGS:=-ldflags "-X main.Version=${VERSION}"
 
 # Build the application

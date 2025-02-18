@@ -55,6 +55,16 @@ export default function NavBar() {
                   Dashboard
                 </Link>
                 <Link
+                  href="/dashboard/rewards/"
+                  className={`${
+                    pathname.includes("/dashboard/rewards/")
+                      ? "text-foreground font-semibold"
+                      : "text-muted-foreground"
+                  } transition-colors hover:text-foreground`}
+                >
+                  Rewards
+                </Link>
+                <Link
                   href="/dashboard/settings/"
                   className={`${
                     pathname.includes("/dashboard/settings/")
@@ -98,6 +108,16 @@ export default function NavBar() {
                       } hover:text-foreground`}
                     >
                       Dashboard
+                    </Link>
+                    <Link
+                      href="/dashboard/rewards"
+                      className={`${
+                        pathname.includes("/dashboard/rewards")
+                          ? "text-foreground font-semibold"
+                          : "text-muted-foreground"
+                      } hover:text-foreground`}
+                    >
+                      Rewards
                     </Link>
                     <Link
                       href="/dashboard/settings/"

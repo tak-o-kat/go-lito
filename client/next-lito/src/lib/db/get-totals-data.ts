@@ -28,8 +28,8 @@ export const getTotalsAndPercentageFromTimeInterval = async (
   // generate the previous from and to in order to get percentage changes over the same interval
   const prevTimeRange = generatePrevLitoDateTimeFromInterval(interval, from);
 
-  // console.log(`from: ${from}, to: ${to}`);
-  // console.log(`from: ${prevTimeRange.from}, to: ${prevTimeRange.to}`);
+  console.log(`from: ${from}, to: ${to}`);
+  console.log(`from: ${prevTimeRange.from}, to: ${prevTimeRange.to}`);
 
   // generate the ranges for the query
   const ranges = generateArrayForSelectCount(

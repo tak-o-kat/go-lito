@@ -19,6 +19,14 @@ export default function SettingsMenu() {
       >
         General
       </Link>
+      <Link
+        href="/dashboard/settings/updates"
+        className={`${
+          pathname === "/dashboard/settings/updates" && textHighlight
+        }`}
+      >
+        Updates
+      </Link>
     </nav>
   );
 }
