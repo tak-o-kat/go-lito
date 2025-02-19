@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Card,
   CardContent,
@@ -10,7 +11,7 @@ import {
 import { useFormState } from "react-dom";
 import { updateLito } from "@/app/actions/update-lito-actions";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface propTypes {
   version: string;
@@ -24,6 +25,10 @@ export default function UpdateLito({ version, repoVersion }: propTypes) {
   );
 
   const [updateRequired, setUpdateRequired] = useState(version !== repoVersion);
+
+  useEffect(() => {
+    console.log("State changed:", state);
+  }, [state]);
 
   return (
     <form action={formAction}>
