@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"syscall"
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
@@ -96,10 +97,22 @@ func New(l *zerolog.Logger, dbPath string, dbFile string) Service {
 	}
 	dburl = filepath.Join(dbPath, dbFile)
 
-	err := os.MkdirAll(dbPath, os.ModePerm)
+	// Save current umask and set to 0
+	oldUmask := syscall.Umask(0)
+
+	err := os.MkdirAll(dbPath, 0777)
 	if err != nil {
 		logger.Fatal().Msg(fmt.Sprintf("%s", err))
 	}
+
+	file, err := os.OpenFile(dburl, os.O_CREATE|os.O_RDWR, 0666)
+	if err != nil {
+		panic(err)
+	}
+	file.Close()
+
+	// Restore the original umask
+	syscall.Umask(oldUmask)
 
 	l.Debug().Msg("Opening database: " + dburl)
 	db, err := sql.Open("sqlite3", dburl)

@@ -14,9 +14,6 @@ export default async function GeneralSettingsPage() {
     // Make a call to get the the current data from the node.log file
     const url = `${GOLITO_API}/version`;
     const response = await fetch(url, {
-      next: {
-        revalidate: 30,
-      },
       method: "GET",
       headers: {
         "Content-Type": "application/json",

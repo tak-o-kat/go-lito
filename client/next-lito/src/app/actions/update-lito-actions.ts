@@ -30,5 +30,5 @@ export async function updateLito(_prevState: any, formData: FormData) {
   }
 
   // save theme in session
-  revalidatePath("/", "layout");
+  revalidatePath("/dashboard/settings/updates", "page");
 }

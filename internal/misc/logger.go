@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"syscall"
 	"time"
 
 	"github.com/rs/zerolog"
@@ -22,8 +23,11 @@ func NewLogger(path string, logFile string) *zerolog.Logger {
 		level = zerolog.InfoLevel
 	}
 
+	// Save current umask and set to 0
+	oldUmask := syscall.Umask(0)
+
 	// Create the path to the log file
-	err := os.MkdirAll(path, os.ModePerm)
+	err := os.MkdirAll(path, 0777)
 	if err != nil {
 		panic(err)
 	}
@@ -34,12 +38,14 @@ func NewLogger(path string, logFile string) *zerolog.Logger {
 	// Open log file and/or create it
 	log, err := os.OpenFile(
 		file,
-		os.O_CREATE|os.O_APPEND|os.O_RDWR,
-		os.ModeAppend|os.ModePerm,
+		os.O_CREATE|os.O_RDWR, 0777,
 	)
 	if err != nil {
 		panic(err)
 	}
+
+	// Restore the original umask
+	syscall.Umask(oldUmask)
 
 	// Create a nice looking output to log file and stdout
 	cw1 := zerolog.ConsoleWriter{Out: log, TimeFormat: time.RFC3339}

@@ -19,16 +19,12 @@ interface propTypes {
 }
 
 export default function UpdateLito({ version, repoVersion }: propTypes) {
-  const [state, formAction] = useFormState<any, FormData>(
+  const [state, formAction, pending] = useFormState<any, FormData>(
     updateLito,
     undefined
   );
 
   const [updateRequired, setUpdateRequired] = useState(version !== repoVersion);
-
-  useEffect(() => {
-    console.log("State changed:", state);
-  }, [state]);
 
   return (
     <form action={formAction}>

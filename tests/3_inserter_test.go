@@ -32,7 +32,7 @@ func TestInserterTotals(t *testing.T) {
 	file := filepath.Join(CFG3.LitoPath, CFG3.Database)
 	_ = file
 
-	err := os.MkdirAll(CFG3.LitoPath, 0664)
+	err := os.MkdirAll(CFG3.LitoPath, 0777)
 	if err != nil {
 		t.Errorf("%s", err)
 	}
