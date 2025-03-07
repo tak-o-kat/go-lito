@@ -78,7 +78,7 @@ func daemon(cmd *cobra.Command, args []string) {
 			}
 		}()
 		// start api server
-		server := server.NewServer(logger, cfg)
+		server := server.NewServer(logger, cfg, Version.Version)
 
 		err := server.ListenAndServe()
 		if err != nil {

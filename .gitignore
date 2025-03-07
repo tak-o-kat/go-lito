@@ -41,6 +41,8 @@ main
 # tars
 lito.tar.bz2
 lito.tar.bz
+update.tar.bz2
+update.tar.bz
 
 # nohup
 nohup.out

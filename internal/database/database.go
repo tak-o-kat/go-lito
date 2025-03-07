@@ -115,6 +115,8 @@ func New(l *zerolog.Logger, dbPath string, dbFile string) Service {
 	syscall.Umask(oldUmask)
 
 	l.Debug().Msg("Opening database: " + dburl)
+
+	// Open the database file
 	db, err := sql.Open("sqlite3", dburl)
 	if err != nil {
 		// This will not be a connection error, but a DSN parse error or
